@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,28 +25,26 @@
 
   #login{position:fixed;inset:0;z-index:100;background:var(--pinus-700);display:flex;align-items:center;justify-content:center;padding:24px}
   #login .card{background:var(--surface);border-radius:20px;max-width:430px;width:100%;padding:38px 34px;box-shadow:0 20px 60px rgba(0,0,0,.25)}
-  .brandmark{display:flex;align-items:center;gap:11px;margin-bottom:24px}
+  .brandmark{display:flex;align-items:center;gap:11px;margin-bottom:26px}
   .brandmark .glyph{width:42px;height:42px;border-radius:11px;background:var(--pinus-600);display:flex;align-items:center;justify-content:center;flex-shrink:0}
   .brandmark .glyph svg{width:24px;height:24px}
   .brandmark .name{font-family:'Fraunces';font-weight:600;font-size:18px;color:var(--pinus-700);line-height:1.1}
   .brandmark .name small{display:block;font-family:'Manrope';font-weight:500;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--tembaga-700);margin-top:3px}
-  #login h1{font-size:23px;color:var(--pinus-700);margin-bottom:6px}
-  #login p{color:var(--muted);font-size:14px;margin-bottom:22px}
-  .role-pick{display:grid;gap:11px}
-  .role-btn{display:flex;align-items:center;gap:13px;padding:15px 16px;border:1.5px solid var(--line);border-radius:12px;text-align:left;transition:.15s;background:var(--surface-2)}
-  .role-btn:hover{border-color:var(--pinus-500);background:#fff}
-  .role-btn .ic{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-  .role-btn .ic svg{width:21px;height:21px;color:#fff}
-  .role-btn .t{display:block;font-weight:600;font-size:15px;color:var(--ink)}
-  .role-btn .d{display:block;font-size:12.5px;color:var(--muted);margin-top:2px}
-  .login-note{margin-top:18px;font-size:11.5px;color:var(--faint);text-align:center;line-height:1.5}
-  .mode-tag{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.05em;padding:2px 8px;border-radius:999px;margin-top:10px}
-  .mode-demo{background:var(--warn-bg);color:var(--tembaga-700)}
-  .mode-live{background:var(--ok-bg);color:var(--ok)}
+  #login h1{font-size:23px;color:var(--pinus-700);margin-bottom:20px}
   .field{margin-bottom:14px}
   .field label{display:block;font-size:12.5px;font-weight:600;color:var(--muted);margin-bottom:6px}
   input,select,textarea{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:9px;font-family:inherit;font-size:14.5px;background:var(--surface-2);color:var(--ink)}
   input:focus,select:focus,textarea:focus{border-color:var(--pinus-500);background:#fff}
+  .status-dot{display:flex;justify-content:center;margin-top:16px}
+  .status-dot span{width:9px;height:9px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 4px var(--ok-bg)}
+  .status-dot.demo span{background:var(--tembaga);box-shadow:0 0 0 4px var(--warn-bg)}
+  .login-note{margin-top:14px;font-size:11.5px;color:var(--faint);text-align:center;line-height:1.5}
+
+  /* language switcher */
+  .langsw{position:fixed;top:13px;right:14px;z-index:120;display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.92);backdrop-filter:blur(6px);border:1px solid var(--line);border-radius:999px;padding:5px 8px 5px 11px;box-shadow:0 2px 10px rgba(21,42,33,.12)}
+  .langsw svg{width:14px;height:14px;color:var(--muted);flex-shrink:0}
+  .langsw select{border:none;background:none;font-family:inherit;font-size:13px;font-weight:600;color:var(--pinus-700);padding:0 2px;width:auto;cursor:pointer}
+  .langsw select:focus{outline:none;background:none}
 
   #app{display:none;min-height:100vh}
   #app.on{display:grid;grid-template-columns:248px 1fr}
@@ -69,6 +67,7 @@
   .page-head .eyebrow{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--tembaga-700);margin-bottom:5px}
   .page-head h1{font-size:28px;color:var(--pinus-700);line-height:1.1}
   .page-head p{color:var(--muted);margin-top:6px;font-size:14px;max-width:560px}
+  @media(min-width:841px){.page-head{padding-right:72px}}
 
   .grid{display:grid;gap:16px}
   .g3{grid-template-columns:repeat(3,1fr)}.g2{grid-template-columns:1fr 1fr}
@@ -146,10 +145,12 @@
   .sj-tag svg{width:12px;height:12px}
 
   .menu-btn{display:none}
+  .scrim{display:none;position:fixed;inset:0;background:rgba(21,33,24,.45);z-index:55}
   @media (max-width:840px){
     #app.on{grid-template-columns:1fr}
     .sidebar{position:fixed;left:0;top:0;z-index:60;width:248px;transform:translateX(-100%);transition:transform .25s}
     .sidebar.open{transform:translateX(0)}
+    .scrim.on{display:block}
     .main{padding:68px 16px 50px;max-width:100%}
     .menu-btn{display:flex;position:fixed;top:14px;left:14px;z-index:50;background:var(--pinus-700);color:#fff;width:42px;height:42px;border-radius:10px;align-items:center;justify-content:center}
     .menu-btn svg{width:22px;height:22px}
@@ -159,54 +160,87 @@
 </head>
 <body>
 
+<div class="langsw">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 3 2.5 15 0 18M12 3c-2.5 3-2.5 15 0 18"/></svg>
+  <select id="langSel"><option value="en">EN</option><option value="id">ID</option><option value="zh">中文</option></select>
+</div>
+
 <div id="login">
   <div class="card">
     <div class="brandmark">
       <span class="glyph"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3C8 6 5 9 5 13a7 7 0 0014 0c0-4-3-7-7-10z" fill="#fff" opacity=".9"/><path d="M12 8c-2 1.5-3.5 3.2-3.5 5.2a3.5 3.5 0 007 0C15.5 11.2 14 9.5 12 8z" fill="#264A3A"/></svg></span>
-      <span class="name">Nusa Higiena Sentosa<small>Portal Layanan</small></span>
+      <span class="name">Nusa Higiena Sentosa<small id="brandSubLogin">SERVICE PORTAL</small></span>
     </div>
-    <h1>Masuk ke portal</h1>
-    <p>Masuk dengan akun Anda. Tampilan menyesuaikan otomatis dengan peran akun.</p>
+    <h1 id="loginTitle">Sign in to portal</h1>
     <form id="loginForm">
-      <div class="field"><label>Email</label><input type="email" id="loginEmail" placeholder="nama@perusahaan.com" required></div>
-      <div class="field"><label>Kata sandi</label><input type="password" id="loginPass" placeholder="••••••••" required></div>
-      <button class="btn-cta block" type="submit" id="loginBtn" style="padding:12px">Masuk</button>
+      <div class="field"><label id="lblEmail">Email</label><input type="email" id="loginEmail" placeholder="name@company.com" required></div>
+      <div class="field"><label id="lblPass">Password</label><input type="password" id="loginPass" placeholder="••••••••" required></div>
+      <label class="check-line" style="margin-bottom:16px"><input type="checkbox" id="rememberMe" checked> <span id="lblRemember">Remember me on this device</span></label>
+      <button class="btn-cta block" type="submit" id="loginBtn" style="padding:12px">Sign in</button>
     </form>
-    <div style="text-align:center"><span class="mode-tag" id="modeTag"></span></div>
+    <div class="status-dot" id="statusDot"><span></span></div>
     <p class="login-note" id="loginNote"></p>
   </div>
 </div>
 
 <button class="menu-btn" id="menuBtn" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round"/></svg></button>
+<div class="scrim" id="scrim"></div>
 
 <div id="app">
   <aside class="sidebar" id="sidebar">
     <div class="brandmark">
       <span class="glyph"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3C8 6 5 9 5 13a7 7 0 0014 0c0-4-3-7-7-10z" fill="#fff" opacity=".9"/><path d="M12 8c-2 1.5-3.5 3.2-3.5 5.2a3.5 3.5 0 007 0C15.5 11.2 14 9.5 12 8z" fill="#1E3A2E"/></svg></span>
-      <span class="name">Nusa Higiena<small>Portal Layanan</small></span>
+      <span class="name">Nusa Higiena<small id="brandSubApp">SERVICE PORTAL</small></span>
     </div>
     <span class="role-chip" id="roleChip"></span>
     <nav class="nav" id="nav"></nav>
-    <button class="logout" id="logout">Keluar</button>
+    <button class="logout" id="logout">Sign out</button>
   </aside>
   <main class="main" id="main"></main>
 </div>
 
 <div class="modal-bg" id="modalBg">
   <div class="modal">
-    <h3>Upload surat jalan</h3>
+    <h3 id="sjTitle">Upload delivery note</h3>
     <div class="sub" id="modalSub"></div>
     <label class="dropzone" for="sjFile">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 16V4m0 0l-4 4m4-4l4 4M5 20h14" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      <div class="t" id="sjFileName">Pilih foto / scan surat jalan</div>
-      <div class="d">JPG, PNG, atau PDF</div>
+      <div class="t" id="sjFileName">Choose photo / scan of delivery note</div>
+      <div class="d" id="sjFormats">JPG, PNG, or PDF</div>
     </label>
     <input type="file" id="sjFile" accept="image/*,.pdf" style="display:none">
-    <label class="check-line"><input type="checkbox" id="sjSigned"> <span>Surat jalan ini <strong>sudah ditandatangani</strong> pihak Foodex</span></label>
-    <div style="font-size:11.5px;color:var(--faint);margin-top:8px">Jika ber-TTD, pesanan otomatis ditandai <strong>Selesai/Terkirim</strong> dan invoice langsung terbit.</div>
+    <label class="check-line"><input type="checkbox" id="sjSigned"> <span id="sjSignedLbl"></span></label>
+    <div style="font-size:11.5px;color:var(--faint);margin-top:8px" id="sjHint"></div>
     <div class="modal-actions">
-      <button class="btn-sm" id="sjCancel" style="flex:1">Batal</button>
-      <button class="btn-cta" id="sjSave" style="flex:1;justify-content:center">Simpan</button>
+      <button class="btn-sm" id="sjCancel" style="flex:1">Cancel</button>
+      <button class="btn-cta" id="sjSave" style="flex:1;justify-content:center">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="svcModalBg">
+  <div class="modal">
+    <h3 id="svcModalTitle">Add service</h3>
+    <div class="sub" id="svcSub"></div>
+    <div class="field"><label id="lblSvcName">Service name</label><input type="text" id="svcName"></div>
+    <div class="field"><label id="lblSvcType">Service type</label>
+      <select id="svcType"><option value="catering" id="optCat">Catering (per portion)</option><option value="laundry" id="optLau">Laundry (per unit)</option></select></div>
+    <div class="field" id="svcUnitWrap"><label id="lblSvcUnit">Unit</label><input type="text" id="svcUnit"></div>
+    <div class="field"><label id="lblSvcPrice">Price (Rp per unit)</label><input type="number" id="svcPrice" min="0"></div>
+    <div class="modal-actions">
+      <button class="btn-sm" id="svcCancel" style="flex:1">Cancel</button>
+      <button class="btn-cta" id="svcSave" style="flex:1;justify-content:center">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="delModalBg">
+  <div class="modal">
+    <h3 id="delTitle">Delete service?</h3>
+    <div class="sub" id="delSub"></div>
+    <div class="modal-actions">
+      <button class="btn-sm" id="delCancel" style="flex:1">Cancel</button>
+      <button class="btn-sm btn-del" id="delConfirm" style="flex:1;justify-content:center">Yes, delete</button>
     </div>
   </div>
 </div>
@@ -223,14 +257,90 @@ const CONFIG = {
   SUPABASE_URL: "https://lwcjhppimxsotzxfmixd.supabase.co",
   SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx3Y2pocHBpbXhzb3R6eGZtaXhkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMwMjY3MzAsImV4cCI6MjA5ODYwMjczMH0.7GSRXqNtE4D1zQZ0_qmAsds0oiMcnYFZ-F-n31LVGpo",
   CLIENT_NAME: "PT Foodex Indonesia",
-  // Akun DEMO (dipakai hanya saat MODE DEMO, sebelum online).
-  // Saat MODE ONLINE, login memakai Supabase Auth (akun asli).
   DEMO_ACCOUNTS: [
     { email:"admin@nhs.co.id",         pass:"demo123", role:"nhs",    client:null },
     { email:"purchasing@foodex.co.id", pass:"demo123", role:"client", client:"PT Foodex Indonesia" },
   ],
 };
-let currentUser=null; // {email, role, client}
+let currentUser=null;
+
+/* ================= I18N ================= */
+const I18N={
+ en:{
+  brand_sub:"SERVICE PORTAL",login_title:"Sign in to portal",email:"Email",ph_email:"name@company.com",password:"Password",remember:"Remember me on this device",signin:"Sign in",checking:"Checking…",wrong:"Wrong email or password",signout:"Sign out",
+  chip_admin:"NHS Team (admin)",loading:"Loading…",cancel:"Cancel",save:"Save",catering:"Catering",laundry:"Laundry",
+  nav_pesan:"Order services",nav_pesanan:"My orders",nav_tagihan:"Invoices",nav_masuk:"Incoming orders",nav_katalog:"Catalog & prices",
+  st_c1:"Received",st_c2:"Preparing",st_c3:"Delivered",st_l1:"Picked up",st_l2:"Washing",st_l3:"Returned",
+  b_done:"Done",b_prog:"In progress",b_queue:"Queued",inv_paid:"Invoice paid",inv_issued:"Invoice issued",
+  pesan_h:"Create order",pesan_p:"Order daily catering or a laundry pickup. Cost is calculated automatically from the NHS catalog.",
+  cat_title:"Daily catering",f_menu:"Menu / package",f_deliverydate:"Delivery date",f_shift1:"Shift 1 portions",f_shift2:"Shift 2 portions",f_note:"Note (optional)",ph_cat_note:"e.g. 20 portions without meat",est_cost:"Estimated cost",btn_send_cat:"Send catering order",no_cat:"No active catering service.",
+  laundry_title:"Laundry pickup",f_itemtype:"Item type",f_qty_pcs:"Quantity (pcs)",f_pickupdate:"Pickup date",ph_laundry_note:"e.g. oil stains, special handling",btn_send_laundry:"Send pickup",no_laundry:"No active laundry service.",
+  pesanan_h:"Your order progress",pesanan_p_empty:"Track each order until completion.",pesanan_p:"Status is updated directly by the NHS team.",empty_orders_t:"No orders yet",empty_orders_d:"Create your first order in the \u201COrder services\u201D menu.",
+  masuk_h:"Manage orders",masuk_p_empty:"Client orders appear here.",masuk_p:"Update progress at each stage. On arrival, upload the signed delivery note \u2192 order Done & invoice issued automatically.",
+  stat_active:"Active orders",stat_active_sub:"in progress",stat_done:"Done (with note)",stat_done_sub:"archived",stat_unpaid:"Invoiced, unpaid",stat_unpaid_sub:"running total",
+  sec_todo:"Needs action",all_done:"All orders completed \ud83c\udf89",sec_archived:"Done & archived",empty_incoming_t:"No incoming orders",empty_incoming_d:"Orders appear as soon as a client places one.",
+  btn_advance:"Next stage \u2192",btn_upload_sj:"Upload delivery note",btn_mark_paid:"Mark as paid",sj_signed_tag:"Delivery note signed",sj_uploaded_tag:"Delivery note uploaded",
+  katalog_h:"Services you sell",katalog_p:"Manage service types and prices \u2014 changes apply instantly to the client order form & invoice calculation.",btn_add_svc:"+ Add service",
+  cat_group:"Catering",per_porsi:"per portion",laundry_group:"Laundry",per_unit:"per pc/unit",inactive:"(inactive)",btn_edit:"Edit",btn_deactivate:"Deactivate",btn_activate:"Activate",btn_delete:"Delete",no_cat_svc:"No catering service yet.",no_laundry_svc:"No laundry service yet.",
+  tagihan_h:"Automatic invoices",tagihan_p:"Invoices are issued automatically when an order arrives (with signed delivery note). Grouped by month.",empty_inv_t:"No invoices yet",empty_inv_d:"Invoices appear automatically after an order is delivered & the signed note is uploaded.",
+  th_date:"Date",th_service:"Service",th_detail:"Detail",th_sj:"Delivery note",th_amount:"Amount",th_status:"Status",sj_yes:"yes",st_paid:"Paid",st_unpaid:"Unpaid",total:"Total",unpaid_label:"Unpaid",all_paid:"All paid",
+  sj_modal_title:"Upload delivery note",sj_pick:"Choose photo / scan of delivery note",sj_formats:"JPG, PNG, or PDF",sj_signed_check:"This delivery note is <strong>signed</strong> by the client",sj_hint:"If signed, the order is automatically marked <strong>Done/Delivered</strong> and the invoice is issued.",sj_need_file:"Choose the delivery note file first",sj_uploading:"Uploading…",sj_upload_fail:"Upload failed \u2014 check the \u201Csurat-jalan\u201D bucket exists & is Public",sj_saved_signed:"Signed note saved \u2192 order Done & invoice issued \u2713",sj_saved_unsigned:"Delivery note saved (unsigned)",
+  svc_add_title:"Add service",svc_edit_title:"Edit service",svc_sub:"Fill in the service details. Changes apply instantly to the client order form & invoice calculation.",svc_name:"Service name",ph_svc_name:"e.g. Worker catering / Production uniform",svc_type:"Service type",opt_catering:"Catering (per portion)",opt_laundry:"Laundry (per unit)",svc_unit:"Unit",ph_svc_unit:"pcs / set / kg",svc_price:"Price (Rp per unit)",ph_svc_price:"e.g. 15000",svc_name_empty:"Service name can't be empty",svc_price_invalid:"Invalid price",svc_updated:"Service updated \u2713",svc_added:"Service added \u2713",
+  del_title:"Delete service?",del_sub:"\u201C{name}\u201D will be removed from the catalog. Existing orders are unaffected.",del_confirm:"Yes, delete",svc_deleted:"Service deleted",
+  order_cat_sent:"Catering order sent \u2713",order_laundry_sent:"Pickup sent \u2713",need_cat_fields:"Fill in date & portions first",need_laundry_fields:"Fill in quantity & pickup date first",progress_updated:"Progress updated \u2192 client sees it instantly",marked_paid:"Marked as paid",
+  demo_note:"DEMO MODE \u2014 try <strong>admin@nhs.co.id</strong> or <strong>purchasing@foodex.co.id</strong>, password <strong>demo123</strong>."
+ },
+ id:{
+  brand_sub:"PORTAL LAYANAN",login_title:"Masuk ke portal",email:"Email",ph_email:"nama@perusahaan.com",password:"Kata sandi",remember:"Ingat saya di perangkat ini",signin:"Masuk",checking:"Memeriksa…",wrong:"Email atau kata sandi salah",signout:"Keluar",
+  chip_admin:"Tim NHS (admin)",loading:"Memuat…",cancel:"Batal",save:"Simpan",catering:"Katering",laundry:"Laundry",
+  nav_pesan:"Pesan layanan",nav_pesanan:"Pesanan saya",nav_tagihan:"Tagihan",nav_masuk:"Pesanan masuk",nav_katalog:"Katalog & harga",
+  st_c1:"Diterima",st_c2:"Disiapkan",st_c3:"Dikirim",st_l1:"Dijemput",st_l2:"Dicuci",st_l3:"Dikembalikan",
+  b_done:"Selesai",b_prog:"Diproses",b_queue:"Antre",inv_paid:"Invoice lunas",inv_issued:"Invoice terbit",
+  pesan_h:"Buat pesanan",pesan_p:"Pesan katering harian atau penjemputan laundry. Biaya terhitung otomatis dari katalog NHS.",
+  cat_title:"Katering harian",f_menu:"Menu / paket",f_deliverydate:"Tanggal pengiriman",f_shift1:"Porsi shift 1",f_shift2:"Porsi shift 2",f_note:"Catatan (opsional)",ph_cat_note:"mis. 20 porsi tanpa daging",est_cost:"Perkiraan biaya",btn_send_cat:"Kirim pesanan katering",no_cat:"Belum ada layanan katering aktif.",
+  laundry_title:"Penjemputan laundry",f_itemtype:"Jenis item",f_qty_pcs:"Jumlah (pcs)",f_pickupdate:"Tanggal jemput",ph_laundry_note:"mis. noda oli, penanganan khusus",btn_send_laundry:"Kirim penjemputan",no_laundry:"Belum ada layanan laundry aktif.",
+  pesanan_h:"Progres pesanan Anda",pesanan_p_empty:"Pantau tiap pesanan sampai selesai.",pesanan_p:"Status diperbarui langsung oleh tim NHS.",empty_orders_t:"Belum ada pesanan",empty_orders_d:"Buat pesanan di menu \u201CPesan layanan\u201D.",
+  masuk_h:"Kelola pesanan",masuk_p_empty:"Pesanan klien muncul di sini.",masuk_p:"Update progres tiap tahap. Saat sampai, upload surat jalan ber-TTD \u2192 pesanan Selesai & invoice terbit otomatis.",
+  stat_active:"Pesanan aktif",stat_active_sub:"sedang berjalan",stat_done:"Selesai (ber-SJ)",stat_done_sub:"terarsip",stat_unpaid:"Invoice belum dibayar",stat_unpaid_sub:"tagihan berjalan",
+  sec_todo:"Perlu ditindak",all_done:"Semua pesanan sudah selesai \ud83c\udf89",sec_archived:"Selesai & terarsip",empty_incoming_t:"Belum ada pesanan masuk",empty_incoming_d:"Pesanan akan tampil begitu klien memesan.",
+  btn_advance:"Lanjut tahap \u2192",btn_upload_sj:"Upload surat jalan",btn_mark_paid:"Tandai lunas",sj_signed_tag:"Surat jalan ber-TTD",sj_uploaded_tag:"Surat jalan diupload",
+  katalog_h:"Layanan yang Anda jual",katalog_p:"Atur jenis layanan dan harga \u2014 perubahan langsung dipakai di form pesanan klien & perhitungan invoice.",btn_add_svc:"+ Tambah layanan",
+  cat_group:"Katering",per_porsi:"per porsi",laundry_group:"Laundry",per_unit:"per pcs/satuan",inactive:"(nonaktif)",btn_edit:"Ubah",btn_deactivate:"Nonaktifkan",btn_activate:"Aktifkan",btn_delete:"Hapus",no_cat_svc:"Belum ada layanan katering.",no_laundry_svc:"Belum ada layanan laundry.",
+  tagihan_h:"Tagihan otomatis",tagihan_p:"Invoice terbit otomatis saat pesanan sampai (ada surat jalan ber-TTD). Dikelompokkan per bulan.",empty_inv_t:"Belum ada tagihan",empty_inv_d:"Invoice muncul otomatis setelah pesanan terkirim & surat jalan ber-TTD masuk.",
+  th_date:"Tanggal",th_service:"Layanan",th_detail:"Detail",th_sj:"Surat jalan",th_amount:"Jumlah",th_status:"Status",sj_yes:"ada",st_paid:"Lunas",st_unpaid:"Belum",total:"Total",unpaid_label:"Belum lunas",all_paid:"Lunas semua",
+  sj_modal_title:"Upload surat jalan",sj_pick:"Pilih foto / scan surat jalan",sj_formats:"JPG, PNG, atau PDF",sj_signed_check:"Surat jalan ini <strong>sudah ditandatangani</strong> klien",sj_hint:"Jika ber-TTD, pesanan otomatis ditandai <strong>Selesai/Terkirim</strong> dan invoice langsung terbit.",sj_need_file:"Pilih file surat jalan dulu",sj_uploading:"Mengupload…",sj_upload_fail:"Gagal upload \u2014 cek bucket \u201Csurat-jalan\u201D sudah dibuat & Public",sj_saved_signed:"Surat jalan ber-TTD tersimpan \u2192 pesanan Selesai & invoice terbit \u2713",sj_saved_unsigned:"Surat jalan tersimpan (belum ber-TTD)",
+  svc_add_title:"Tambah layanan",svc_edit_title:"Ubah layanan",svc_sub:"Isi detail layanan. Perubahan langsung dipakai di form pesanan klien & perhitungan invoice.",svc_name:"Nama layanan",ph_svc_name:"mis. Katering pekerja / Seragam produksi",svc_type:"Jenis layanan",opt_catering:"Katering (per porsi)",opt_laundry:"Laundry (per satuan)",svc_unit:"Satuan",ph_svc_unit:"pcs / set / kg",svc_price:"Harga (Rp per satuan)",ph_svc_price:"mis. 15000",svc_name_empty:"Nama layanan tidak boleh kosong",svc_price_invalid:"Harga tidak valid",svc_updated:"Layanan diperbarui \u2713",svc_added:"Layanan ditambahkan \u2713",
+  del_title:"Hapus layanan?",del_sub:"\u201C{name}\u201D akan dihapus dari katalog. Pesanan lama tidak terpengaruh.",del_confirm:"Ya, hapus",svc_deleted:"Layanan dihapus",
+  order_cat_sent:"Pesanan katering terkirim \u2713",order_laundry_sent:"Penjemputan terkirim \u2713",need_cat_fields:"Isi tanggal & jumlah porsi dulu",need_laundry_fields:"Isi jumlah & tanggal jemput dulu",progress_updated:"Progres diperbarui \u2192 klien langsung melihatnya",marked_paid:"Ditandai lunas",
+  demo_note:"MODE DEMO \u2014 coba <strong>admin@nhs.co.id</strong> atau <strong>purchasing@foodex.co.id</strong>, sandi <strong>demo123</strong>."
+ },
+ zh:{
+  brand_sub:"服务门户",login_title:"登录门户",email:"邮箱",ph_email:"name@company.com",password:"密码",remember:"在此设备上记住我",signin:"登录",checking:"验证中…",wrong:"邮箱或密码错误",signout:"退出",
+  chip_admin:"NHS 团队（管理员）",loading:"加载中…",cancel:"取消",save:"保存",catering:"餐饮",laundry:"洗涤",
+  nav_pesan:"下单服务",nav_pesanan:"我的订单",nav_tagihan:"账单",nav_masuk:"收到的订单",nav_katalog:"目录与价格",
+  st_c1:"已接收",st_c2:"准备中",st_c3:"已送达",st_l1:"已取件",st_l2:"清洗中",st_l3:"已送回",
+  b_done:"完成",b_prog:"处理中",b_queue:"排队中",inv_paid:"账单已付",inv_issued:"账单已开",
+  pesan_h:"创建订单",pesan_p:"下单每日餐饮或洗涤取件。费用根据 NHS 目录自动计算。",
+  cat_title:"每日餐饮",f_menu:"菜单 / 套餐",f_deliverydate:"配送日期",f_shift1:"第一班份数",f_shift2:"第二班份数",f_note:"备注（可选）",ph_cat_note:"例如：20份不含肉",est_cost:"预计费用",btn_send_cat:"提交餐饮订单",no_cat:"暂无可用餐饮服务。",
+  laundry_title:"洗涤取件",f_itemtype:"物品类型",f_qty_pcs:"数量（件）",f_pickupdate:"取件日期",ph_laundry_note:"例如：油渍，特殊处理",btn_send_laundry:"提交取件",no_laundry:"暂无可用洗涤服务。",
+  pesanan_h:"您的订单进度",pesanan_p_empty:"跟踪每个订单直至完成。",pesanan_p:"状态由 NHS 团队直接更新。",empty_orders_t:"暂无订单",empty_orders_d:"在\u201C下单服务\u201D菜单中创建您的第一个订单。",
+  masuk_h:"管理订单",masuk_p_empty:"客户订单显示在此。",masuk_p:"逐阶段更新进度。送达后上传已签送货单 \u2192 订单完成并自动开账单。",
+  stat_active:"进行中订单",stat_active_sub:"进行中",stat_done:"已完成（含单）",stat_done_sub:"已归档",stat_unpaid:"已开票未付",stat_unpaid_sub:"当前应收",
+  sec_todo:"待处理",all_done:"所有订单已完成 \ud83c\udf89",sec_archived:"已完成并归档",empty_incoming_t:"暂无收到的订单",empty_incoming_d:"客户下单后订单会显示在此。",
+  btn_advance:"下一阶段 \u2192",btn_upload_sj:"上传送货单",btn_mark_paid:"标记已付",sj_signed_tag:"送货单已签",sj_uploaded_tag:"送货单已上传",
+  katalog_h:"您提供的服务",katalog_p:"管理服务类型与价格 \u2014 更改会即时应用到客户下单表单和账单计算。",btn_add_svc:"+ 添加服务",
+  cat_group:"餐饮",per_porsi:"每份",laundry_group:"洗涤",per_unit:"每件/单位",inactive:"（已停用）",btn_edit:"编辑",btn_deactivate:"停用",btn_activate:"启用",btn_delete:"删除",no_cat_svc:"暂无餐饮服务。",no_laundry_svc:"暂无洗涤服务。",
+  tagihan_h:"自动账单",tagihan_p:"当订单送达（附已签送货单）时自动开账单。按月分组。",empty_inv_t:"暂无账单",empty_inv_d:"订单送达并上传已签送货单后，账单会自动出现。",
+  th_date:"日期",th_service:"服务",th_detail:"明细",th_sj:"送货单",th_amount:"金额",th_status:"状态",sj_yes:"有",st_paid:"已付",st_unpaid:"未付",total:"合计",unpaid_label:"未付",all_paid:"全部已付",
+  sj_modal_title:"上传送货单",sj_pick:"选择送货单照片/扫描件",sj_formats:"JPG、PNG 或 PDF",sj_signed_check:"此送货单<strong>已由客户签字</strong>",sj_hint:"如已签字，订单将自动标记为<strong>完成/已送达</strong>并开具账单。",sj_need_file:"请先选择送货单文件",sj_uploading:"上传中…",sj_upload_fail:"上传失败 \u2014 请检查\u201Csurat-jalan\u201D存储桶已创建且为 Public",sj_saved_signed:"已签送货单已保存 \u2192 订单完成并开账单 \u2713",sj_saved_unsigned:"送货单已保存（未签字）",
+  svc_add_title:"添加服务",svc_edit_title:"编辑服务",svc_sub:"填写服务详情。更改会即时应用到客户下单表单和账单计算。",svc_name:"服务名称",ph_svc_name:"例如：员工餐饮 / 生产制服",svc_type:"服务类型",opt_catering:"餐饮（每份）",opt_laundry:"洗涤（每单位）",svc_unit:"单位",ph_svc_unit:"件 / 套 / 公斤",svc_price:"价格（每单位 Rp）",ph_svc_price:"例如：15000",svc_name_empty:"服务名称不能为空",svc_price_invalid:"价格无效",svc_updated:"服务已更新 \u2713",svc_added:"服务已添加 \u2713",
+  del_title:"删除服务？",del_sub:"\u201C{name}\u201D 将从目录中移除。现有订单不受影响。",del_confirm:"确认删除",svc_deleted:"服务已删除",
+  order_cat_sent:"餐饮订单已提交 \u2713",order_laundry_sent:"取件已提交 \u2713",need_cat_fields:"请先填写日期和份数",need_laundry_fields:"请先填写数量和取件日期",progress_updated:"进度已更新 \u2192 客户即时可见",marked_paid:"已标记为已付",
+  demo_note:"演示模式 \u2014 试试 <strong>admin@nhs.co.id</strong> 或 <strong>purchasing@foodex.co.id</strong>，密码 <strong>demo123</strong>。"
+ }
+};
+let LANG=(()=>{try{return localStorage.getItem('nhs_lang')||'en'}catch(e){return 'en'}})();
+function t(k){const d=I18N[LANG]||I18N.en;return d[k]!==undefined?d[k]:(I18N.en[k]!==undefined?I18N.en[k]:k);}
 
 const LIVE=!!(CONFIG.SUPABASE_URL&&CONFIG.SUPABASE_ANON_KEY);
 const H={"apikey":CONFIG.SUPABASE_ANON_KEY,"Authorization":"Bearer "+CONFIG.SUPABASE_ANON_KEY,"Content-Type":"application/json"};
@@ -246,7 +356,7 @@ let demoOrders=[
   {id:'o2',client:CONFIG.CLIENT_NAME,type:'laundry',service_name:'Seragam produksi',service_date:'2026-07-01',qty:140,unit:'pcs',price:3200,amount:448000,note:'',stage:2,delivered:false,invoiced:false,paid:false,sj_file:null,sj_signed:false,created_at:'2026-06-30T09:00:00Z'},
   {id:'o3',client:CONFIG.CLIENT_NAME,type:'catering',service_name:'Katering harian',service_date:'2026-06-28',qty:300,unit:'porsi',price:13000,amount:3900000,note:'Shift 1: 170 · Shift 2: 130',stage:3,delivered:true,invoiced:true,paid:true,sj_file:'SJ-0628.jpg',sj_signed:true,created_at:'2026-06-27T08:00:00Z'},
 ];
-async function sbGet(t,q=''){const r=await fetch(`${CONFIG.SUPABASE_URL}/rest/v1/${t}?select=*${q}`,{headers:H});return r.ok?await r.json():[];}
+async function sbGet(tb,q=''){const r=await fetch(`${CONFIG.SUPABASE_URL}/rest/v1/${tb}?select=*${q}`,{headers:H});return r.ok?await r.json():[];}
 const db={
   async services(){ if(!LIVE)return [...demoServices]; return await sbGet('services','&order=type.asc'); },
   async addService(s){ if(!LIVE){s.id='s'+Date.now();demoServices.push(s);return s;} const r=await fetch(`${CONFIG.SUPABASE_URL}/rest/v1/services`,{method:'POST',headers:{...H,'Prefer':'return=representation'},body:JSON.stringify(s)});return (await r.json())[0]; },
@@ -257,29 +367,30 @@ const db={
   async updOrder(id,p){ if(!LIVE){Object.assign(demoOrders.find(x=>x.id===id),p);return;} await fetch(`${CONFIG.SUPABASE_URL}/rest/v1/orders?id=eq.${id}`,{method:'PATCH',headers:H,body:JSON.stringify(p)}); },
 };
 
-const STAGES={catering:['Diterima','Disiapkan','Dikirim'],laundry:['Dijemput','Dicuci','Dikembalikan']};
+const STAGE_KEYS={catering:['st_c1','st_c2','st_c3'],laundry:['st_l1','st_l2','st_l3']};
 const rp=n=>'Rp '+Number(n||0).toLocaleString('id-ID');
-const MONTHS=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
-const ymLabel=d=>{const x=new Date(d);return MONTHS[x.getMonth()]+' '+x.getFullYear();};
-const dLabel=d=>{const x=new Date(d);return x.getDate()+' '+MONTHS[x.getMonth()]+' '+x.getFullYear();};
+const MONTHS_BY={en:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],id:['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'],zh:['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月']};
+function dLabel(d){const x=new Date(d);if(LANG==='zh')return `${x.getFullYear()}年${x.getMonth()+1}月${x.getDate()}日`;const m=MONTHS_BY[LANG]||MONTHS_BY.en;return x.getDate()+' '+m[x.getMonth()]+' '+x.getFullYear();}
+function ymLabel(d){const x=new Date(d);if(LANG==='zh')return `${x.getFullYear()}年${x.getMonth()+1}月`;const m=MONTHS_BY[LANG]||MONTHS_BY.en;return m[x.getMonth()]+' '+x.getFullYear();}
 
-let role='client',orders=[],services=[];
+let role='client',orders=[],services=[],currentView='';
 const $=s=>document.querySelector(s),main=$('#main');
-function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2900);}
+function toast(m){const el=$('#toast');el.textContent=m;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2900);}
+function typeLabel(tp){return tp==='catering'?t('catering'):t('laundry');}
 function svcIcon(type){return type==='catering'
   ?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20h16M6 20V9a6 6 0 0112 0v11" stroke-linecap="round"/><path d="M12 3v3" stroke-linecap="round"/></svg>'
   :'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="13" r="6"/><circle cx="12" cy="13" r="2.3"/><path d="M5 3h14v3H5z"/></svg>';}
-function stageBadge(o){if(o.delivered)return '<span class="badge b-ok"><span class="b-dot"></span>Selesai</span>';if(o.stage>=1)return '<span class="badge b-prog"><span class="b-dot"></span>Diproses</span>';return '<span class="badge b-wait"><span class="b-dot"></span>Antre</span>';}
-function pipeline(o){const st=STAGES[o.type];const cur=o.delivered?st.length:o.stage;let h='<div class="track">';st.forEach((s,i)=>{const n=i+1,c=n<cur?'done':(n===cur?'now':'');h+=`<div class="step ${c}"><span class="dot"></span>${i<st.length-1?'<span class="bar"></span>':''}</div>`;});h+='</div><div class="track-labels">';st.forEach((s,i)=>h+=`<span class="${i+1===cur?'on':''}">${s}</span>`);return h+'</div>';}
+function stageBadge(o){if(o.delivered)return `<span class="badge b-ok"><span class="b-dot"></span>${t('b_done')}</span>`;if(o.stage>=1)return `<span class="badge b-prog"><span class="b-dot"></span>${t('b_prog')}</span>`;return `<span class="badge b-wait"><span class="b-dot"></span>${t('b_queue')}</span>`;}
+function pipeline(o){const st=STAGE_KEYS[o.type];const cur=o.delivered?st.length:o.stage;let h='<div class="track">';st.forEach((s,i)=>{const n=i+1,c=n<cur?'done':(n===cur?'now':'');h+=`<div class="step ${c}"><span class="dot"></span>${i<st.length-1?'<span class="bar"></span>':''}</div>`;});h+='</div><div class="track-labels">';st.forEach((s,i)=>h+=`<span class="${i+1===cur?'on':''}">${t(s)}</span>`);return h+'</div>';}
 async function refresh(){const r=await Promise.all([db.orders(),db.services()]);orders=r[0];services=r[1];}
 
 const NAV={
-  client:[['pesan','Pesan layanan','M12 5v14M5 12h14'],['pesanan','Pesanan saya','M4 6h16M4 12h16M4 18h10'],['tagihan','Tagihan','M6 3h12v18l-3-2-3 2-3-2-3 2z']],
-  nhs:[['masuk','Pesanan masuk','M4 6h16M4 12h16M4 18h10'],['katalog','Katalog & harga','M4 7h16M4 12h16M4 17h16M8 3v18'],['tagihan','Tagihan','M6 3h12v18l-3-2-3 2-3-2-3 2z']],
+  client:[['pesan','nav_pesan','M12 5v14M5 12h14'],['pesanan','nav_pesanan','M4 6h16M4 12h16M4 18h10'],['tagihan','nav_tagihan','M6 3h12v18l-3-2-3 2-3-2-3 2z']],
+  nhs:[['masuk','nav_masuk','M4 6h16M4 12h16M4 18h10'],['katalog','nav_katalog','M4 7h16M4 12h16M4 17h16M8 3v18'],['tagihan','nav_tagihan','M6 3h12v18l-3-2-3 2-3-2-3 2z']],
 };
-function buildNav(){const n=$('#nav');n.innerHTML=NAV[role].map((v,i)=>`<button data-view="${v[0]}" class="${i===0?'active':''}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="${v[2]}"/></svg>${v[1]}</button>`).join('');n.querySelectorAll('button').forEach(b=>b.onclick=()=>{go(b.dataset.view);$('#sidebar').classList.remove('open');});}
+function buildNav(){const n=$('#nav');n.innerHTML=NAV[role].map((v,i)=>`<button data-view="${v[0]}" class="${v[0]===currentView?'active':(i===0&&!currentView?'active':'')}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="${v[2]}"/></svg>${t(v[1])}</button>`).join('');n.querySelectorAll('button').forEach(b=>b.onclick=()=>{go(b.dataset.view);closeMenu();});}
 function head(eb,h,p,right=''){return `<div class="page-head"><div><div class="eyebrow">${eb}</div><h1>${h}</h1><p>${p}</p></div>${right}</div>`;}
-function emptyBox(t,d){return `<div class="card"><div class="empty"><div class="big">${t}</div>${d}</div></div>`;}
+function emptyBox(tt,d){return `<div class="card"><div class="empty"><div class="big">${tt}</div>${d}</div></div>`;}
 
 const V={
   pesan(){
@@ -287,99 +398,98 @@ const V={
     const laundry=services.filter(s=>s.active&&s.type==='laundry');
     const catOpts=cat.map(s=>`<option value="${s.id}">${s.name} — ${rp(s.price)}/${s.unit}</option>`).join('');
     const lOpts=laundry.map(s=>`<option value="${s.id}">${s.name} — ${rp(s.price)}/${s.unit}</option>`).join('');
-    return head('Pesan layanan','Buat pesanan','Pesan katering harian atau penjemputan laundry. Biaya terhitung otomatis dari katalog NHS.')+
+    return head(t('nav_pesan'),t('pesan_h'),t('pesan_p'))+
     `<div class="grid g2" style="align-items:start">
       <div class="card">
-        <div class="sec-title" style="margin:0 0 14px">Katering harian</div>
+        <div class="sec-title" style="margin:0 0 14px">${t('cat_title')}</div>
         ${cat.length?`
-        <div class="field"><label>Menu / paket</label><select id="cSvc">${catOpts}</select></div>
-        <div class="field"><label>Tanggal pengiriman</label><input type="date" id="cDate"></div>
+        <div class="field"><label>${t('f_menu')}</label><select id="cSvc">${catOpts}</select></div>
+        <div class="field"><label>${t('f_deliverydate')}</label><input type="date" id="cDate"></div>
         <div class="form-row">
-          <div class="field"><label>Porsi shift 1</label><input type="number" id="cS1" min="0" value="0"></div>
-          <div class="field"><label>Porsi shift 2</label><input type="number" id="cS2" min="0" value="0"></div>
+          <div class="field"><label>${t('f_shift1')}</label><input type="number" id="cS1" min="0" value="0"></div>
+          <div class="field"><label>${t('f_shift2')}</label><input type="number" id="cS2" min="0" value="0"></div>
         </div>
-        <div class="field"><label>Catatan (opsional)</label><textarea id="cNote" rows="2" placeholder="mis. 20 porsi tanpa daging"></textarea></div>
-        <div class="price-preview"><span class="l">Perkiraan biaya</span><span class="v" id="cPrice">Rp 0</span></div>
-        <button class="btn-cta block" id="cSubmit">Kirim pesanan katering</button>`
-        :'<div class="empty">Belum ada layanan katering aktif.</div>'}
+        <div class="field"><label>${t('f_note')}</label><textarea id="cNote" rows="2" placeholder="${t('ph_cat_note')}"></textarea></div>
+        <div class="price-preview"><span class="l">${t('est_cost')}</span><span class="v" id="cPrice">Rp 0</span></div>
+        <button class="btn-cta block" id="cSubmit">${t('btn_send_cat')}</button>`
+        :`<div class="empty">${t('no_cat')}</div>`}
       </div>
       <div class="card">
-        <div class="sec-title" style="margin:0 0 14px">Penjemputan laundry</div>
+        <div class="sec-title" style="margin:0 0 14px">${t('laundry_title')}</div>
         ${laundry.length?`
-        <div class="field"><label>Jenis item</label><select id="lSvc">${lOpts}</select></div>
+        <div class="field"><label>${t('f_itemtype')}</label><select id="lSvc">${lOpts}</select></div>
         <div class="form-row">
-          <div class="field"><label>Jumlah (pcs)</label><input type="number" id="lQty" min="0" value="0"></div>
-          <div class="field"><label>Tanggal jemput</label><input type="date" id="lDate"></div>
+          <div class="field"><label>${t('f_qty_pcs')}</label><input type="number" id="lQty" min="0" value="0"></div>
+          <div class="field"><label>${t('f_pickupdate')}</label><input type="date" id="lDate"></div>
         </div>
-        <div class="field"><label>Catatan (opsional)</label><textarea id="lNote" rows="2" placeholder="mis. noda oli, penanganan khusus"></textarea></div>
-        <div class="price-preview"><span class="l">Perkiraan biaya</span><span class="v" id="lPrice">Rp 0</span></div>
-        <button class="btn-cta block" id="lSubmit">Kirim penjemputan</button>`
-        :'<div class="empty">Belum ada layanan laundry aktif.</div>'}
+        <div class="field"><label>${t('f_note')}</label><textarea id="lNote" rows="2" placeholder="${t('ph_laundry_note')}"></textarea></div>
+        <div class="price-preview"><span class="l">${t('est_cost')}</span><span class="v" id="lPrice">Rp 0</span></div>
+        <button class="btn-cta block" id="lSubmit">${t('btn_send_laundry')}</button>`
+        :`<div class="empty">${t('no_laundry')}</div>`}
       </div>
     </div>`;
   },
   pesanan(){
     const mine=orders.filter(o=>o.client===currentUser.client);
-    if(!mine.length)return head('Pesanan saya','Progres pesanan Anda','Pantau tiap pesanan sampai selesai.')+emptyBox('Belum ada pesanan','Buat pesanan di menu “Pesan layanan”.');
-    return head('Pesanan saya','Progres pesanan Anda','Status diperbarui langsung oleh tim NHS.')+mine.map(o=>orderCard(o,false)).join('');
+    if(!mine.length)return head(t('nav_pesanan'),t('pesanan_h'),t('pesanan_p_empty'))+emptyBox(t('empty_orders_t'),t('empty_orders_d'));
+    return head(t('nav_pesanan'),t('pesanan_h'),t('pesanan_p'))+mine.map(o=>orderCard(o,false)).join('');
   },
   tagihan(){ return invoiceView(orders.filter(o=>o.client===currentUser.client)); },
 
   masuk(){
-    if(!orders.length)return head('Pesanan masuk','Kelola pesanan','Pesanan klien muncul di sini.')+emptyBox('Belum ada pesanan masuk','Pesanan akan tampil begitu klien memesan.');
+    if(!orders.length)return head(t('nav_masuk'),t('masuk_h'),t('masuk_p_empty'))+emptyBox(t('empty_incoming_t'),t('empty_incoming_d'));
     const active=orders.filter(o=>!o.delivered),done=orders.filter(o=>o.delivered);
     const unpaid=orders.filter(o=>o.invoiced&&!o.paid).reduce((s,o)=>s+ +o.amount,0);
-    return head('Pesanan masuk','Kelola pesanan','Update progres tiap tahap. Saat sampai tujuan, upload surat jalan ber-TTD → pesanan Selesai &amp; invoice terbit otomatis.')+
+    return head(t('nav_masuk'),t('masuk_h'),t('masuk_p'))+
       `<div class="grid g3">
-        <div class="card stat"><div class="lbl">Pesanan aktif</div><div class="num">${active.length}</div><div class="sub">sedang berjalan</div></div>
-        <div class="card stat"><div class="lbl">Selesai (ber-SJ)</div><div class="num">${done.length}</div><div class="sub">terarsip</div></div>
-        <div class="card stat"><div class="lbl">Invoice belum dibayar</div><div class="num">${rp(unpaid)}</div><div class="sub">tagihan berjalan</div></div>
+        <div class="card stat"><div class="lbl">${t('stat_active')}</div><div class="num">${active.length}</div><div class="sub">${t('stat_active_sub')}</div></div>
+        <div class="card stat"><div class="lbl">${t('stat_done')}</div><div class="num">${done.length}</div><div class="sub">${t('stat_done_sub')}</div></div>
+        <div class="card stat"><div class="lbl">${t('stat_unpaid')}</div><div class="num">${rp(unpaid)}</div><div class="sub">${t('stat_unpaid_sub')}</div></div>
       </div>
-      <div class="sec-title">Perlu ditindak</div>
-      ${active.length?active.map(o=>orderCard(o,true)).join(''):'<div class="card"><div class="empty">Semua pesanan sudah selesai 🎉</div></div>'}
-      ${done.length?'<div class="sec-title">Selesai &amp; terarsip</div>'+done.map(o=>orderCard(o,true)).join(''):''}`;
+      <div class="sec-title">${t('sec_todo')}</div>
+      ${active.length?active.map(o=>orderCard(o,true)).join(''):`<div class="card"><div class="empty">${t('all_done')}</div></div>`}
+      ${done.length?`<div class="sec-title">${t('sec_archived')}</div>`+done.map(o=>orderCard(o,true)).join(''):''}`;
   },
 
   katalog(){
     const cat=services.filter(s=>s.type==='catering'),laundry=services.filter(s=>s.type==='laundry');
     const row=s=>`<div class="svc">
       <span class="ic" style="background:${s.type==='catering'?'var(--tembaga)':'var(--pinus-500)'}">${svcIcon(s.type)}</span>
-      <div class="body"><div class="t">${s.name} ${s.active?'':'<span style="font-size:11px;color:var(--faint);font-weight:600">(nonaktif)</span>'}</div><div class="d">${s.type==='catering'?'Katering':'Laundry'} · per ${s.unit}</div></div>
+      <div class="body"><div class="t">${s.name} ${s.active?'':`<span style="font-size:11px;color:var(--faint);font-weight:600">${t('inactive')}</span>`}</div><div class="d">${typeLabel(s.type)} · ${s.unit}</div></div>
       <span class="price">${rp(s.price)}<span style="font-size:11px;color:var(--faint);font-weight:500">/${s.unit}</span></span>
       <div style="display:flex;gap:6px;margin-left:auto">
-        <button class="btn-sm" data-edit="${s.id}">Ubah</button>
-        <button class="btn-sm" data-toggle="${s.id}">${s.active?'Nonaktifkan':'Aktifkan'}</button>
-        <button class="btn-sm btn-del" data-delsvc="${s.id}">Hapus</button>
+        <button class="btn-sm" data-edit="${s.id}">${t('btn_edit')}</button>
+        <button class="btn-sm" data-toggle="${s.id}">${s.active?t('btn_deactivate'):t('btn_activate')}</button>
+        <button class="btn-sm btn-del" data-delsvc="${s.id}">${t('btn_delete')}</button>
       </div></div>`;
-    return head('Katalog & harga','Layanan yang Anda jual','Atur jenis layanan dan harga — perubahan langsung dipakai di form pesanan klien &amp; perhitungan invoice.',
-      `<button class="btn-cta" id="addSvc">+ Tambah layanan</button>`)+
-      `<div class="card"><div class="sec-title" style="margin:0 0 4px">Katering <span style="font-family:Manrope;font-size:12px;font-weight:600;color:var(--faint)">per porsi</span></div>
-        ${cat.length?cat.map(row).join(''):'<div class="empty">Belum ada layanan katering.</div>'}</div>
-      <div class="card" style="margin-top:16px"><div class="sec-title" style="margin:0 0 4px">Laundry <span style="font-family:Manrope;font-size:12px;font-weight:600;color:var(--faint)">per pcs/satuan</span></div>
-        ${laundry.length?laundry.map(row).join(''):'<div class="empty">Belum ada layanan laundry.</div>'}</div>`;
+    return head(t('nav_katalog'),t('katalog_h'),t('katalog_p'),`<button class="btn-cta" id="addSvc">${t('btn_add_svc')}</button>`)+
+      `<div class="card"><div class="sec-title" style="margin:0 0 4px">${t('cat_group')} <span style="font-family:Manrope;font-size:12px;font-weight:600;color:var(--faint)">${t('per_porsi')}</span></div>
+        ${cat.length?cat.map(row).join(''):`<div class="empty">${t('no_cat_svc')}</div>`}</div>
+      <div class="card" style="margin-top:16px"><div class="sec-title" style="margin:0 0 4px">${t('laundry_group')} <span style="font-family:Manrope;font-size:12px;font-weight:600;color:var(--faint)">${t('per_unit')}</span></div>
+        ${laundry.length?laundry.map(row).join(''):`<div class="empty">${t('no_laundry_svc')}</div>`}</div>`;
   },
 };
 
 function orderCard(o,admin){
   const last=o.delivered;
-  const sjBadge=o.sj_file?`<span class="sj-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>Surat jalan ${o.sj_signed?'ber-TTD':'diupload'}${typeof o.sj_file==='string'?' · '+o.sj_file:''}</span>`:'';
-  const canAdvance=!last&&o.stage<STAGES[o.type].length-1;
-  const readyForSJ=!last&&o.stage>=STAGES[o.type].length-1;
+  const sjBadge=o.sj_file?`<span class="sj-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>${o.sj_signed?t('sj_signed_tag'):t('sj_uploaded_tag')}${typeof o.sj_file==='string'?' · '+o.sj_file.split('/').pop():''}</span>`:'';
+  const canAdvance=!last&&o.stage<STAGE_KEYS[o.type].length-1;
+  const readyForSJ=!last&&o.stage>=STAGE_KEYS[o.type].length-1;
   return `<div class="card" style="margin-bottom:14px">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:12px;flex-wrap:wrap">
-      <div><span class="badge ${o.type==='catering'?'b-prog':'b-wait'}" style="margin-bottom:6px">${o.type==='catering'?'Katering':'Laundry'}</span>
+      <div><span class="badge ${o.type==='catering'?'b-prog':'b-wait'}" style="margin-bottom:6px">${typeLabel(o.type)}</span>
         <div style="font-weight:600;font-size:15px">${o.service_name}</div>
         <div style="font-size:12.5px;color:var(--faint);margin-top:2px">${dLabel(o.service_date)} · ${o.qty} ${o.unit}${o.note?' · '+o.note:''}${admin?' · '+o.client:''}</div></div>
       <div style="text-align:right"><div class="amt" style="font-size:15px;color:var(--pinus-700)">${rp(o.amount)}</div>
         <div style="margin-top:4px">${stageBadge(o)}</div>
-        ${o.invoiced?(o.paid?'<div><span class="badge b-ok" style="margin-top:4px">Invoice lunas</span></div>':'<div><span class="badge b-wait" style="margin-top:4px">Invoice terbit</span></div>'):''}</div>
+        ${o.invoiced?(o.paid?`<div><span class="badge b-ok" style="margin-top:4px">${t('inv_paid')}</span></div>`:`<div><span class="badge b-wait" style="margin-top:4px">${t('inv_issued')}</span></div>`):''}</div>
     </div>
     ${pipeline(o)}
     ${sjBadge?'<div style="margin-top:12px">'+sjBadge+'</div>':''}
     ${admin?`<div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
-      ${canAdvance?`<button class="btn-sm btn-adv" data-adv="${o.id}">Lanjut tahap →</button>`:''}
-      ${readyForSJ?`<button class="btn-sm btn-sj" data-sj="${o.id}">Upload surat jalan</button>`:''}
-      ${o.invoiced&&!o.paid?`<button class="btn-sm" data-paid="${o.id}">Tandai lunas</button>`:''}
+      ${canAdvance?`<button class="btn-sm btn-adv" data-adv="${o.id}">${t('btn_advance')}</button>`:''}
+      ${readyForSJ?`<button class="btn-sm btn-sj" data-sj="${o.id}">${t('btn_upload_sj')}</button>`:''}
+      ${o.invoiced&&!o.paid?`<button class="btn-sm" data-paid="${o.id}">${t('btn_mark_paid')}</button>`:''}
     </div>`:''}
   </div>`;
 }
@@ -387,21 +497,22 @@ function invoiceView(list){
   const inv=list.filter(o=>o.invoiced);
   const groups={};inv.forEach(o=>{const k=ymLabel(o.service_date);(groups[k]=groups[k]||[]).push(o);});
   const keys=Object.keys(groups);
-  let body=head('Tagihan','Tagihan otomatis','Invoice terbit otomatis saat pesanan sampai (ada surat jalan ber-TTD). Dikelompokkan per bulan.');
-  if(!keys.length)return body+emptyBox('Belum ada tagihan','Invoice muncul otomatis setelah pesanan terkirim &amp; surat jalan ber-TTD masuk.');
+  let body=head(t('nav_tagihan'),t('tagihan_h'),t('tagihan_p'));
+  if(!keys.length)return body+emptyBox(t('empty_inv_t'),t('empty_inv_d'));
   keys.forEach(k=>{const g=groups[k],total=g.reduce((s,o)=>s+ +o.amount,0),unpaid=g.filter(o=>!o.paid).reduce((s,o)=>s+ +o.amount,0);
-    body+=`<div class="sec-title"><span>${k}</span><span style="font-family:Manrope;font-size:14px;font-weight:600;color:${unpaid>0?'var(--tembaga-700)':'var(--ok)'}">${unpaid>0?'Belum lunas '+rp(unpaid):'Lunas semua'}</span></div>
-    <div class="card" style="padding:6px 8px"><table><thead><tr><th>Tanggal</th><th>Layanan</th><th>Detail</th><th>Surat jalan</th><th style="text-align:right">Jumlah</th><th>Status</th></tr></thead><tbody>
-    ${g.map(o=>`<tr><td>${dLabel(o.service_date)}</td><td>${o.type==='catering'?'Katering':'Laundry'}</td><td style="color:var(--muted)">${o.service_name} · ${o.qty} ${o.unit}</td>
-      <td>${o.sj_file?'<span class="sj-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>ada</span>':'<span style="color:var(--faint)">—</span>'}</td>
-      <td class="amt" style="text-align:right">${rp(o.amount)}</td><td>${o.paid?'<span class="badge b-ok">Lunas</span>':'<span class="badge b-wait">Belum</span>'}</td></tr>`).join('')}
-    <tr><td colspan="4" style="text-align:right;font-weight:700">Total ${k}</td><td class="amt" style="text-align:right;font-family:Fraunces;font-size:16px;color:var(--pinus-700)">${rp(total)}</td><td></td></tr>
+    body+=`<div class="sec-title"><span>${k}</span><span style="font-family:Manrope;font-size:14px;font-weight:600;color:${unpaid>0?'var(--tembaga-700)':'var(--ok)'}">${unpaid>0?t('unpaid_label')+' '+rp(unpaid):t('all_paid')}</span></div>
+    <div class="card" style="padding:6px 8px"><table><thead><tr><th>${t('th_date')}</th><th>${t('th_service')}</th><th>${t('th_detail')}</th><th>${t('th_sj')}</th><th style="text-align:right">${t('th_amount')}</th><th>${t('th_status')}</th></tr></thead><tbody>
+    ${g.map(o=>`<tr><td>${dLabel(o.service_date)}</td><td>${typeLabel(o.type)}</td><td style="color:var(--muted)">${o.service_name} · ${o.qty} ${o.unit}</td>
+      <td>${o.sj_file?`<span class="sj-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>${t('sj_yes')}</span>`:'<span style="color:var(--faint)">—</span>'}</td>
+      <td class="amt" style="text-align:right">${rp(o.amount)}</td><td>${o.paid?`<span class="badge b-ok">${t('st_paid')}</span>`:`<span class="badge b-wait">${t('st_unpaid')}</span>`}</td></tr>`).join('')}
+    <tr><td colspan="4" style="text-align:right;font-weight:700">${t('total')} ${k}</td><td class="amt" style="text-align:right;font-family:Fraunces;font-size:16px;color:var(--pinus-700)">${rp(total)}</td><td></td></tr>
     </tbody></table></div>`;});
   return body;
 }
 
 async function go(view){
-  main.innerHTML='<div class="empty">Memuat…</div>';
+  currentView=view;
+  main.innerHTML=`<div class="empty">${t('loading')}</div>`;
   await refresh();
   main.innerHTML=V[view]();
   $('#nav').querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.view===view));
@@ -414,91 +525,126 @@ function wire(view){
     const upL=()=>{const s=svcById($('#lSvc')?.value);if(!s)return;$('#lPrice').textContent=rp((+$('#lQty').value||0)*s.price);};
     if($('#cSvc')){$('#cSvc').onchange=upC;['cS1','cS2'].forEach(i=>$('#'+i).oninput=upC);
       $('#cSubmit').onclick=async()=>{const s=svcById($('#cSvc').value),s1=+$('#cS1').value||0,s2=+$('#cS2').value||0,q=s1+s2;
-        if(!q||!$('#cDate').value)return toast('Isi tanggal & jumlah porsi dulu');
+        if(!q||!$('#cDate').value)return toast(t('need_cat_fields'));
         await db.addOrder({client:currentUser.client,type:'catering',service_name:s.name,service_date:$('#cDate').value,qty:q,unit:'porsi',price:s.price,amount:q*s.price,note:`Shift 1: ${s1} · Shift 2: ${s2}`+($('#cNote').value?' · '+$('#cNote').value:''),stage:1,delivered:false,invoiced:false,paid:false,sj_file:null,sj_signed:false});
-        toast('Pesanan katering terkirim ✓');go('pesanan');};}
+        toast(t('order_cat_sent'));go('pesanan');};}
     if($('#lSvc')){$('#lSvc').onchange=upL;$('#lQty').oninput=upL;
       $('#lSubmit').onclick=async()=>{const s=svcById($('#lSvc').value),q=+$('#lQty').value||0;
-        if(!q||!$('#lDate').value)return toast('Isi jumlah & tanggal jemput dulu');
+        if(!q||!$('#lDate').value)return toast(t('need_laundry_fields'));
         await db.addOrder({client:currentUser.client,type:'laundry',service_name:s.name,service_date:$('#lDate').value,qty:q,unit:s.unit,price:s.price,amount:q*s.price,note:$('#lNote').value||'',stage:1,delivered:false,invoiced:false,paid:false,sj_file:null,sj_signed:false});
-        toast('Penjemputan terkirim ✓');go('pesanan');};}
+        toast(t('order_laundry_sent'));go('pesanan');};}
   }
   if(view==='masuk'){
-    main.querySelectorAll('[data-adv]').forEach(b=>b.onclick=async()=>{const o=orders.find(x=>x.id===b.dataset.adv);await db.updOrder(o.id,{stage:o.stage+1});toast('Progres diperbarui → klien langsung melihatnya');go('masuk');});
+    main.querySelectorAll('[data-adv]').forEach(b=>b.onclick=async()=>{const o=orders.find(x=>x.id===b.dataset.adv);await db.updOrder(o.id,{stage:o.stage+1});toast(t('progress_updated'));go('masuk');});
     main.querySelectorAll('[data-sj]').forEach(b=>b.onclick=()=>openSJ(b.dataset.sj));
-    main.querySelectorAll('[data-paid]').forEach(b=>b.onclick=async()=>{await db.updOrder(b.dataset.paid,{paid:true});toast('Ditandai lunas');go('masuk');});
+    main.querySelectorAll('[data-paid]').forEach(b=>b.onclick=async()=>{await db.updOrder(b.dataset.paid,{paid:true});toast(t('marked_paid'));go('masuk');});
   }
   if(view==='katalog'){
     $('#addSvc').onclick=()=>editSvc(null);
     main.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>editSvc(b.dataset.edit));
     main.querySelectorAll('[data-toggle]').forEach(b=>b.onclick=async()=>{const s=svcById(b.dataset.toggle);await db.updService(s.id,{active:!s.active});go('katalog');});
-    main.querySelectorAll('[data-delsvc]').forEach(b=>b.onclick=async()=>{if(confirm('Hapus layanan ini? Pesanan lama tidak terpengaruh.')){await db.delService(b.dataset.delsvc);toast('Layanan dihapus');go('katalog');}});
+    main.querySelectorAll('[data-delsvc]').forEach(b=>b.onclick=()=>askDelSvc(b.dataset.delsvc));
   }
 }
 
-async function editSvc(id){
+let editingSvcId=null;
+function svcUnitToggle(){ $('#svcUnitWrap').style.display = $('#svcType').value==='catering' ? 'none' : 'block'; }
+function editSvc(id){
+  editingSvcId=id;
   const s=id?svcById(id):null;
-  const name=prompt('Nama layanan:',s?s.name:'');if(name===null)return;if(!name.trim())return toast('Nama tidak boleh kosong');
-  const type=prompt('Jenis — ketik "catering" atau "laundry":',s?s.type:'laundry');if(type===null)return;
-  if(!['catering','laundry'].includes(type))return toast('Jenis harus catering atau laundry');
-  const unit=type==='catering'?'porsi':((prompt('Satuan (mis. pcs, set, kg):',s?s.unit:'pcs')||'pcs').trim());
-  const price=+prompt('Harga per '+unit+' (angka saja):',s?s.price:'');if(!price)return toast('Harga tidak valid');
-  if(id){await db.updService(id,{name,type,unit,price});toast('Layanan diperbarui');}
-  else{await db.addService({name,type,unit,price,active:true});toast('Layanan ditambahkan');}
-  go('katalog');
+  $('#svcModalTitle').textContent = id ? t('svc_edit_title') : t('svc_add_title');
+  $('#svcName').value = s?s.name:'';
+  $('#svcType').value = s?s.type:'laundry';
+  $('#svcUnit').value = s?(s.type==='catering'?'porsi':s.unit):'pcs';
+  $('#svcPrice').value = s?s.price:'';
+  svcUnitToggle();
+  $('#svcModalBg').classList.add('on');
+  setTimeout(()=>$('#svcName').focus(),50);
 }
+$('#svcType').onchange=svcUnitToggle;
+$('#svcCancel').onclick=()=>$('#svcModalBg').classList.remove('on');
+$('#svcModalBg').onclick=e=>{if(e.target===$('#svcModalBg'))$('#svcModalBg').classList.remove('on');};
+$('#svcSave').onclick=async()=>{
+  const name=$('#svcName').value.trim();
+  const type=$('#svcType').value;
+  const unit=type==='catering'?'porsi':($('#svcUnit').value.trim()||'pcs');
+  const price=+$('#svcPrice').value;
+  if(!name)return toast(t('svc_name_empty'));
+  if(!price||price<=0)return toast(t('svc_price_invalid'));
+  if(editingSvcId){await db.updService(editingSvcId,{name,type,unit,price});toast(t('svc_updated'));}
+  else{await db.addService({name,type,unit,price,active:true});toast(t('svc_added'));}
+  $('#svcModalBg').classList.remove('on');
+  go('katalog');
+};
+let delSvcId=null;
+function askDelSvc(id){delSvcId=id;const s=svcById(id);$('#delSub').textContent=t('del_sub').replace('{name}',s.name);$('#delModalBg').classList.add('on');}
+$('#delCancel').onclick=()=>$('#delModalBg').classList.remove('on');
+$('#delModalBg').onclick=e=>{if(e.target===$('#delModalBg'))$('#delModalBg').classList.remove('on');};
+$('#delConfirm').onclick=async()=>{await db.delService(delSvcId);$('#delModalBg').classList.remove('on');toast(t('svc_deleted'));go('katalog');};
 
 let sjOrderId=null,sjFile=null;
 function openSJ(id){sjOrderId=id;sjFile=null;
   const o=orders.find(x=>x.id===id);
   $('#modalSub').textContent=`${o.service_name} · ${dLabel(o.service_date)} · ${o.client}`;
-  $('#sjFileName').textContent='Pilih foto / scan surat jalan';
+  $('#sjFileName').textContent=t('sj_pick');
   $('#sjSigned').checked=false;$('#sjFile').value='';
   $('#modalBg').classList.add('on');}
 $('#sjFile').onchange=e=>{const f=e.target.files[0];if(f){sjFile=f;$('#sjFileName').textContent=f.name;}};
 $('#sjCancel').onclick=()=>$('#modalBg').classList.remove('on');
 $('#modalBg').onclick=e=>{if(e.target===$('#modalBg'))$('#modalBg').classList.remove('on');};
 $('#sjSave').onclick=async()=>{
-  if(!sjFile)return toast('Pilih file surat jalan dulu');
+  if(!sjFile)return toast(t('sj_need_file'));
   const signed=$('#sjSigned').checked;
   const o=orders.find(x=>x.id===sjOrderId);
   let fileRef=sjFile.name;
-  // Mode LIVE: upload file asli ke Supabase Storage, simpan URL publiknya
   if(LIVE){
     try{
-      $('#sjSave').textContent='Mengupload…';$('#sjSave').disabled=true;
+      $('#sjSave').textContent=t('sj_uploading');$('#sjSave').disabled=true;
       const path=`${sjOrderId}-${Date.now()}-${sjFile.name.replace(/[^\w.\-]/g,'_')}`;
       const up=await fetch(`${CONFIG.SUPABASE_URL}/storage/v1/object/surat-jalan/${path}`,{
-        method:'POST',headers:{"apikey":CONFIG.SUPABASE_ANON_KEY,"Authorization":"Bearer "+CONFIG.SUPABASE_ANON_KEY},body:sjFile});
+        method:'POST',headers:{"apikey":CONFIG.SUPABASE_ANON_KEY,"Authorization":H["Authorization"]},body:sjFile});
       if(!up.ok)throw new Error('upload gagal');
       fileRef=`${CONFIG.SUPABASE_URL}/storage/v1/object/public/surat-jalan/${path}`;
-    }catch(err){toast('Gagal upload file — cek bucket "surat-jalan" sudah dibuat & Public');$('#sjSave').textContent='Simpan';$('#sjSave').disabled=false;return;}
-    $('#sjSave').textContent='Simpan';$('#sjSave').disabled=false;
+    }catch(err){toast(t('sj_upload_fail'));$('#sjSave').textContent=t('save');$('#sjSave').disabled=false;return;}
+    $('#sjSave').textContent=t('save');$('#sjSave').disabled=false;
   }
   const patch={sj_file:fileRef,sj_signed:signed};
-  if(signed){patch.delivered=true;patch.invoiced=true;patch.stage=STAGES[o.type].length;}
+  if(signed){patch.delivered=true;patch.invoiced=true;patch.stage=STAGE_KEYS[o.type].length;}
   await db.updOrder(sjOrderId,patch);
   $('#modalBg').classList.remove('on');
-  toast(signed?'Surat jalan ber-TTD tersimpan → pesanan Selesai & invoice terbit ✓':'Surat jalan tersimpan (belum ber-TTD)');
+  toast(signed?t('sj_saved_signed'):t('sj_saved_unsigned'));
   go('masuk');
 };
 
 /* ---------- AUTH ---------- */
+async function fetchProfile(userId,email){
+  const pr=await fetch(`${CONFIG.SUPABASE_URL}/rest/v1/profiles?select=*&id=eq.${userId}`,{headers:H});
+  const rows=pr.ok?await pr.json():[];
+  const prof=rows[0]||{role:'client',client_name:CONFIG.CLIENT_NAME};
+  return {email, role:prof.role, client:prof.client_name||CONFIG.CLIENT_NAME};
+}
 async function sbAuthLogin(email,pass){
   const r=await fetch(`${CONFIG.SUPABASE_URL}/auth/v1/token?grant_type=password`,{
     method:'POST',headers:{"apikey":CONFIG.SUPABASE_ANON_KEY,"Content-Type":"application/json"},
     body:JSON.stringify({email,password:pass})});
   if(!r.ok)return null;
   const data=await r.json();
-  // token dipakai untuk semua request berikutnya
   H["Authorization"]="Bearer "+data.access_token;
-  // ambil profil (peran + nama klien) dari tabel profiles
-  const pr=await fetch(`${CONFIG.SUPABASE_URL}/rest/v1/profiles?select=*&id=eq.${data.user.id}`,{headers:H});
-  const rows=pr.ok?await pr.json():[];
-  const prof=rows[0]||{role:'client',client_name:CONFIG.CLIENT_NAME};
-  return {email:data.user.email, role:prof.role, client:prof.client_name||CONFIG.CLIENT_NAME};
+  const u=await fetchProfile(data.user.id,data.user.email);
+  u._refresh=data.refresh_token;
+  return u;
 }
-
+async function sbRefreshSession(refreshToken){
+  const r=await fetch(`${CONFIG.SUPABASE_URL}/auth/v1/token?grant_type=refresh_token`,{
+    method:'POST',headers:{"apikey":CONFIG.SUPABASE_ANON_KEY,"Content-Type":"application/json"},
+    body:JSON.stringify({refresh_token:refreshToken})});
+  if(!r.ok)return null;
+  const data=await r.json();
+  H["Authorization"]="Bearer "+data.access_token;
+  const u=await fetchProfile(data.user.id,data.user.email);
+  u._refresh=data.refresh_token;
+  return u;
+}
 async function doLogin(email,pass){
   if(!LIVE){
     const a=CONFIG.DEMO_ACCOUNTS.find(x=>x.email===email&&x.pass===pass);
@@ -506,32 +652,83 @@ async function doLogin(email,pass){
   }
   return await sbAuthLogin(email,pass);
 }
-
 function enter(u){
-  currentUser=u; role=u.role;
+  currentUser=u; role=u.role; currentView='';
   $('#login').style.display='none';$('#app').classList.add('on');
   $('#roleChip').className='role-chip '+(role==='nhs'?'chip-nhs':'chip-client');
-  $('#roleChip').textContent=role==='nhs'?'Tim NHS (admin)':u.client;
+  $('#roleChip').textContent=role==='nhs'?t('chip_admin'):u.client;
   buildNav();go(NAV[role][0][0]);
 }
-
 $('#loginForm').onsubmit=async e=>{
   e.preventDefault();
   const btn=$('#loginBtn'),email=$('#loginEmail').value.trim(),pass=$('#loginPass').value;
-  btn.textContent='Memeriksa…';btn.disabled=true;
+  btn.textContent=t('checking');btn.disabled=true;
   const u=await doLogin(email,pass);
-  btn.textContent='Masuk';btn.disabled=false;
-  if(u)enter(u); else toast('Email atau kata sandi salah');
+  btn.textContent=t('signin');btn.disabled=false;
+  if(u){ if($('#rememberMe').checked){try{localStorage.setItem('nhs_session',JSON.stringify(u));}catch(e){}} enter(u); }
+  else toast(t('wrong'));
 };
 
+/* ---------- APPLY LANGUAGE TO STATIC ELEMENTS ---------- */
+function applyStatic(){
+  document.documentElement.lang=LANG;
+  $('#langSel').value=LANG;
+  $('#brandSubLogin').textContent=t('brand_sub');
+  $('#brandSubApp').textContent=t('brand_sub');
+  $('#loginTitle').textContent=t('login_title');
+  $('#lblEmail').textContent=t('email');
+  $('#loginEmail').placeholder=t('ph_email');
+  $('#lblPass').textContent=t('password');
+  $('#lblRemember').textContent=t('remember');
+  $('#loginBtn').textContent=t('signin');
+  $('#logout').textContent=t('signout');
+  $('#loginNote').innerHTML=LIVE?'':t('demo_note');
+  // SJ modal
+  $('#sjTitle').textContent=t('sj_modal_title');
+  $('#sjFormats').textContent=t('sj_formats');
+  $('#sjSignedLbl').innerHTML=t('sj_signed_check');
+  $('#sjHint').innerHTML=t('sj_hint');
+  $('#sjCancel').textContent=t('cancel');$('#sjSave').textContent=t('save');
+  // SVC modal
+  $('#svcSub').textContent=t('svc_sub');
+  $('#lblSvcName').textContent=t('svc_name');$('#svcName').placeholder=t('ph_svc_name');
+  $('#lblSvcType').textContent=t('svc_type');
+  $('#optCat').textContent=t('opt_catering');$('#optLau').textContent=t('opt_laundry');
+  $('#lblSvcUnit').textContent=t('svc_unit');$('#svcUnit').placeholder=t('ph_svc_unit');
+  $('#lblSvcPrice').textContent=t('svc_price');$('#svcPrice').placeholder=t('ph_svc_price');
+  $('#svcCancel').textContent=t('cancel');$('#svcSave').textContent=t('save');
+  // DEL modal
+  $('#delTitle').textContent=t('del_title');$('#delCancel').textContent=t('cancel');$('#delConfirm').textContent=t('del_confirm');
+}
+function setLang(l){
+  LANG=l; try{localStorage.setItem('nhs_lang',l)}catch(e){}
+  applyStatic();
+  if($('#app').classList.contains('on')){
+    $('#roleChip').textContent=role==='nhs'?t('chip_admin'):currentUser.client;
+    buildNav(); if(currentView) go(currentView);
+  }
+}
+$('#langSel').onchange=e=>setLang(e.target.value);
+
 /* ---------- BOOT ---------- */
-$('#modeTag').className='mode-tag '+(LIVE?'mode-live':'mode-demo');
-$('#modeTag').textContent=LIVE?'● MODE ONLINE (tersimpan)':'● MODE DEMO (belum online)';
-$('#loginNote').innerHTML=LIVE
-  ?'Terhubung database. Masuk dengan akun Anda.'
-  :'MODE DEMO — coba: <strong>admin@nhs.co.id</strong> atau <strong>purchasing@foodex.co.id</strong>, sandi <strong>demo123</strong>. Data hilang saat refresh.';
-$('#logout').onclick=()=>{currentUser=null;$('#app').classList.remove('on');$('#login').style.display='flex';$('#loginPass').value='';};
-$('#menuBtn').onclick=()=>$('#sidebar').classList.toggle('open');
+$('#statusDot').className='status-dot'+(LIVE?'':' demo');
+applyStatic();
+$('#logout').onclick=()=>{currentUser=null;localStorage.removeItem('nhs_session');$('#app').classList.remove('on');$('#login').style.display='flex';$('#loginPass').value='';};
+function openMenu(){$('#sidebar').classList.add('open');$('#scrim').classList.add('on');}
+function closeMenu(){$('#sidebar').classList.remove('open');$('#scrim').classList.remove('on');}
+$('#menuBtn').onclick=()=>{$('#sidebar').classList.contains('open')?closeMenu():openMenu();};
+$('#scrim').onclick=closeMenu;
+
+(async function autoLogin(){
+  let saved;
+  try{ saved=JSON.parse(localStorage.getItem('nhs_session')||'null'); }catch(e){ saved=null; }
+  if(!saved||!saved.email||!saved.role) return;
+  if(!LIVE){ enter(saved); return; }
+  if(!saved._refresh){ localStorage.removeItem('nhs_session'); return; }
+  const u=await sbRefreshSession(saved._refresh);
+  if(u){ try{localStorage.setItem('nhs_session',JSON.stringify(u));}catch(e){} enter(u); }
+  else { localStorage.removeItem('nhs_session'); }
+})();
 </script>
 </body>
 </html>
