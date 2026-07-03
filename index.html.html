@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NHS Portal — PT Nusa Higiena Sentosa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --pinus-900:#152A21;--pinus-700:#1E3A2E;--pinus-600:#264A3A;--pinus-500:#31614C;
+    --tembaga:#B26E38;--tembaga-700:#8A5327;--tembaga-soft:#E9D9C6;
+    --paper:#ECF0E9;--surface:#FFFFFF;--surface-2:#F6F8F4;
+    --ink:#182018;--muted:#5C6B60;--faint:#8A978C;--line:#DEE4D9;
+    --ok:#2E7A57;--ok-bg:#E4F0E9;--warn:#B26E38;--warn-bg:#F7ECDF;--alert:#B23A2E;--alert-bg:#F7E4E2;
+    --radius:12px;--shadow:0 1px 3px rgba(21,42,33,.06),0 6px 20px rgba(21,42,33,.05);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Manrope',system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.5;font-size:15px;-webkit-font-smoothing:antialiased}
+  h1,h2,h3,.serif{font-family:'Fraunces',Georgia,serif;font-weight:600;letter-spacing:-.01em}
+  button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+  :focus-visible{outline:2px solid var(--tembaga);outline-offset:2px;border-radius:4px}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+  #login{position:fixed;inset:0;z-index:100;background:var(--pinus-700);display:flex;align-items:center;justify-content:center;padding:24px}
+  #login .card{background:var(--surface);border-radius:20px;max-width:430px;width:100%;padding:38px 34px;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+  .brandmark{display:flex;align-items:center;gap:11px;margin-bottom:24px}
+  .brandmark .glyph{width:42px;height:42px;border-radius:11px;background:var(--pinus-600);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .brandmark .glyph svg{width:24px;height:24px}
+  .brandmark .name{font-family:'Fraunces';font-weight:600;font-size:18px;color:var(--pinus-700);line-height:1.1}
+  .brandmark .name small{display:block;font-family:'Manrope';font-weight:500;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--tembaga-700);margin-top:3px}
+  #login h1{font-size:23px;color:var(--pinus-700);margin-bottom:6px}
+  #login p{color:var(--muted);font-size:14px;margin-bottom:22px}
+  .role-pick{display:grid;gap:11px}
+  .role-btn{display:flex;align-items:center;gap:13px;padding:15px 16px;border:1.5px solid var(--line);border-radius:12px;text-align:left;transition:.15s;background:var(--surface-2)}
+  .role-btn:hover{border-color:var(--pinus-500);background:#fff}
+  .role-btn .ic{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .role-btn .ic svg{width:21px;height:21px;color:#fff}
+  .role-btn .t{display:block;font-weight:600;font-size:15px;color:var(--ink)}
+  .role-btn .d{display:block;font-size:12.5px;color:var(--muted);margin-top:2px}
+  .login-note{margin-top:18px;font-size:11.5px;color:var(--faint);text-align:center;line-height:1.5}
+  .mode-tag{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.05em;padding:2px 8px;border-radius:999px;margin-top:10px}
+  .mode-demo{background:var(--warn-bg);color:var(--tembaga-700)}
+  .mode-live{background:var(--ok-bg);color:var(--ok)}
+  .field{margin-bottom:14px}
+  .field label{display:block;font-size:12.5px;font-weight:600;color:var(--muted);margin-bottom:6px}
+  input,select,textarea{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:9px;font-family:inherit;font-size:14.5px;background:var(--surface-2);color:var(--ink)}
+  input:focus,select:focus,textarea:focus{border-color:var(--pinus-500);background:#fff}
+
+  #app{display:none;min-height:100vh}
+  #app.on{display:grid;grid-template-columns:248px 1fr}
+  .sidebar{background:var(--pinus-700);color:#cfdbd2;padding:22px 15px;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+  .sidebar .brandmark{margin-bottom:8px;padding:0 6px}
+  .sidebar .brandmark .name{color:#fff}
+  .sidebar .glyph{background:var(--pinus-500)}
+  .role-chip{margin:6px 6px 18px;font-size:11px;font-weight:700;letter-spacing:.05em;padding:4px 10px;border-radius:999px;display:inline-block;align-self:flex-start}
+  .chip-nhs{background:var(--tembaga);color:#fff}.chip-client{background:var(--pinus-500);color:#cfe6d8}
+  .nav{display:flex;flex-direction:column;gap:2px;flex:1}
+  .nav button{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:9px;color:#b9c8be;font-size:14px;font-weight:500;text-align:left;transition:.14s}
+  .nav button svg{width:18px;height:18px;flex-shrink:0;opacity:.85}
+  .nav button:hover{background:rgba(255,255,255,.06);color:#fff}
+  .nav button.active{background:var(--pinus-500);color:#fff}
+  .logout{margin-top:12px;font-size:12.5px;color:#98a89d;padding:9px 12px;border-radius:8px;text-align:left;border-top:1px solid rgba(255,255,255,.1)}
+  .logout:hover{color:#fff}
+
+  .main{padding:30px 36px 60px;max-width:1000px}
+  .page-head{margin-bottom:22px;display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap}
+  .page-head .eyebrow{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--tembaga-700);margin-bottom:5px}
+  .page-head h1{font-size:28px;color:var(--pinus-700);line-height:1.1}
+  .page-head p{color:var(--muted);margin-top:6px;font-size:14px;max-width:560px}
+
+  .grid{display:grid;gap:16px}
+  .g3{grid-template-columns:repeat(3,1fr)}.g2{grid-template-columns:1fr 1fr}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow)}
+  .stat .lbl{font-size:12px;color:var(--muted);font-weight:600}
+  .stat .num{font-family:'Fraunces';font-size:29px;font-weight:600;color:var(--pinus-700);margin-top:7px;line-height:1}
+  .stat .sub{font-size:12px;color:var(--faint);margin-top:5px}
+
+  .badge{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;padding:3px 9px;border-radius:999px;white-space:nowrap}
+  .b-ok{background:var(--ok-bg);color:var(--ok)}.b-prog{background:var(--warn-bg);color:var(--tembaga-700)}
+  .b-wait{background:var(--surface-2);color:var(--muted)}.b-dot{width:6px;height:6px;border-radius:50%;background:currentColor}
+
+  .sec-title{font-family:'Fraunces';font-weight:600;font-size:18px;color:var(--pinus-700);margin:28px 0 13px;display:flex;justify-content:space-between;align-items:baseline}
+  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  th{text-align:left;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--faint);padding:0 12px 10px;border-bottom:1px solid var(--line)}
+  td{padding:12px;border-bottom:1px solid var(--line);vertical-align:middle}
+  tr:last-child td{border-bottom:none}
+  td.mono{font-variant-numeric:tabular-nums;font-weight:600;color:var(--pinus-700)}
+  .amt{font-variant-numeric:tabular-nums;font-weight:600}
+
+  .track{display:flex;align-items:center;margin-top:4px}
+  .track .step{display:flex;align-items:center;flex:1;min-width:0}
+  .track .dot{width:11px;height:11px;border-radius:50%;background:var(--line);flex-shrink:0;border:2px solid var(--line)}
+  .track .step.done .dot{background:var(--pinus-500);border-color:var(--pinus-500)}
+  .track .step.now .dot{background:#fff;border-color:var(--tembaga);box-shadow:0 0 0 3px var(--warn-bg)}
+  .track .bar{height:2px;flex:1;background:var(--line)}
+  .track .step.done .bar{background:var(--pinus-500)}
+  .track-labels{display:flex;margin-top:7px;font-size:10.5px;color:var(--faint)}
+  .track-labels span{flex:1;text-align:center}
+  .track-labels span:first-child{text-align:left}.track-labels span:last-child{text-align:right}
+  .track-labels span.on{color:var(--tembaga-700);font-weight:700}
+
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+  .form-row .field{margin:0}
+  .price-preview{background:var(--surface-2);border:1px dashed var(--line);border-radius:9px;padding:12px 14px;margin:6px 0 14px;display:flex;justify-content:space-between;align-items:center}
+  .price-preview .l{font-size:13px;color:var(--muted);font-weight:600}
+  .price-preview .v{font-family:'Fraunces';font-size:20px;font-weight:600;color:var(--pinus-700)}
+  .btn-cta{background:var(--tembaga);color:#fff;padding:11px 20px;border-radius:9px;font-weight:700;font-size:14px;display:inline-flex;align-items:center;gap:8px}
+  .btn-cta:hover{background:var(--tembaga-700)}
+  .btn-cta.block{width:100%;justify-content:center}
+  .btn-sm{font-size:12.5px;font-weight:600;padding:7px 13px;border-radius:8px;border:1px solid var(--line);color:var(--pinus-700);background:#fff}
+  .btn-sm:hover{border-color:var(--pinus-500)}
+  .btn-adv{background:var(--pinus-600);color:#fff;border:none}.btn-adv:hover{background:var(--pinus-700)}
+  .btn-sj{background:var(--tembaga);color:#fff;border:none}.btn-sj:hover{background:var(--tembaga-700)}
+  .btn-del{color:var(--alert);border-color:#e9cfca}.btn-del:hover{background:var(--alert-bg)}
+
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(140%);background:var(--pinus-700);color:#fff;padding:13px 20px;border-radius:10px;font-size:14px;font-weight:600;box-shadow:0 10px 30px rgba(0,0,0,.2);z-index:200;transition:transform .3s cubic-bezier(.2,.8,.2,1);max-width:90vw}
+  .toast.show{transform:translateX(-50%) translateY(0)}
+  .empty{text-align:center;padding:36px 20px;color:var(--faint)}
+  .empty .big{font-family:'Fraunces';font-size:17px;color:var(--muted);margin-bottom:5px}
+
+  .svc{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--line);flex-wrap:wrap}
+  .svc:last-child{border-bottom:none}
+  .svc .ic{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .svc .ic svg{width:19px;height:19px;color:#fff}
+  .svc .body{flex:1;min-width:120px}
+  .svc .body .t{font-weight:600;font-size:14.5px}
+  .svc .body .d{font-size:12.5px;color:var(--muted);margin-top:1px}
+  .svc .price{font-family:'Fraunces';font-weight:600;font-size:16px;color:var(--pinus-700);white-space:nowrap}
+
+  .modal-bg{position:fixed;inset:0;background:rgba(21,33,24,.55);z-index:150;display:none;align-items:center;justify-content:center;padding:20px}
+  .modal-bg.on{display:flex}
+  .modal{background:#fff;border-radius:16px;max-width:440px;width:100%;padding:26px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+  .modal h3{font-size:19px;color:var(--pinus-700);margin-bottom:4px}
+  .modal .sub{font-size:13px;color:var(--muted);margin-bottom:18px}
+  .modal-actions{display:flex;gap:10px;margin-top:20px}
+  .dropzone{border:1.5px dashed var(--line);border-radius:11px;padding:22px;text-align:center;background:var(--surface-2);cursor:pointer;transition:.15s;display:block}
+  .dropzone:hover{border-color:var(--tembaga);background:#fff}
+  .dropzone svg{width:30px;height:30px;color:var(--tembaga);margin-bottom:8px}
+  .dropzone .t{font-weight:600;font-size:13.5px;color:var(--ink)}
+  .dropzone .d{font-size:12px;color:var(--muted);margin-top:3px}
+  .check-line{display:flex;align-items:center;gap:9px;margin-top:14px;font-size:13.5px;padding:11px 13px;background:var(--surface-2);border-radius:9px}
+  .check-line input{width:auto}
+  .sj-tag{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;color:var(--pinus-600);background:var(--ok-bg);padding:3px 9px;border-radius:999px}
+  .sj-tag svg{width:12px;height:12px}
+
+  .menu-btn{display:none}
+  @media (max-width:840px){
+    #app.on{grid-template-columns:1fr}
+    .sidebar{position:fixed;left:0;top:0;z-index:60;width:248px;transform:translateX(-100%);transition:transform .25s}
+    .sidebar.open{transform:translateX(0)}
+    .main{padding:68px 16px 50px;max-width:100%}
+    .menu-btn{display:flex;position:fixed;top:14px;left:14px;z-index:50;background:var(--pinus-700);color:#fff;width:42px;height:42px;border-radius:10px;align-items:center;justify-content:center}
+    .menu-btn svg{width:22px;height:22px}
+    .g3,.g2{grid-template-columns:1fr}.form-row{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<div id="login">
+  <div class="card">
+    <div class="brandmark">
+      <span class="glyph"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3C8 6 5 9 5 13a7 7 0 0014 0c0-4-3-7-7-10z" fill="#fff" opacity=".9"/><path d="M12 8c-2 1.5-3.5 3.2-3.5 5.2a3.5 3.5 0 007 0C15.5 11.2 14 9.5 12 8z" fill="#264A3A"/></svg></span>
+      <span class="name">Nusa Higiena Sentosa<small>Portal Layanan</small></span>
+    </div>
+    <h1>Masuk ke portal</h1>
+    <p>Masuk dengan akun Anda. Tampilan menyesuaikan otomatis dengan peran akun.</p>
+    <form id="loginForm">
+      <div class="field"><label>Email</label><input type="email" id="loginEmail" placeholder="nama@perusahaan.com" required></div>
+      <div class="field"><label>Kata sandi</label><input type="password" id="loginPass" placeholder="••••••••" required></div>
+      <button class="btn-cta block" type="submit" id="loginBtn" style="padding:12px">Masuk</button>
+    </form>
+    <div style="text-align:center"><span class="mode-tag" id="modeTag"></span></div>
+    <p class="login-note" id="loginNote"></p>
+  </div>
+</div>
+
+<button class="menu-btn" id="menuBtn" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round"/></svg></button>
+
+<div id="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="brandmark">
+      <span class="glyph"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3C8 6 5 9 5 13a7 7 0 0014 0c0-4-3-7-7-10z" fill="#fff" opacity=".9"/><path d="M12 8c-2 1.5-3.5 3.2-3.5 5.2a3.5 3.5 0 007 0C15.5 11.2 14 9.5 12 8z" fill="#1E3A2E"/></svg></span>
+      <span class="name">Nusa Higiena<small>Portal Layanan</small></span>
+    </div>
+    <span class="role-chip" id="roleChip"></span>
+    <nav class="nav" id="nav"></nav>
+    <button class="logout" id="logout">Keluar</button>
+  </aside>
+  <main class="main" id="main"></main>
+</div>
+
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <h3>Upload surat jalan</h3>
+    <div class="sub" id="modalSub"></div>
+    <label class="dropzone" for="sjFile">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 16V4m0 0l-4 4m4-4l4 4M5 20h14" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div class="t" id="sjFileName">Pilih foto / scan surat jalan</div>
+      <div class="d">JPG, PNG, atau PDF</div>
+    </label>
+    <input type="file" id="sjFile" accept="image/*,.pdf" style="display:none">
+    <label class="check-line"><input type="checkbox" id="sjSigned"> <span>Surat jalan ini <strong>sudah ditandatangani</strong> pihak Foodex</span></label>
+    <div style="font-size:11.5px;color:var(--faint);margin-top:8px">Jika ber-TTD, pesanan otomatis ditandai <strong>Selesai/Terkirim</strong> dan invoice langsung terbit.</div>
+    <div class="modal-actions">
+      <button class="btn-sm" id="sjCancel" style="flex:1">Batal</button>
+      <button class="btn-cta" id="sjSave" style="flex:1;justify-content:center">Simpan</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   KONFIGURASI — EDIT SAAT GO ONLINE
+   Kosongkan URL/KEY = mode DEMO (data hilang saat refresh).
+   Isi kredensial Supabase = mode LIVE (tersimpan online).
+   ============================================================ */
+const CONFIG = {
+  SUPABASE_URL: "https://lwcjhppimxsotzxfmixd.supabase.co",
+  SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx3Y2pocHBpbXhzb3R6eGZtaXhkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMwMjY3MzAsImV4cCI6MjA5ODYwMjczMH0.7GSRXqNtE4D1zQZ0_qmAsds0oiMcnYFZ-F-n31LVGpo",
+  CLIENT_NAME: "PT Foodex Indonesia",
+  // Akun DEMO (dipakai hanya saat MODE DEMO, sebelum online).
+  // Saat MODE ONLINE, login memakai Supabase Auth (akun asli).
+  DEMO_ACCOUNTS: [
+    { email:"admin@nhs.co.id",         pass:"demo123", role:"nhs",    client:null },
+    { email:"purchasing@foodex.co.id", pass:"demo123", role:"client", client:"PT Foodex Indonesia" },
+  ],
+};
+let currentUser=null; // {email, role, client}
+
+const LIVE=!!(CONFIG.SUPABASE_URL&&CONFIG.SUPABASE_ANON_KEY);
+const H={"apikey":CONFIG.SUPABASE_ANON_KEY,"Authorization":"Bearer "+CONFIG.SUPABASE_ANON_KEY,"Content-Type":"application/json"};
+
+let demoServices=[
+  {id:'s1',name:'Katering harian',type:'catering',unit:'porsi',price:13000,active:true},
+  {id:'s2',name:'Seragam produksi',type:'laundry',unit:'pcs',price:3200,active:true},
+  {id:'s3',name:'Apron & lap dapur',type:'laundry',unit:'pcs',price:2500,active:true},
+  {id:'s4',name:'Linen cleanroom',type:'laundry',unit:'pcs',price:4000,active:true},
+];
+let demoOrders=[
+  {id:'o1',client:CONFIG.CLIENT_NAME,type:'catering',service_name:'Katering harian',service_date:'2026-07-02',qty:320,unit:'porsi',price:13000,amount:4160000,note:'Shift 1: 180 · Shift 2: 140',stage:2,delivered:false,invoiced:false,paid:false,sj_file:null,sj_signed:false,created_at:'2026-07-01T08:00:00Z'},
+  {id:'o2',client:CONFIG.CLIENT_NAME,type:'laundry',service_name:'Seragam produksi',service_date:'2026-07-01',qty:140,unit:'pcs',price:3200,amount:448000,note:'',stage:2,delivered:false,invoiced:false,paid:false,sj_file:null,sj_signed:false,created_at:'2026-06-30T09:00:00Z'},
+  {id:'o3',client:CONFIG.CLIENT_NAME,type:'catering',service_name:'Katering harian',service_date:'2026-06-28',qty:300,unit:'porsi',price:13000,amount:3900000,note:'Shift 1: 170 · Shift 2: 130',stage:3,delivered:true,invoiced:true,paid:true,sj_file:'SJ-0628.jpg',sj_signed:true,created_at:'2026-06-27T08:00:00Z'},
+];
+async function sbGet(t,q=''){const r=await fetch(`${CONFIG.SUPABASE_URL}/rest/v1/${t}?select=*${q}`,{headers:H});return r.ok?await r.json():[];}
+const db={
+  async services(){ if(!LIVE)return [...demoServices]; return await sbGet('services','&order=type.asc'); },
+  async addService(s){ if(!LIVE){s.id='s'+Date.now();demoServices.push(s);return s;} const r=await fetch(`${CONFIG.SUPABASE_URL}/rest/v1/services`,{method:'POST',headers:{...H,'Prefer':'return=representation'},body:JSON.stringify(s)});return (await r.json())[0]; },
+  async updService(id,p){ if(!LIVE){Object.assign(demoServices.find(x=>x.id===id),p);return;} await fetch(`${CONFIG.SUPABASE_URL}/rest/v1/services?id=eq.${id}`,{method:'PATCH',headers:H,body:JSON.stringify(p)}); },
+  async delService(id){ if(!LIVE){demoServices=demoServices.filter(x=>x.id!==id);return;} await fetch(`${CONFIG.SUPABASE_URL}/rest/v1/services?id=eq.${id}`,{method:'DELETE',headers:H}); },
+  async orders(){ if(!LIVE)return [...demoOrders].sort((a,b)=>b.created_at.localeCompare(a.created_at)); return await sbGet('orders','&order=created_at.desc'); },
+  async addOrder(o){ if(!LIVE){o.id='o'+Date.now();o.created_at=new Date().toISOString();demoOrders.unshift(o);return o;} const r=await fetch(`${CONFIG.SUPABASE_URL}/rest/v1/orders`,{method:'POST',headers:{...H,'Prefer':'return=representation'},body:JSON.stringify(o)});return (await r.json())[0]; },
+  async updOrder(id,p){ if(!LIVE){Object.assign(demoOrders.find(x=>x.id===id),p);return;} await fetch(`${CONFIG.SUPABASE_URL}/rest/v1/orders?id=eq.${id}`,{method:'PATCH',headers:H,body:JSON.stringify(p)}); },
+};
+
+const STAGES={catering:['Diterima','Disiapkan','Dikirim'],laundry:['Dijemput','Dicuci','Dikembalikan']};
+const rp=n=>'Rp '+Number(n||0).toLocaleString('id-ID');
+const MONTHS=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+const ymLabel=d=>{const x=new Date(d);return MONTHS[x.getMonth()]+' '+x.getFullYear();};
+const dLabel=d=>{const x=new Date(d);return x.getDate()+' '+MONTHS[x.getMonth()]+' '+x.getFullYear();};
+
+let role='client',orders=[],services=[];
+const $=s=>document.querySelector(s),main=$('#main');
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2900);}
+function svcIcon(type){return type==='catering'
+  ?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20h16M6 20V9a6 6 0 0112 0v11" stroke-linecap="round"/><path d="M12 3v3" stroke-linecap="round"/></svg>'
+  :'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="13" r="6"/><circle cx="12" cy="13" r="2.3"/><path d="M5 3h14v3H5z"/></svg>';}
+function stageBadge(o){if(o.delivered)return '<span class="badge b-ok"><span class="b-dot"></span>Selesai</span>';if(o.stage>=1)return '<span class="badge b-prog"><span class="b-dot"></span>Diproses</span>';return '<span class="badge b-wait"><span class="b-dot"></span>Antre</span>';}
+function pipeline(o){const st=STAGES[o.type];const cur=o.delivered?st.length:o.stage;let h='<div class="track">';st.forEach((s,i)=>{const n=i+1,c=n<cur?'done':(n===cur?'now':'');h+=`<div class="step ${c}"><span class="dot"></span>${i<st.length-1?'<span class="bar"></span>':''}</div>`;});h+='</div><div class="track-labels">';st.forEach((s,i)=>h+=`<span class="${i+1===cur?'on':''}">${s}</span>`);return h+'</div>';}
+async function refresh(){const r=await Promise.all([db.orders(),db.services()]);orders=r[0];services=r[1];}
+
+const NAV={
+  client:[['pesan','Pesan layanan','M12 5v14M5 12h14'],['pesanan','Pesanan saya','M4 6h16M4 12h16M4 18h10'],['tagihan','Tagihan','M6 3h12v18l-3-2-3 2-3-2-3 2z']],
+  nhs:[['masuk','Pesanan masuk','M4 6h16M4 12h16M4 18h10'],['katalog','Katalog & harga','M4 7h16M4 12h16M4 17h16M8 3v18'],['tagihan','Tagihan','M6 3h12v18l-3-2-3 2-3-2-3 2z']],
+};
+function buildNav(){const n=$('#nav');n.innerHTML=NAV[role].map((v,i)=>`<button data-view="${v[0]}" class="${i===0?'active':''}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="${v[2]}"/></svg>${v[1]}</button>`).join('');n.querySelectorAll('button').forEach(b=>b.onclick=()=>{go(b.dataset.view);$('#sidebar').classList.remove('open');});}
+function head(eb,h,p,right=''){return `<div class="page-head"><div><div class="eyebrow">${eb}</div><h1>${h}</h1><p>${p}</p></div>${right}</div>`;}
+function emptyBox(t,d){return `<div class="card"><div class="empty"><div class="big">${t}</div>${d}</div></div>`;}
+
+const V={
+  pesan(){
+    const cat=services.filter(s=>s.active&&s.type==='catering');
+    const laundry=services.filter(s=>s.active&&s.type==='laundry');
+    const catOpts=cat.map(s=>`<option value="${s.id}">${s.name} — ${rp(s.price)}/${s.unit}</option>`).join('');
+    const lOpts=laundry.map(s=>`<option value="${s.id}">${s.name} — ${rp(s.price)}/${s.unit}</option>`).join('');
+    return head('Pesan layanan','Buat pesanan','Pesan katering harian atau penjemputan laundry. Biaya terhitung otomatis dari katalog NHS.')+
+    `<div class="grid g2" style="align-items:start">
+      <div class="card">
+        <div class="sec-title" style="margin:0 0 14px">Katering harian</div>
+        ${cat.length?`
+        <div class="field"><label>Menu / paket</label><select id="cSvc">${catOpts}</select></div>
+        <div class="field"><label>Tanggal pengiriman</label><input type="date" id="cDate"></div>
+        <div class="form-row">
+          <div class="field"><label>Porsi shift 1</label><input type="number" id="cS1" min="0" value="0"></div>
+          <div class="field"><label>Porsi shift 2</label><input type="number" id="cS2" min="0" value="0"></div>
+        </div>
+        <div class="field"><label>Catatan (opsional)</label><textarea id="cNote" rows="2" placeholder="mis. 20 porsi tanpa daging"></textarea></div>
+        <div class="price-preview"><span class="l">Perkiraan biaya</span><span class="v" id="cPrice">Rp 0</span></div>
+        <button class="btn-cta block" id="cSubmit">Kirim pesanan katering</button>`
+        :'<div class="empty">Belum ada layanan katering aktif.</div>'}
+      </div>
+      <div class="card">
+        <div class="sec-title" style="margin:0 0 14px">Penjemputan laundry</div>
+        ${laundry.length?`
+        <div class="field"><label>Jenis item</label><select id="lSvc">${lOpts}</select></div>
+        <div class="form-row">
+          <div class="field"><label>Jumlah (pcs)</label><input type="number" id="lQty" min="0" value="0"></div>
+          <div class="field"><label>Tanggal jemput</label><input type="date" id="lDate"></div>
+        </div>
+        <div class="field"><label>Catatan (opsional)</label><textarea id="lNote" rows="2" placeholder="mis. noda oli, penanganan khusus"></textarea></div>
+        <div class="price-preview"><span class="l">Perkiraan biaya</span><span class="v" id="lPrice">Rp 0</span></div>
+        <button class="btn-cta block" id="lSubmit">Kirim penjemputan</button>`
+        :'<div class="empty">Belum ada layanan laundry aktif.</div>'}
+      </div>
+    </div>`;
+  },
+  pesanan(){
+    const mine=orders.filter(o=>o.client===currentUser.client);
+    if(!mine.length)return head('Pesanan saya','Progres pesanan Anda','Pantau tiap pesanan sampai selesai.')+emptyBox('Belum ada pesanan','Buat pesanan di menu “Pesan layanan”.');
+    return head('Pesanan saya','Progres pesanan Anda','Status diperbarui langsung oleh tim NHS.')+mine.map(o=>orderCard(o,false)).join('');
+  },
+  tagihan(){ return invoiceView(orders.filter(o=>o.client===currentUser.client)); },
+
+  masuk(){
+    if(!orders.length)return head('Pesanan masuk','Kelola pesanan','Pesanan klien muncul di sini.')+emptyBox('Belum ada pesanan masuk','Pesanan akan tampil begitu klien memesan.');
+    const active=orders.filter(o=>!o.delivered),done=orders.filter(o=>o.delivered);
+    const unpaid=orders.filter(o=>o.invoiced&&!o.paid).reduce((s,o)=>s+ +o.amount,0);
+    return head('Pesanan masuk','Kelola pesanan','Update progres tiap tahap. Saat sampai tujuan, upload surat jalan ber-TTD → pesanan Selesai &amp; invoice terbit otomatis.')+
+      `<div class="grid g3">
+        <div class="card stat"><div class="lbl">Pesanan aktif</div><div class="num">${active.length}</div><div class="sub">sedang berjalan</div></div>
+        <div class="card stat"><div class="lbl">Selesai (ber-SJ)</div><div class="num">${done.length}</div><div class="sub">terarsip</div></div>
+        <div class="card stat"><div class="lbl">Invoice belum dibayar</div><div class="num">${rp(unpaid)}</div><div class="sub">tagihan berjalan</div></div>
+      </div>
+      <div class="sec-title">Perlu ditindak</div>
+      ${active.length?active.map(o=>orderCard(o,true)).join(''):'<div class="card"><div class="empty">Semua pesanan sudah selesai 🎉</div></div>'}
+      ${done.length?'<div class="sec-title">Selesai &amp; terarsip</div>'+done.map(o=>orderCard(o,true)).join(''):''}`;
+  },
+
+  katalog(){
+    const cat=services.filter(s=>s.type==='catering'),laundry=services.filter(s=>s.type==='laundry');
+    const row=s=>`<div class="svc">
+      <span class="ic" style="background:${s.type==='catering'?'var(--tembaga)':'var(--pinus-500)'}">${svcIcon(s.type)}</span>
+      <div class="body"><div class="t">${s.name} ${s.active?'':'<span style="font-size:11px;color:var(--faint);font-weight:600">(nonaktif)</span>'}</div><div class="d">${s.type==='catering'?'Katering':'Laundry'} · per ${s.unit}</div></div>
+      <span class="price">${rp(s.price)}<span style="font-size:11px;color:var(--faint);font-weight:500">/${s.unit}</span></span>
+      <div style="display:flex;gap:6px;margin-left:auto">
+        <button class="btn-sm" data-edit="${s.id}">Ubah</button>
+        <button class="btn-sm" data-toggle="${s.id}">${s.active?'Nonaktifkan':'Aktifkan'}</button>
+        <button class="btn-sm btn-del" data-delsvc="${s.id}">Hapus</button>
+      </div></div>`;
+    return head('Katalog & harga','Layanan yang Anda jual','Atur jenis layanan dan harga — perubahan langsung dipakai di form pesanan klien &amp; perhitungan invoice.',
+      `<button class="btn-cta" id="addSvc">+ Tambah layanan</button>`)+
+      `<div class="card"><div class="sec-title" style="margin:0 0 4px">Katering <span style="font-family:Manrope;font-size:12px;font-weight:600;color:var(--faint)">per porsi</span></div>
+        ${cat.length?cat.map(row).join(''):'<div class="empty">Belum ada layanan katering.</div>'}</div>
+      <div class="card" style="margin-top:16px"><div class="sec-title" style="margin:0 0 4px">Laundry <span style="font-family:Manrope;font-size:12px;font-weight:600;color:var(--faint)">per pcs/satuan</span></div>
+        ${laundry.length?laundry.map(row).join(''):'<div class="empty">Belum ada layanan laundry.</div>'}</div>`;
+  },
+};
+
+function orderCard(o,admin){
+  const last=o.delivered;
+  const sjBadge=o.sj_file?`<span class="sj-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>Surat jalan ${o.sj_signed?'ber-TTD':'diupload'}${typeof o.sj_file==='string'?' · '+o.sj_file:''}</span>`:'';
+  const canAdvance=!last&&o.stage<STAGES[o.type].length-1;
+  const readyForSJ=!last&&o.stage>=STAGES[o.type].length-1;
+  return `<div class="card" style="margin-bottom:14px">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:12px;flex-wrap:wrap">
+      <div><span class="badge ${o.type==='catering'?'b-prog':'b-wait'}" style="margin-bottom:6px">${o.type==='catering'?'Katering':'Laundry'}</span>
+        <div style="font-weight:600;font-size:15px">${o.service_name}</div>
+        <div style="font-size:12.5px;color:var(--faint);margin-top:2px">${dLabel(o.service_date)} · ${o.qty} ${o.unit}${o.note?' · '+o.note:''}${admin?' · '+o.client:''}</div></div>
+      <div style="text-align:right"><div class="amt" style="font-size:15px;color:var(--pinus-700)">${rp(o.amount)}</div>
+        <div style="margin-top:4px">${stageBadge(o)}</div>
+        ${o.invoiced?(o.paid?'<div><span class="badge b-ok" style="margin-top:4px">Invoice lunas</span></div>':'<div><span class="badge b-wait" style="margin-top:4px">Invoice terbit</span></div>'):''}</div>
+    </div>
+    ${pipeline(o)}
+    ${sjBadge?'<div style="margin-top:12px">'+sjBadge+'</div>':''}
+    ${admin?`<div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
+      ${canAdvance?`<button class="btn-sm btn-adv" data-adv="${o.id}">Lanjut tahap →</button>`:''}
+      ${readyForSJ?`<button class="btn-sm btn-sj" data-sj="${o.id}">Upload surat jalan</button>`:''}
+      ${o.invoiced&&!o.paid?`<button class="btn-sm" data-paid="${o.id}">Tandai lunas</button>`:''}
+    </div>`:''}
+  </div>`;
+}
+function invoiceView(list){
+  const inv=list.filter(o=>o.invoiced);
+  const groups={};inv.forEach(o=>{const k=ymLabel(o.service_date);(groups[k]=groups[k]||[]).push(o);});
+  const keys=Object.keys(groups);
+  let body=head('Tagihan','Tagihan otomatis','Invoice terbit otomatis saat pesanan sampai (ada surat jalan ber-TTD). Dikelompokkan per bulan.');
+  if(!keys.length)return body+emptyBox('Belum ada tagihan','Invoice muncul otomatis setelah pesanan terkirim &amp; surat jalan ber-TTD masuk.');
+  keys.forEach(k=>{const g=groups[k],total=g.reduce((s,o)=>s+ +o.amount,0),unpaid=g.filter(o=>!o.paid).reduce((s,o)=>s+ +o.amount,0);
+    body+=`<div class="sec-title"><span>${k}</span><span style="font-family:Manrope;font-size:14px;font-weight:600;color:${unpaid>0?'var(--tembaga-700)':'var(--ok)'}">${unpaid>0?'Belum lunas '+rp(unpaid):'Lunas semua'}</span></div>
+    <div class="card" style="padding:6px 8px"><table><thead><tr><th>Tanggal</th><th>Layanan</th><th>Detail</th><th>Surat jalan</th><th style="text-align:right">Jumlah</th><th>Status</th></tr></thead><tbody>
+    ${g.map(o=>`<tr><td>${dLabel(o.service_date)}</td><td>${o.type==='catering'?'Katering':'Laundry'}</td><td style="color:var(--muted)">${o.service_name} · ${o.qty} ${o.unit}</td>
+      <td>${o.sj_file?'<span class="sj-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>ada</span>':'<span style="color:var(--faint)">—</span>'}</td>
+      <td class="amt" style="text-align:right">${rp(o.amount)}</td><td>${o.paid?'<span class="badge b-ok">Lunas</span>':'<span class="badge b-wait">Belum</span>'}</td></tr>`).join('')}
+    <tr><td colspan="4" style="text-align:right;font-weight:700">Total ${k}</td><td class="amt" style="text-align:right;font-family:Fraunces;font-size:16px;color:var(--pinus-700)">${rp(total)}</td><td></td></tr>
+    </tbody></table></div>`;});
+  return body;
+}
+
+async function go(view){
+  main.innerHTML='<div class="empty">Memuat…</div>';
+  await refresh();
+  main.innerHTML=V[view]();
+  $('#nav').querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.view===view));
+  window.scrollTo(0,0);wire(view);
+}
+function svcById(id){return services.find(s=>s.id===id);}
+function wire(view){
+  if(view==='pesan'){
+    const upC=()=>{const s=svcById($('#cSvc')?.value);if(!s)return;const q=(+$('#cS1').value||0)+(+$('#cS2').value||0);$('#cPrice').textContent=rp(q*s.price);};
+    const upL=()=>{const s=svcById($('#lSvc')?.value);if(!s)return;$('#lPrice').textContent=rp((+$('#lQty').value||0)*s.price);};
+    if($('#cSvc')){$('#cSvc').onchange=upC;['cS1','cS2'].forEach(i=>$('#'+i).oninput=upC);
+      $('#cSubmit').onclick=async()=>{const s=svcById($('#cSvc').value),s1=+$('#cS1').value||0,s2=+$('#cS2').value||0,q=s1+s2;
+        if(!q||!$('#cDate').value)return toast('Isi tanggal & jumlah porsi dulu');
+        await db.addOrder({client:currentUser.client,type:'catering',service_name:s.name,service_date:$('#cDate').value,qty:q,unit:'porsi',price:s.price,amount:q*s.price,note:`Shift 1: ${s1} · Shift 2: ${s2}`+($('#cNote').value?' · '+$('#cNote').value:''),stage:1,delivered:false,invoiced:false,paid:false,sj_file:null,sj_signed:false});
+        toast('Pesanan katering terkirim ✓');go('pesanan');};}
+    if($('#lSvc')){$('#lSvc').onchange=upL;$('#lQty').oninput=upL;
+      $('#lSubmit').onclick=async()=>{const s=svcById($('#lSvc').value),q=+$('#lQty').value||0;
+        if(!q||!$('#lDate').value)return toast('Isi jumlah & tanggal jemput dulu');
+        await db.addOrder({client:currentUser.client,type:'laundry',service_name:s.name,service_date:$('#lDate').value,qty:q,unit:s.unit,price:s.price,amount:q*s.price,note:$('#lNote').value||'',stage:1,delivered:false,invoiced:false,paid:false,sj_file:null,sj_signed:false});
+        toast('Penjemputan terkirim ✓');go('pesanan');};}
+  }
+  if(view==='masuk'){
+    main.querySelectorAll('[data-adv]').forEach(b=>b.onclick=async()=>{const o=orders.find(x=>x.id===b.dataset.adv);await db.updOrder(o.id,{stage:o.stage+1});toast('Progres diperbarui → klien langsung melihatnya');go('masuk');});
+    main.querySelectorAll('[data-sj]').forEach(b=>b.onclick=()=>openSJ(b.dataset.sj));
+    main.querySelectorAll('[data-paid]').forEach(b=>b.onclick=async()=>{await db.updOrder(b.dataset.paid,{paid:true});toast('Ditandai lunas');go('masuk');});
+  }
+  if(view==='katalog'){
+    $('#addSvc').onclick=()=>editSvc(null);
+    main.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>editSvc(b.dataset.edit));
+    main.querySelectorAll('[data-toggle]').forEach(b=>b.onclick=async()=>{const s=svcById(b.dataset.toggle);await db.updService(s.id,{active:!s.active});go('katalog');});
+    main.querySelectorAll('[data-delsvc]').forEach(b=>b.onclick=async()=>{if(confirm('Hapus layanan ini? Pesanan lama tidak terpengaruh.')){await db.delService(b.dataset.delsvc);toast('Layanan dihapus');go('katalog');}});
+  }
+}
+
+async function editSvc(id){
+  const s=id?svcById(id):null;
+  const name=prompt('Nama layanan:',s?s.name:'');if(name===null)return;if(!name.trim())return toast('Nama tidak boleh kosong');
+  const type=prompt('Jenis — ketik "catering" atau "laundry":',s?s.type:'laundry');if(type===null)return;
+  if(!['catering','laundry'].includes(type))return toast('Jenis harus catering atau laundry');
+  const unit=type==='catering'?'porsi':((prompt('Satuan (mis. pcs, set, kg):',s?s.unit:'pcs')||'pcs').trim());
+  const price=+prompt('Harga per '+unit+' (angka saja):',s?s.price:'');if(!price)return toast('Harga tidak valid');
+  if(id){await db.updService(id,{name,type,unit,price});toast('Layanan diperbarui');}
+  else{await db.addService({name,type,unit,price,active:true});toast('Layanan ditambahkan');}
+  go('katalog');
+}
+
+let sjOrderId=null,sjFile=null;
+function openSJ(id){sjOrderId=id;sjFile=null;
+  const o=orders.find(x=>x.id===id);
+  $('#modalSub').textContent=`${o.service_name} · ${dLabel(o.service_date)} · ${o.client}`;
+  $('#sjFileName').textContent='Pilih foto / scan surat jalan';
+  $('#sjSigned').checked=false;$('#sjFile').value='';
+  $('#modalBg').classList.add('on');}
+$('#sjFile').onchange=e=>{const f=e.target.files[0];if(f){sjFile=f;$('#sjFileName').textContent=f.name;}};
+$('#sjCancel').onclick=()=>$('#modalBg').classList.remove('on');
+$('#modalBg').onclick=e=>{if(e.target===$('#modalBg'))$('#modalBg').classList.remove('on');};
+$('#sjSave').onclick=async()=>{
+  if(!sjFile)return toast('Pilih file surat jalan dulu');
+  const signed=$('#sjSigned').checked;
+  const o=orders.find(x=>x.id===sjOrderId);
+  let fileRef=sjFile.name;
+  // Mode LIVE: upload file asli ke Supabase Storage, simpan URL publiknya
+  if(LIVE){
+    try{
+      $('#sjSave').textContent='Mengupload…';$('#sjSave').disabled=true;
+      const path=`${sjOrderId}-${Date.now()}-${sjFile.name.replace(/[^\w.\-]/g,'_')}`;
+      const up=await fetch(`${CONFIG.SUPABASE_URL}/storage/v1/object/surat-jalan/${path}`,{
+        method:'POST',headers:{"apikey":CONFIG.SUPABASE_ANON_KEY,"Authorization":"Bearer "+CONFIG.SUPABASE_ANON_KEY},body:sjFile});
+      if(!up.ok)throw new Error('upload gagal');
+      fileRef=`${CONFIG.SUPABASE_URL}/storage/v1/object/public/surat-jalan/${path}`;
+    }catch(err){toast('Gagal upload file — cek bucket "surat-jalan" sudah dibuat & Public');$('#sjSave').textContent='Simpan';$('#sjSave').disabled=false;return;}
+    $('#sjSave').textContent='Simpan';$('#sjSave').disabled=false;
+  }
+  const patch={sj_file:fileRef,sj_signed:signed};
+  if(signed){patch.delivered=true;patch.invoiced=true;patch.stage=STAGES[o.type].length;}
+  await db.updOrder(sjOrderId,patch);
+  $('#modalBg').classList.remove('on');
+  toast(signed?'Surat jalan ber-TTD tersimpan → pesanan Selesai & invoice terbit ✓':'Surat jalan tersimpan (belum ber-TTD)');
+  go('masuk');
+};
+
+/* ---------- AUTH ---------- */
+async function sbAuthLogin(email,pass){
+  const r=await fetch(`${CONFIG.SUPABASE_URL}/auth/v1/token?grant_type=password`,{
+    method:'POST',headers:{"apikey":CONFIG.SUPABASE_ANON_KEY,"Content-Type":"application/json"},
+    body:JSON.stringify({email,password:pass})});
+  if(!r.ok)return null;
+  const data=await r.json();
+  // token dipakai untuk semua request berikutnya
+  H["Authorization"]="Bearer "+data.access_token;
+  // ambil profil (peran + nama klien) dari tabel profiles
+  const pr=await fetch(`${CONFIG.SUPABASE_URL}/rest/v1/profiles?select=*&id=eq.${data.user.id}`,{headers:H});
+  const rows=pr.ok?await pr.json():[];
+  const prof=rows[0]||{role:'client',client_name:CONFIG.CLIENT_NAME};
+  return {email:data.user.email, role:prof.role, client:prof.client_name||CONFIG.CLIENT_NAME};
+}
+
+async function doLogin(email,pass){
+  if(!LIVE){
+    const a=CONFIG.DEMO_ACCOUNTS.find(x=>x.email===email&&x.pass===pass);
+    return a?{email:a.email,role:a.role,client:a.client||CONFIG.CLIENT_NAME}:null;
+  }
+  return await sbAuthLogin(email,pass);
+}
+
+function enter(u){
+  currentUser=u; role=u.role;
+  $('#login').style.display='none';$('#app').classList.add('on');
+  $('#roleChip').className='role-chip '+(role==='nhs'?'chip-nhs':'chip-client');
+  $('#roleChip').textContent=role==='nhs'?'Tim NHS (admin)':u.client;
+  buildNav();go(NAV[role][0][0]);
+}
+
+$('#loginForm').onsubmit=async e=>{
+  e.preventDefault();
+  const btn=$('#loginBtn'),email=$('#loginEmail').value.trim(),pass=$('#loginPass').value;
+  btn.textContent='Memeriksa…';btn.disabled=true;
+  const u=await doLogin(email,pass);
+  btn.textContent='Masuk';btn.disabled=false;
+  if(u)enter(u); else toast('Email atau kata sandi salah');
+};
+
+/* ---------- BOOT ---------- */
+$('#modeTag').className='mode-tag '+(LIVE?'mode-live':'mode-demo');
+$('#modeTag').textContent=LIVE?'● MODE ONLINE (tersimpan)':'● MODE DEMO (belum online)';
+$('#loginNote').innerHTML=LIVE
+  ?'Terhubung database. Masuk dengan akun Anda.'
+  :'MODE DEMO — coba: <strong>admin@nhs.co.id</strong> atau <strong>purchasing@foodex.co.id</strong>, sandi <strong>demo123</strong>. Data hilang saat refresh.';
+$('#logout').onclick=()=>{currentUser=null;$('#app').classList.remove('on');$('#login').style.display='flex';$('#loginPass').value='';};
+$('#menuBtn').onclick=()=>$('#sidebar').classList.toggle('open');
+</script>
+</body>
+</html>
