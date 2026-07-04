@@ -1292,7 +1292,7 @@ V.tagihan=function(){
     let b=head(t('nav_tagihan'),'Tagihan Anda','Invoice gabungan dari NHS. Unduh PDF untuk arsip & pembayaran.');
     if(!mine.length)return b+emptyBox('Belum ada tagihan','Invoice gabungan muncul di sini setelah NHS menerbitkannya.');
     b+='<div class="card" style="padding:6px 8px"><div class="tbl-wrap"><table><thead><tr><th>No. Invoice</th><th>Periode</th><th>Tanggal</th><th style="text-align:right">Total</th><th></th></tr></thead><tbody>';
-    b+=mine.map(g=>`<tr><td class="mono">${g.number}</td><td>${dLabel(g.from)} – ${dLabel(g.to)}</td><td>${dLabel(g.created_at)}</td><td class="amt" style="text-align:right">${rp(g.total)}</td><td style="text-align:right"><button class="btn-sm" data-gpdf="${g.id}">Unduh PDF</button></td></tr>`).join('');
+    b+=mine.map(g=>`<tr><td class="mono">${g.number}</td><td>${dLabel(g.period_from)} – ${dLabel(g.period_to)}</td><td>${dLabel(g.created_at)}</td><td class="amt" style="text-align:right">${rp(g.period_total)}</td><td style="text-align:right"><button class="btn-sm" data-gpdf="${g.id}">Unduh PDF</button></td></tr>`).join('');
     b+='</tbody></table></div></div>';
     return b;
   }
@@ -1320,8 +1320,8 @@ V.tagihan=function(){
   if(!grands.length)return b+emptyBox('Belum ada grand invoice','Pilih order di pool atas → "Buat Grand Invoice".');
   b+=`<div class="card" style="padding:6px 8px"><div class="tbl-wrap"><table><thead><tr><th>No.</th><th>Klien</th><th>Periode</th><th style="text-align:right">Total</th><th>Status</th><th></th></tr></thead><tbody>`;
   b+=grands.map(g=>{const badge=g.status==='sent'?'b-ok':'b-wait';const lbl=g.status==='sent'?('Terkirim'+(g.sent_to?' → '+g.sent_to:'')):'Draft';return `<tr>
-    <td class="mono">${g.number}</td><td>${g.client}</td><td>${dLabel(g.from)} – ${dLabel(g.to)}</td>
-    <td class="amt" style="text-align:right">${rp(g.total)}</td>
+    <td class="mono">${g.number}</td><td>${g.client}</td><td>${dLabel(g.period_from)} – ${dLabel(g.period_to)}</td>
+    <td class="amt" style="text-align:right">${rp(g.period_total)}</td>
     <td><span class="badge ${badge}">${lbl}</span></td>
     <td style="text-align:right;white-space:nowrap"><button class="btn-sm" data-gpdf="${g.id}">PDF</button> <button class="btn-sm btn-adv" data-gsend="${g.id}">Kirim</button> <button class="btn-sm btn-del" data-gdel="${g.id}">✕</button></td>
   </tr>`;}).join('');
@@ -1376,7 +1376,7 @@ function saveGrand(){
   const ppn=TAX.PPN_ENABLED?Math.round(subtotal*TAX.PPN_RATE):0;
   const total=subtotal+ppn;
   const number=nextInvoiceNo();
-  const g={number,client,from,to,order_ids:ids,subtotal,ppn,total,terbilang:terbilangRupiah(total),status:'draft',sent_to:null,sent_at:null};
+  const g={number,client,period_from:from,period_to:to,order_ids:ids,subtotal,ppn,total,terbilang:terbilangRupiah(total),status:'draft',sent_to:null,sent_at:null};
   run(async()=>{
     await db.addGrand(g);
     for(const id of ids){ await db.updOrder(id,{billed:true,grand_no:number}); }
@@ -1395,8 +1395,8 @@ function grandInvoiceHTML(g){
     <td style="padding:7px 8px;border-bottom:1px solid #e5e5e5;font-size:12px;text-align:right">${rp(o.price)}</td>
     <td style="padding:7px 8px;border-bottom:1px solid #e5e5e5;font-size:12px;text-align:right">${rp(o.amount)}</td>
   </tr>`).join('');
-  const jt=new Date(g.to); jt.setDate(jt.getDate()+14); const jtStr=jt.toISOString().slice(0,10);
-  const bigEnough=g.total>=5000000;
+  const jt=new Date(g.period_to); jt.setDate(jt.getDate()+14); const jtStr=jt.toISOString().slice(0,10);
+  const bigEnough=g.period_total>=5000000;
   return `<div style="width:794px;box-sizing:border-box;padding:44px 46px;background:#fff;font-family:'Manrope',Arial,sans-serif;color:#182018">
     <!-- header -->
     <div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #1E3A2E;padding-bottom:16px">
@@ -1420,7 +1420,7 @@ function grandInvoiceHTML(g){
       <div style="text-align:right;line-height:1.9">
         <div><span style="color:#5C6B60">No. Invoice</span> &nbsp; <strong style="font-size:15px;color:#1E3A2E">${g.number}</strong></div>
         <div><span style="color:#5C6B60">Tanggal</span> &nbsp; <strong>${dLabel(g.created_at||todayStr())}</strong></div>
-        <div><span style="color:#5C6B60">Periode</span> &nbsp; <strong>${dLabel(g.from)} – ${dLabel(g.to)}</strong></div>
+        <div><span style="color:#5C6B60">Periode</span> &nbsp; <strong>${dLabel(g.period_from)} – ${dLabel(g.period_to)}</strong></div>
         <div><span style="color:#5C6B60">Jatuh Tempo</span> &nbsp; <strong>${dLabel(jtStr)}</strong></div>
       </div>
     </div>
@@ -1440,10 +1440,10 @@ function grandInvoiceHTML(g){
       <div style="width:300px;font-size:12.5px">
         <div style="display:flex;justify-content:space-between;padding:5px 8px"><span style="color:#5C6B60">Subtotal</span><span>${rp(g.subtotal)}</span></div>
         <div style="display:flex;justify-content:space-between;padding:5px 8px;color:#8A978C"><span>PPN (0%)</span><span>${rp(g.ppn||0)}</span></div>
-        <div style="display:flex;justify-content:space-between;padding:10px 12px;background:#1E3A2E;color:#fff;font-weight:700;font-size:15px;margin-top:4px"><span>TOTAL</span><span>${rp(g.total)}</span></div>
+        <div style="display:flex;justify-content:space-between;padding:10px 12px;background:#1E3A2E;color:#fff;font-weight:700;font-size:15px;margin-top:4px"><span>TOTAL</span><span>${rp(g.period_total)}</span></div>
       </div>
     </div>
-    <div style="margin-top:14px;font-size:12px;font-style:italic;color:#5C6B60">Terbilang: <span style="color:#182018">${g.terbilang||terbilangRupiah(g.total)}</span></div>
+    <div style="margin-top:14px;font-size:12px;font-style:italic;color:#5C6B60">Terbilang: <span style="color:#182018">${g.terbilang||terbilangRupiah(g.period_total)}</span></div>
     <!-- footer: pembayaran + materai + ttd -->
     <div style="display:flex;justify-content:space-between;margin-top:34px;font-size:12px">
       <div>
@@ -1517,10 +1517,10 @@ async function downloadGrandPDF(g){
 let sendGrandId=null;
 function openSendModal(id){
   sendGrandId=id; const g=grands.find(v=>v.id===id);
-  $('#sendSub').textContent=`Grand Invoice ${g.number} · ${g.client} · ${rp(g.total)}`;
+  $('#sendSub').textContent=`Grand Invoice ${g.number} · ${g.client} · ${rp(g.period_total)}`;
   $('#sendTo').value=''; 
   $('#sendSubject').value=`Invoice ${g.number} — PT Nusa Higiena Sentosa`;
-  $('#sendBody').value=`Kepada ${g.client},\n\nTerlampir invoice ${g.number} untuk periode ${dLabel(g.from)} – ${dLabel(g.to)} sejumlah ${rp(g.total)} (${g.terbilang||terbilangRupiah(g.total)}).\n\nMohon konfirmasi penerimaan. Terima kasih.\n\nHormat kami,\nPT Nusa Higiena Sentosa`;
+  $('#sendBody').value=`Kepada ${g.client},\n\nTerlampir invoice ${g.number} untuk periode ${dLabel(g.period_from)} – ${dLabel(g.period_to)} sejumlah ${rp(g.period_total)} (${g.terbilang||terbilangRupiah(g.period_total)}).\n\nMohon konfirmasi penerimaan. Terima kasih.\n\nHormat kami,\nPT Nusa Higiena Sentosa`;
   $('#sendModalBg').classList.add('on');
 }
 async function doSend(){
