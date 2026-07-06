@@ -1073,10 +1073,13 @@ function editSup(id){
 /* ================= BATCH (stage qty) MODAL ================= */
 let batchOrderId=null;
 function openBatch(id){
-  batchOrderId=id;const o=orders.find(x=>x.id===id);const st=orderStages(o),q=orderQty(o);
+  batchOrderId=id;const o=orders.find(x=>x.id===id);const st=orderStages(o),q=orderQty(o),last=st.length-1;
   $('#batchTitle').textContent=t('btn_batch');
   $('#batchSub').textContent=`${o.service_name} · total ${o.qty} ${o.unit} · ${o.client}`;
-  $('#batchRows').innerHTML=st.map((name,i)=>`<div class="batch-row"><span class="lbl">${i+1}. ${name}</span><input type="number" min="0" class="bq" data-i="${i}" value="${q[i]||0}"></div>`).join('');
+  $('#batchRows').innerHTML=st.map((name,i)=>i===last
+    ?`<div class="batch-row"><span class="lbl">${i+1}. ${name} <span style="font-weight:400;opacity:.7">(otomatis)</span></span><input type="number" class="bq-last" value="${q[i]||0}" readonly style="opacity:.65;cursor:not-allowed;background:var(--surface-2)"></div>`
+    :`<div class="batch-row"><span class="lbl">${i+1}. ${name}</span><input type="number" min="0" class="bq" data-i="${i}" value="${q[i]||0}"></div>`
+  ).join('');
   $('#batchModalBg').classList.add('on');
   $('#batchRows').querySelectorAll('.bq').forEach(inp=>inp.oninput=updBatchSum);
   updBatchSum();
@@ -1084,15 +1087,22 @@ function openBatch(id){
 function updBatchSum(){
   const o=orders.find(x=>x.id===batchOrderId);const total=+o.qty||0;
   let sum=0;$('#batchRows').querySelectorAll('.bq').forEach(inp=>sum+=+inp.value||0);
-  const el=$('#batchSum');const ok=sum===total;
+  const remaining=total-sum;
+  const lastInp=$('#batchRows').querySelector('.bq-last');
+  if(lastInp)lastInp.value=remaining;
+  const el=$('#batchSum');const ok=remaining>=0;
   el.className='batch-sum '+(ok?'ok':'bad');
-  el.innerHTML=`<span>Total tersebar</span><span>${sum} / ${total} ${o.unit} ${ok?'✓':'— harus pas '+total}</span>`;
+  el.innerHTML=ok?`<span>Total tersebar</span><span>${total} / ${total} ${o.unit} ✓</span>`:`<span>Kelebihan ${-remaining} ${o.unit}</span><span>Kurangi input stage di atas</span>`;
+  const saveBtn=$('#batchSave');saveBtn.disabled=!ok;saveBtn.style.opacity=ok?'1':'.5';
 }
 function saveBatch(){
   const o=orders.find(x=>x.id===batchOrderId);const total=+o.qty||0;
+  const st=orderStages(o),last=st.length-1;
   const arr=[];$('#batchRows').querySelectorAll('.bq').forEach(inp=>arr[+inp.dataset.i]=+inp.value||0);
-  const sum=arr.reduce((s,n)=>s+n,0);
-  if(sum!==total)return toast(`Jumlah harus pas ${total} ${o.unit} (sekarang ${sum})`,true);
+  const sumEditable=arr.reduce((s,n)=>s+n,0);
+  const remaining=total-sumEditable;
+  if(remaining<0)return toast(`Kelebihan ${-remaining} ${o.unit} — kurangi input stage di atas`,true);
+  arr[last]=remaining;
   run(()=>db.updOrder(batchOrderId,{stage_qty:arr}),t('progress_updated'),()=>{$('#batchModalBg').classList.remove('on');go('masuk');});
 }
 /* ================= PO MODAL ================= */
