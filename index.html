@@ -154,9 +154,20 @@
   .batch-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
   .batch-row:last-child{border-bottom:none}
   .batch-row .lbl{flex:1;font-weight:600;font-size:13.5px}
-  .batch-row input{width:88px;text-align:center}
   .batch-sum{display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding:11px 13px;border-radius:9px;font-size:13px;font-weight:600}
   .batch-sum.ok{background:var(--ok-bg);color:var(--ok)}.batch-sum.bad{background:var(--alert-bg);color:var(--alert)}
+  .timeline{display:flex;flex-direction:column;margin-top:10px}
+  .tl-row{display:flex;gap:10px;position:relative;padding-bottom:16px}
+  .tl-row:last-child{padding-bottom:0}
+  .tl-row:not(:last-child)::before{content:'';position:absolute;left:11px;top:24px;bottom:-4px;width:2px;background:var(--line)}
+  .tl-dot{flex:none;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;background:var(--surface-2);border:2px solid var(--line);color:var(--faint)}
+  .tl-row.tl-done .tl-dot{background:var(--ok);border-color:var(--ok);color:#fff}
+  .tl-row.tl-done:not(:last-child)::before{background:var(--ok)}
+  .tl-row.tl-current .tl-dot{background:var(--tembaga);border-color:var(--tembaga);color:#fff}
+  .tl-body{padding-top:2px}
+  .tl-label{font-size:13px;font-weight:600;color:var(--ink)}
+  .tl-row.tl-upcoming .tl-label{color:var(--faint);font-weight:500}
+  .tl-time{font-size:11px;color:var(--faint);margin-top:1px}
 
   /* PO line items */
   .li-row{display:grid;grid-template-columns:1fr 70px 70px 96px 32px;gap:8px;align-items:center;margin-bottom:8px}
@@ -547,7 +558,6 @@ const DEFAULT_STAGES={
   catering:['Prepare','Masak','Packing','Antar','Sampai'],
 };
 function stagesOf(svc){ if(svc&&Array.isArray(svc.stages)&&svc.stages.length) return svc.stages; return DEFAULT_STAGES[svc&&svc.type]||DEFAULT_STAGES.laundry; }
-function initStageQty(stages,qty){ const a=stages.map(()=>0); a[0]=qty; return a; }
 
 /* ================= DEMO DATA ================= */
 let demoServices=[
@@ -557,10 +567,10 @@ let demoServices=[
   {id:'s4',name:'Linen cleanroom',type:'laundry',unit:'pcs',price:4000,active:true,stages:['Jemput','Cuci','Keringin','Setrika','Kirim']},
 ];
 let demoOrders=[
-  {id:'o1',client:CONFIG.CLIENT_NAME,type:'catering',service_name:'Katering harian',service_date:'2026-07-02',qty:320,unit:'porsi',price:13000,amount:4160000,note:'Shift 1: 180 · Shift 2: 140',stages:['Prepare','Masak','Packing','Antar','Sampai'],stage_qty:[0,120,200,0,0],delivered:false,invoiced:false,paid:false,billed:false,sj_file:null,sj_signed:false,created_at:'2026-07-01T08:00:00Z'},
-  {id:'o2',client:CONFIG.CLIENT_NAME,type:'laundry',service_name:'Seragam produksi',service_date:'2026-07-01',qty:140,unit:'pcs',price:3200,amount:448000,note:'',stages:['Jemput','Cuci','Keringin','Kirim'],stage_qty:[0,60,80,0],delivered:false,invoiced:false,paid:false,billed:false,sj_file:null,sj_signed:false,created_at:'2026-06-30T09:00:00Z'},
-  {id:'o3',client:CONFIG.CLIENT_NAME,type:'catering',service_name:'Katering harian',service_date:'2026-06-28',qty:300,unit:'porsi',price:13000,amount:3900000,note:'Shift 1: 170 · Shift 2: 130',stages:['Prepare','Masak','Packing','Antar','Sampai'],stage_qty:[0,0,0,0,300],delivered:true,invoiced:true,paid:false,billed:false,sj_file:'SJ-0628.jpg',sj_signed:true,created_at:'2026-06-27T08:00:00Z'},
-  {id:'o4',client:CONFIG.CLIENT_NAME,type:'laundry',service_name:'Apron & lap dapur',service_date:'2026-06-30',qty:220,unit:'pcs',price:2500,amount:550000,note:'',stages:['Jemput','Cuci','Keringin','Setrika','Kirim'],stage_qty:[0,0,0,0,220],delivered:true,invoiced:true,paid:false,billed:false,sj_file:'SJ-0630.jpg',sj_signed:true,created_at:'2026-06-29T08:00:00Z'},
+  {id:'o1',client:CONFIG.CLIENT_NAME,type:'catering',service_name:'Katering harian',service_date:'2026-07-02',qty:320,unit:'porsi',price:13000,amount:4160000,note:'Shift 1: 180 · Shift 2: 140',stages:['Prepare','Masak','Packing','Antar','Sampai'],current_stage:2,stage_history:[{stage:'Prepare',at:'2026-07-01T08:00:00Z'},{stage:'Masak',at:'2026-07-01T10:00:00Z'},{stage:'Packing',at:'2026-07-01T13:00:00Z'}],delivered:false,invoiced:false,paid:false,billed:false,sj_file:null,sj_signed:false,created_at:'2026-07-01T08:00:00Z'},
+  {id:'o2',client:CONFIG.CLIENT_NAME,type:'laundry',service_name:'Seragam produksi',service_date:'2026-07-01',qty:140,unit:'pcs',price:3200,amount:448000,note:'',stages:['Jemput','Cuci','Keringin','Kirim'],current_stage:2,stage_history:[{stage:'Jemput',at:'2026-06-30T09:00:00Z'},{stage:'Cuci',at:'2026-06-30T11:00:00Z'},{stage:'Keringin',at:'2026-06-30T14:00:00Z'}],delivered:false,invoiced:false,paid:false,billed:false,sj_file:null,sj_signed:false,created_at:'2026-06-30T09:00:00Z'},
+  {id:'o3',client:CONFIG.CLIENT_NAME,type:'catering',service_name:'Katering harian',service_date:'2026-06-28',qty:300,unit:'porsi',price:13000,amount:3900000,note:'Shift 1: 170 · Shift 2: 130',stages:['Prepare','Masak','Packing','Antar','Sampai'],current_stage:4,stage_history:[{stage:'Prepare',at:'2026-06-27T08:00:00Z'},{stage:'Sampai',at:'2026-06-28T08:00:00Z'}],delivered:true,invoiced:true,paid:false,billed:false,sj_file:'SJ-0628.jpg',sj_signed:true,created_at:'2026-06-27T08:00:00Z'},
+  {id:'o4',client:CONFIG.CLIENT_NAME,type:'laundry',service_name:'Apron & lap dapur',service_date:'2026-06-30',qty:220,unit:'pcs',price:2500,amount:550000,note:'',stages:['Jemput','Cuci','Keringin','Setrika','Kirim'],current_stage:4,stage_history:[{stage:'Jemput',at:'2026-06-29T08:00:00Z'},{stage:'Kirim',at:'2026-06-30T08:00:00Z'}],delivered:true,invoiced:true,paid:false,billed:false,sj_file:'SJ-0630.jpg',sj_signed:true,created_at:'2026-06-29T08:00:00Z'},
 ];
 let demoInventory=[
   {id:'i1',name:'Deterjen Giken',category:'Chemical',unit:'kg',qty:48,min_qty:20,unit_cost:28000,supplier:'Heaven Chemical'},
@@ -642,13 +652,29 @@ function svcIcon(type){return type==='catering'
   :'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="13" r="6"/><circle cx="12" cy="13" r="2.3"/><path d="M5 3h14v3H5z"/></svg>';}
 
 function orderStages(o){ return Array.isArray(o.stages)&&o.stages.length?o.stages:(DEFAULT_STAGES[o.type]||DEFAULT_STAGES.laundry); }
-function orderQty(o){ const st=orderStages(o); let q=o.stage_qty; if(!Array.isArray(q)||q.length!==st.length){ q=initStageQty(st,+o.qty||0); } return q.map(n=>+n||0); }
-function allAtLast(o){ const st=orderStages(o),q=orderQty(o); return (+o.qty||0)>0 && q[st.length-1]===(+o.qty||0); }
-function stageBadge(o){ if(o.delivered)return `<span class="badge b-ok"><span class="b-dot"></span>${t('b_done')}</span>`; const q=orderQty(o); const moved=q.slice(1).reduce((s,n)=>s+n,0); return moved>0?`<span class="badge b-prog"><span class="b-dot"></span>${t('b_prog')}</span>`:`<span class="badge b-wait"><span class="b-dot"></span>${t('b_queue')}</span>`; }
+function currentStage(o){ const st=orderStages(o),last=st.length-1; let c=+o.current_stage; if(!Number.isInteger(c)||c<0)c=0; return Math.min(c,last); }
+function allAtLast(o){ return currentStage(o)===orderStages(o).length-1; }
+function stageBadge(o){ if(o.delivered)return `<span class="badge b-ok"><span class="b-dot"></span>${t('b_done')}</span>`; return currentStage(o)>0?`<span class="badge b-prog"><span class="b-dot"></span>${t('b_prog')}</span>`:`<span class="badge b-wait"><span class="b-dot"></span>${t('b_queue')}</span>`; }
 function pipeline(o){
-  const st=orderStages(o),q=orderQty(o),last=st.length-1;
+  const st=orderStages(o),cur=currentStage(o),last=st.length-1;
   let h='<div class="pl">';
-  st.forEach((name,i)=>{ const n=q[i]||0; const cls=n<=0?'':(i===last?'full':'has'); h+=`<div class="pl-stage ${cls}"><div class="n">${n}</div><div class="lb">${name}</div></div>`; });
+  st.forEach((name,i)=>{ const cls=i<cur?'full':(i===cur?'has':''); h+=`<div class="pl-stage ${cls}"><div class="n">${i<cur?'✓':i+1}</div><div class="lb">${name}</div></div>`; });
+  return h+'</div>';
+}
+function tLabel(iso){ const d=new Date(iso); return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'); }
+function orderTimeline(o){
+  const st=orderStages(o), cur=currentStage(o);
+  const hist=Array.isArray(o.stage_history)?o.stage_history:[];
+  let h='<div class="timeline">';
+  st.forEach((name,i)=>{
+    const state=i<cur?'done':(i===cur?'current':'upcoming');
+    const rec=hist.find(x=>x.stage===name);
+    const ts=(i<=cur&&rec)?`${dLabel(rec.at)} · ${tLabel(rec.at)}`:'';
+    h+=`<div class="tl-row tl-${state}">
+      <div class="tl-dot">${state==='done'?'✓':i+1}</div>
+      <div class="tl-body"><div class="tl-label">${name}</div>${ts?`<div class="tl-time">${ts}</div>`:''}</div>
+    </div>`;
+  });
   return h+'</div>';
 }
 async function refresh(){
@@ -867,7 +893,7 @@ function orderCard(o,admin){
         <div style="margin-top:4px">${stageBadge(o)}</div>
         ${o.invoiced?(o.paid?`<div><span class="badge b-ok" style="margin-top:4px">${t('inv_paid')}</span></div>`:`<div><span class="badge b-wait" style="margin-top:4px">${t('inv_issued')}</span></div>`):''}</div>
     </div>
-    ${pipeline(o)}
+    ${admin?pipeline(o):orderTimeline(o)}
     ${ready&&admin?`<div style="font-size:12px;color:var(--ok);margin-top:8px;font-weight:600">✓ ${t('ready_sj')}</div>`:''}
     ${sjBadge?'<div style="margin-top:12px">'+sjBadge+'</div>':''}
     ${admin?`<div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
@@ -924,12 +950,12 @@ function wire(view){
       $('#cSubmit').onclick=()=>{const s=svcById($('#cSvc').value),s1=+$('#cS1').value||0,s2=+$('#cS2').value||0,q=s1+s2;
         if(!q||!$('#cDate').value)return toast(t('need_cat_fields'));
         const stg=stagesOf(s);
-        run(()=>db.addOrder({client:currentUser.client,type:'catering',service_name:s.name,service_date:$('#cDate').value,qty:q,unit:'porsi',price:s.price,amount:q*s.price,note:`Shift 1: ${s1} · Shift 2: ${s2}`+($('#cNote').value?' · '+$('#cNote').value:''),stages:stg,stage_qty:initStageQty(stg,q),delivered:false,invoiced:false,paid:false,billed:false,sj_file:null,sj_signed:false}),t('order_cat_sent'),()=>go('pesanan'));};}
+        run(()=>db.addOrder({client:currentUser.client,type:'catering',service_name:s.name,service_date:$('#cDate').value,qty:q,unit:'porsi',price:s.price,amount:q*s.price,note:`Shift 1: ${s1} · Shift 2: ${s2}`+($('#cNote').value?' · '+$('#cNote').value:''),stages:stg,current_stage:0,stage_history:[{stage:stg[0],at:new Date().toISOString()}],delivered:false,invoiced:false,paid:false,billed:false,sj_file:null,sj_signed:false}),t('order_cat_sent'),()=>go('pesanan'));};}
     if($('#lSvc')){$('#lSvc').onchange=upL;$('#lQty').oninput=upL;
       $('#lSubmit').onclick=()=>{const s=svcById($('#lSvc').value),q=+$('#lQty').value||0;
         if(!q||!$('#lDate').value)return toast(t('need_laundry_fields'));
         const stg=stagesOf(s);
-        run(()=>db.addOrder({client:currentUser.client,type:'laundry',service_name:s.name,service_date:$('#lDate').value,qty:q,unit:s.unit,price:s.price,amount:q*s.price,note:$('#lNote').value||'',stages:stg,stage_qty:initStageQty(stg,q),delivered:false,invoiced:false,paid:false,billed:false,sj_file:null,sj_signed:false}),t('order_laundry_sent'),()=>go('pesanan'));};}
+        run(()=>db.addOrder({client:currentUser.client,type:'laundry',service_name:s.name,service_date:$('#lDate').value,qty:q,unit:s.unit,price:s.price,amount:q*s.price,note:$('#lNote').value||'',stages:stg,current_stage:0,stage_history:[{stage:stg[0],at:new Date().toISOString()}],delivered:false,invoiced:false,paid:false,billed:false,sj_file:null,sj_signed:false}),t('order_laundry_sent'),()=>go('pesanan'));};}
   }
   if(view==='masuk'){
     main.querySelectorAll('[data-batch]').forEach(b=>b.onclick=()=>openBatch(b.dataset.batch));
@@ -1030,7 +1056,7 @@ function bindStatic(){
   // batch modal
   $('#batchCancel').onclick=()=>$('#batchModalBg').classList.remove('on');
   $('#batchModalBg').onclick=e=>{if(e.target===$('#batchModalBg'))$('#batchModalBg').classList.remove('on');};
-  $('#batchSave').onclick=saveBatch;
+  $('#batchSave').onclick=()=>stepStage(1);
   // PO modal
   $('#poCancel').onclick=()=>$('#poModalBg').classList.remove('on');
   $('#poModalBg').onclick=e=>{if(e.target===$('#poModalBg'))$('#poModalBg').classList.remove('on');};
@@ -1073,37 +1099,28 @@ function editSup(id){
 /* ================= BATCH (stage qty) MODAL ================= */
 let batchOrderId=null;
 function openBatch(id){
-  batchOrderId=id;const o=orders.find(x=>x.id===id);const st=orderStages(o),q=orderQty(o),last=st.length-1;
+  batchOrderId=id;const o=orders.find(x=>x.id===id);const st=orderStages(o),cur=currentStage(o),last=st.length-1;
   $('#batchTitle').textContent=t('btn_batch');
   $('#batchSub').textContent=`${o.service_name} · total ${o.qty} ${o.unit} · ${o.client}`;
-  $('#batchRows').innerHTML=st.map((name,i)=>i===last
-    ?`<div class="batch-row"><span class="lbl">${i+1}. ${name} <span style="font-weight:400;opacity:.7">(otomatis)</span></span><input type="number" class="bq-last" value="${q[i]||0}" readonly style="opacity:.65;cursor:not-allowed;background:var(--surface-2)"></div>`
-    :`<div class="batch-row"><span class="lbl">${i+1}. ${name}</span><input type="number" min="0" class="bq" data-i="${i}" value="${q[i]||0}"></div>`
-  ).join('');
+  $('#batchRows').innerHTML=st.map((name,i)=>{
+    const badge=i<cur?'<span class="badge b-ok">✓ Selesai</span>':(i===cur?'<span class="badge b-prog">● Sekarang</span>':'<span class="badge b-wait">Menunggu</span>');
+    return `<div class="batch-row"><span class="lbl">${i+1}. ${name}</span>${badge}</div>`;
+  }).join('');
+  const saveBtn=$('#batchSave');
+  if(cur>=last){ saveBtn.textContent='Sudah di tahap akhir'; saveBtn.disabled=true; saveBtn.style.opacity='.5'; }
+  else{ saveBtn.textContent='Maju ke: '+st[cur+1]; saveBtn.disabled=false; saveBtn.style.opacity='1'; }
+  const sumEl=$('#batchSum');
+  if(role==='nhs'&&cur>0){ sumEl.style.display='flex'; sumEl.className='batch-sum'; sumEl.innerHTML=`<span>Salah pencet?</span><button class="btn-sm" id="batchBack">↩ Mundur ke: ${st[cur-1]}</button>`; $('#batchBack').onclick=()=>stepStage(-1); }
+  else{ sumEl.style.display='none'; sumEl.innerHTML=''; }
   $('#batchModalBg').classList.add('on');
-  $('#batchRows').querySelectorAll('.bq').forEach(inp=>inp.oninput=updBatchSum);
-  updBatchSum();
 }
-function updBatchSum(){
-  const o=orders.find(x=>x.id===batchOrderId);const total=+o.qty||0;
-  let sum=0;$('#batchRows').querySelectorAll('.bq').forEach(inp=>sum+=+inp.value||0);
-  const remaining=total-sum;
-  const lastInp=$('#batchRows').querySelector('.bq-last');
-  if(lastInp)lastInp.value=remaining;
-  const el=$('#batchSum');const ok=remaining>=0;
-  el.className='batch-sum '+(ok?'ok':'bad');
-  el.innerHTML=ok?`<span>Total tersebar</span><span>${total} / ${total} ${o.unit} ✓</span>`:`<span>Kelebihan ${-remaining} ${o.unit}</span><span>Kurangi input stage di atas</span>`;
-  const saveBtn=$('#batchSave');saveBtn.disabled=!ok;saveBtn.style.opacity=ok?'1':'.5';
-}
-function saveBatch(){
-  const o=orders.find(x=>x.id===batchOrderId);const total=+o.qty||0;
-  const st=orderStages(o),last=st.length-1;
-  const arr=[];$('#batchRows').querySelectorAll('.bq').forEach(inp=>arr[+inp.dataset.i]=+inp.value||0);
-  const sumEditable=arr.reduce((s,n)=>s+n,0);
-  const remaining=total-sumEditable;
-  if(remaining<0)return toast(`Kelebihan ${-remaining} ${o.unit} — kurangi input stage di atas`,true);
-  arr[last]=remaining;
-  run(()=>db.updOrder(batchOrderId,{stage_qty:arr}),t('progress_updated'),()=>{$('#batchModalBg').classList.remove('on');go('masuk');});
+function stepStage(dir){
+  const o=orders.find(x=>x.id===batchOrderId);const st=orderStages(o),last=st.length-1,cur=currentStage(o);
+  const next=Math.max(0,Math.min(last,cur+dir));
+  if(next===cur)return;
+  const hist=Array.isArray(o.stage_history)?[...o.stage_history]:[];
+  hist.push({stage:st[next],at:new Date().toISOString()});
+  run(()=>db.updOrder(batchOrderId,{current_stage:next,stage_history:hist}),t('progress_updated'),()=>{$('#batchModalBg').classList.remove('on');go('masuk');});
 }
 /* ================= PO MODAL ================= */
 function poAddRow(item){
@@ -1160,7 +1177,12 @@ async function saveSJ(){
       fileRef=`${CONFIG.SUPABASE_URL}/storage/v1/object/public/surat-jalan/${path}`;
     }
     const patch={sj_file:fileRef,sj_signed:signed};
-    if(signed){ patch.delivered=true;patch.invoiced=true; const st=orderStages(o); const q=st.map(()=>0); q[st.length-1]=+o.qty||0; patch.stage_qty=q; }
+    if(signed){
+      patch.delivered=true;patch.invoiced=true;
+      const st=orderStages(o),last=st.length-1;
+      if(currentStage(o)!==last){ const hist=Array.isArray(o.stage_history)?[...o.stage_history]:[]; hist.push({stage:st[last],at:new Date().toISOString()}); patch.stage_history=hist; }
+      patch.current_stage=last;
+    }
     await db.updOrder(sjOrderId,patch);
     $('#sjSave').textContent=t('save');$('#sjSave').disabled=false;
     $('#modalBg').classList.remove('on');
@@ -1713,7 +1735,7 @@ function submitOrderForm(type,getClient,after){
   run(async()=>{
     for(const {s,q} of rows){
       const stg=stagesOf(s);
-      await db.addOrder({client,type,service_name:s.name,service_date:date,qty:q,unit:s.unit,price:s.price,amount:q*s.price,note,stages:stg,stage_qty:initStageQty(stg,q),delivered:false,invoiced:false,paid:false,billed:false,sj_file:null,sj_signed:false});
+      await db.addOrder({client,type,service_name:s.name,service_date:date,qty:q,unit:s.unit,price:s.price,amount:q*s.price,note,stages:stg,current_stage:0,stage_history:[{stage:stg[0],at:new Date().toISOString()}],delivered:false,invoiced:false,paid:false,billed:false,sj_file:null,sj_signed:false});
     }
   },t('orders_sent').replace('{n}',rows.length),after);
 }
@@ -1733,11 +1755,9 @@ function homeTile(goto,bg,icon,big,label,sub){
   </button>`;
 }
 function orderProgress(o){
-  const st=orderStages(o), q=orderQty(o), n=st.length-1, total=+o.qty||0;
-  if(!total||n<=0)return {pct:o.delivered?100:0,stage:st[st.length-1]};
-  let weighted=0; q.forEach((c,i)=>weighted+=c*i);
-  let cur=0; q.forEach((c,i)=>{if(c>0)cur=i;});
-  return {pct:Math.round(weighted/(total*n)*100), stage:st[cur]};
+  const st=orderStages(o), n=st.length-1, cur=currentStage(o);
+  if(n<=0)return {pct:o.delivered?100:0,stage:st[st.length-1]};
+  return {pct:Math.round(cur/n*100), stage:st[cur]};
 }
 function homeTileH(area,goto,bg,icon,big,label,sub){
   return `<button data-goto="${goto}" class="h-tile h-${area}" style="background:${bg}">
