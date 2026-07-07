@@ -410,6 +410,38 @@
   </div>
 </div>
 
+<!-- Mark invoice as paid modal -->
+<div class="modal-bg" id="paidModalBg">
+  <div class="modal">
+    <h3>Tandai lunas</h3>
+    <div class="sub" id="paidSub"></div>
+    <div class="form-row">
+      <div class="field"><label>Jumlah dibayar (Rp)</label><input type="number" id="paidAmt" min="0"></div>
+      <div class="field"><label>Tanggal bayar</label><input type="date" id="paidDate"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-sm" id="paidCancel" style="flex:1">Batal</button>
+      <button class="btn-cta" id="paidGo" style="flex:1;justify-content:center">Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- Opening cash balance modal -->
+<div class="modal-bg" id="openBalModalBg">
+  <div class="modal">
+    <h3>Modal awal kas</h3>
+    <div class="sub">Saldo kas/bank riil di tanggal ini. Order/PO yang lunas/diterima SEBELUM tanggal ini gak ikut ke ledger — dianggap udah "beres sebelum saldo mulai".</div>
+    <div class="form-row">
+      <div class="field"><label>Saldo (Rp)</label><input type="number" id="openBalAmt" min="0"></div>
+      <div class="field"><label>Tanggal</label><input type="date" id="openBalDate"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-sm" id="openBalCancel" style="flex:1">Batal</button>
+      <button class="btn-cta" id="openBalGo" style="flex:1;justify-content:center">Simpan modal awal</button>
+    </div>
+  </div>
+</div>
+
 <!-- Grand Invoice builder modal -->
 <div class="modal-bg" id="grandModalBg">
   <div class="modal wide">
@@ -833,24 +865,29 @@ const V={
   },
 
   fin(){
-    // income = invoiced orders; expense = received POs + manual expense; manual income too
-    const invoicedOrders=orders.filter(o=>o.invoiced);
-    const incomeOrders=invoicedOrders.reduce((s,o)=>s+ +o.amount,0);
-    const paidIncome=invoicedOrders.filter(o=>o.paid).reduce((s,o)=>s+ +o.amount,0);
-    const unpaidIncome=incomeOrders-paidIncome;
-    const poExpense=pos.filter(p=>p.status==='received').reduce((s,p)=>s+ +p.total,0);
-    const manualIncome=txns.filter(x=>x.type==='income').reduce((s,x)=>s+ +x.amount,0);
-    const manualExpense=txns.filter(x=>x.type==='expense').reduce((s,x)=>s+ +x.amount,0);
-    const totalIncome=incomeOrders+manualIncome;
-    const totalExpense=poExpense+manualExpense;
-    const net=totalIncome-totalExpense;
+    const openingTxn=txns.find(x=>x.type==='opening');
+    const rows=[];
+    if(openingTxn)rows.push({date:openingTxn.date,type:'opening',cat:'Modal Awal',desc:openingTxn.description||'Saldo awal kas',amount:+openingTxn.amount,src:'txn',id:openingTxn.id});
+    orders.filter(o=>o.paid&&o.paid_at).forEach(o=>rows.push({date:o.paid_at.slice(0,10),type:'income',cat:typeLabel(o.type),desc:`${o.client} · ${o.service_name} (lunas)`,amount:+o.paid_amount||+o.amount,src:'order'}));
+    pos.filter(p=>p.status==='received'&&p.received_at).forEach(p=>rows.push({date:p.received_at.slice(0,10),type:'expense',cat:'PO',desc:`${p.po_number} · ${p.supplier_name}`,amount:+p.total,src:'po'}));
+    txns.filter(x=>x.type!=='opening').forEach(x=>rows.push({date:x.date,type:x.type,cat:x.category||'Manual',desc:x.description||'',amount:+x.amount,src:'txn',id:x.id}));
+    rows.sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+    let bal=0; rows.forEach(r=>{ bal+=(r.type==='expense'?-r.amount:r.amount); r.balance=bal; });
+    const cashBalance=bal;
+
+    const ym=new Date().toISOString().slice(0,7);
+    const monthIncome=rows.filter(r=>r.type==='income'&&(r.date||'').startsWith(ym)).reduce((s,r)=>s+r.amount,0);
+    const monthExpense=rows.filter(r=>r.type==='expense'&&(r.date||'').startsWith(ym)).reduce((s,r)=>s+r.amount,0);
+    const incomeOrders=orders.filter(o=>o.invoiced).reduce((s,o)=>s+ +o.amount,0);
+    const unpaidIncome=orders.filter(o=>o.invoiced&&!o.paid).reduce((s,o)=>s+ +o.amount,0);
     const pph23=incomeOrders*TAX.PPH23_RATE;
 
-    let body=head(t('nav_fin'),'Keuangan','Ringkasan kas, pajak, dan buku transaksi. PPN OFF (NHS belum PKP).',`<button class="btn-cta" id="addTxn">+ Transaksi</button>`);
+    let body=head(t('nav_fin'),'Keuangan','Saldo kas berjalan, pajak, dan ledger transaksi. PPN OFF (NHS belum PKP).',
+      `<div style="display:flex;gap:8px">${openingTxn?'':'<button class="btn-sm" id="addOpenBal">+ Modal Awal</button>'}<button class="btn-cta" id="addTxn">+ Transaksi</button></div>`);
     body+=`<div class="grid g4">
-      <div class="card stat"><div class="lbl">Pemasukan</div><div class="num sm" style="color:var(--ok)">${rp(totalIncome)}</div><div class="sub">invoice + manual</div></div>
-      <div class="card stat"><div class="lbl">Pengeluaran</div><div class="num sm" style="color:var(--alert)">${rp(totalExpense)}</div><div class="sub">PO diterima + manual</div></div>
-      <div class="card stat"><div class="lbl">Laba kotor</div><div class="num sm" style="color:${net>=0?'var(--pinus-700)':'var(--alert)'}">${rp(net)}</div><div class="sub">pemasukan − pengeluaran</div></div>
+      <div class="card stat"><div class="lbl">Saldo Kas Sekarang</div><div class="num" style="color:${cashBalance>=0?'var(--pinus-700)':'var(--alert)'}">${rp(cashBalance)}</div><div class="sub">saldo berjalan</div></div>
+      <div class="card stat"><div class="lbl">Pemasukan bulan ini</div><div class="num sm" style="color:var(--ok)">${rp(monthIncome)}</div><div class="sub">invoice lunas + manual</div></div>
+      <div class="card stat"><div class="lbl">Pengeluaran bulan ini</div><div class="num sm" style="color:var(--alert)">${rp(monthExpense)}</div><div class="sub">PO diterima + manual</div></div>
       <div class="card stat"><div class="lbl">Piutang</div><div class="num sm" style="color:var(--tembaga-700)">${rp(unpaidIncome)}</div><div class="sub">invoice belum dibayar</div></div>
     </div>`;
     // tax panel
@@ -858,21 +895,17 @@ const V={
       <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--line)"><div><strong>PPN 11%</strong><div style="font-size:12px;color:var(--faint)">NHS belum PKP → tidak memungut PPN</div></div><span class="badge b-wait">OFF</span></div>
       <div style="display:flex;justify-content:space-between;padding:9px 0"><div><strong>PPh 23 jasa (2%)</strong><div style="font-size:12px;color:var(--faint)">Atas nilai invoice ${rp(incomeOrders)} — pilih pemotong per order (buyer / NHS)</div></div><span class="amt" style="color:var(--pinus-700)">${rp(pph23)}</span></div>
     </div>`;
-    // ledger: invoiced orders + manual txns
-    const rows=[];
-    invoicedOrders.forEach(o=>rows.push({date:o.service_date,type:'income',cat:typeLabel(o.type),desc:`${o.client} · ${o.service_name}`,amount:+o.amount,paid:o.paid,src:'order'}));
-    pos.filter(p=>p.status==='received').forEach(p=>rows.push({date:p.date,type:'expense',cat:'PO',desc:`${p.po_number} · ${p.supplier_name}`,amount:+p.total,src:'po'}));
-    txns.forEach(x=>rows.push({date:x.date,type:x.type,cat:x.category||'Manual',desc:x.description||'',amount:+x.amount,src:'txn',id:x.id}));
-    rows.sort((a,b)=>(b.date||'').localeCompare(a.date||''));
-    body+=`<div class="sec-title">Buku transaksi</div>`;
-    if(!rows.length)return body+emptyBox('Belum ada transaksi','Transaksi muncul dari invoice, PO diterima, atau input manual.');
+    body+=`<div class="sec-title">Ledger kas (saldo berjalan)</div>`;
+    if(!openingTxn)body+=`<div class="card" style="margin-bottom:14px"><div class="empty">Belum ada Modal Awal — klik "+ Modal Awal" kalau mau mulai catet saldo dari angka tertentu. Sementara ini ledger mulai dari 0.</div></div>`;
+    if(!rows.length)return body+emptyBox('Belum ada transaksi kas','Transaksi muncul dari invoice lunas, PO diterima, modal awal, atau input manual.');
     body+=`<div class="card" style="padding:6px 8px"><div class="tbl-wrap"><table>
-      <thead><tr><th>Tanggal</th><th>Kategori</th><th>Keterangan</th><th style="text-align:right">Masuk</th><th style="text-align:right">Keluar</th><th></th></tr></thead><tbody>
+      <thead><tr><th>Tanggal</th><th>Kategori</th><th>Keterangan</th><th style="text-align:right">Masuk</th><th style="text-align:right">Keluar</th><th style="text-align:right">Saldo</th><th></th></tr></thead><tbody>
       ${rows.map(r=>`<tr>
         <td>${dLabel(r.date)}</td><td style="color:var(--muted)">${r.cat}</td>
-        <td>${r.desc}${r.src==='order'?(r.paid?' <span class="badge b-ok">lunas</span>':' <span class="badge b-wait">belum</span>'):''}</td>
-        <td class="amt" style="text-align:right;color:var(--ok)">${r.type==='income'?rp(r.amount):''}</td>
+        <td>${r.desc}</td>
+        <td class="amt" style="text-align:right;color:var(--ok)">${r.type==='income'||r.type==='opening'?rp(r.amount):''}</td>
         <td class="amt" style="text-align:right;color:var(--alert)">${r.type==='expense'?rp(r.amount):''}</td>
+        <td class="amt" style="text-align:right;font-weight:700;color:var(--pinus-700)">${rp(r.balance)}</td>
         <td style="text-align:right">${r.src==='txn'?`<button class="btn-sm btn-del" data-txndel="${r.id}">✕</button>`:''}</td>
       </tr>`).join('')}
       </tbody></table></div></div>`;
@@ -960,7 +993,7 @@ function wire(view){
   if(view==='masuk'){
     main.querySelectorAll('[data-batch]').forEach(b=>b.onclick=()=>openBatch(b.dataset.batch));
     main.querySelectorAll('[data-sj]').forEach(b=>b.onclick=()=>openSJ(b.dataset.sj));
-    main.querySelectorAll('[data-paid]').forEach(b=>b.onclick=()=>run(()=>db.updOrder(b.dataset.paid,{paid:true}),t('marked_paid'),()=>go('masuk')));
+    main.querySelectorAll('[data-paid]').forEach(b=>b.onclick=()=>openPaidModal(b.dataset.paid));
     main.querySelectorAll('[data-delorder]').forEach(b=>b.onclick=()=>{const o=orders.find(x=>x.id===b.dataset.delorder);delCtx={kind:'order',id:o.id};$('#delTitle').textContent='Hapus order ini?';$('#delSub').textContent=`Order "${o.service_name}" (${o.client}, ${o.qty} ${o.unit}) dihapus permanen. Buat beberes data trial.`;$('#delModalBg').classList.add('on');});
   }
   if(view==='katalog'){
@@ -980,11 +1013,16 @@ function wire(view){
     $('#addPO').onclick=()=>openPO();
     main.querySelectorAll('[data-supedit]').forEach(b=>b.onclick=()=>editSup(b.dataset.supedit));
     main.querySelectorAll('[data-supdel]').forEach(b=>b.onclick=()=>{delCtx={kind:'sup',id:b.dataset.supdel};const s=suppliers.find(v=>v.id===b.dataset.supdel);$('#delTitle').textContent='Hapus supplier?';$('#delSub').textContent=`"${s.name}" akan dihapus.`;$('#delModalBg').classList.add('on');});
-    main.querySelectorAll('[data-postatus]').forEach(b=>b.onclick=()=>run(()=>db.updPO(b.dataset.postatus,{status:b.dataset.to}),'Status PO diperbarui',()=>go('po')));
+    main.querySelectorAll('[data-postatus]').forEach(b=>b.onclick=()=>{
+      const patch={status:b.dataset.to};
+      if(b.dataset.to==='received')patch.received_at=new Date().toISOString();
+      run(()=>db.updPO(b.dataset.postatus,patch),'Status PO diperbarui',()=>go('po'));
+    });
     main.querySelectorAll('[data-podel]').forEach(b=>b.onclick=()=>{delCtx={kind:'po',id:b.dataset.podel};const p=pos.find(v=>v.id===b.dataset.podel);$('#delTitle').textContent='Hapus PO?';$('#delSub').textContent=`"${p.po_number}" akan dihapus.`;$('#delModalBg').classList.add('on');});
   }
   if(view==='fin'){
     $('#addTxn').onclick=()=>openTxn();
+    if($('#addOpenBal'))$('#addOpenBal').onclick=()=>openOpenBal();
     main.querySelectorAll('[data-txndel]').forEach(b=>b.onclick=()=>run(()=>db.delTxn(b.dataset.txndel),'Transaksi dihapus',()=>go('fin')));
   }
 }
@@ -1070,6 +1108,14 @@ function bindStatic(){
     const amt=+$('#txnAmt').value||0; if(!amt)return toast('Isi jumlah dulu',true);
     run(()=>db.addTxn({type:$('#txnType').value,date:$('#txnDate').value||new Date().toISOString().slice(0,10),category:$('#txnCat').value.trim(),description:$('#txnDesc').value.trim(),amount:amt}),'Transaksi disimpan',()=>{$('#txnModalBg').classList.remove('on');go('fin');});
   };
+  // paid modal
+  $('#paidCancel').onclick=()=>$('#paidModalBg').classList.remove('on');
+  $('#paidModalBg').onclick=e=>{if(e.target===$('#paidModalBg'))$('#paidModalBg').classList.remove('on');};
+  $('#paidGo').onclick=doMarkPaid;
+  // opening balance modal
+  $('#openBalCancel').onclick=()=>$('#openBalModalBg').classList.remove('on');
+  $('#openBalModalBg').onclick=e=>{if(e.target===$('#openBalModalBg'))$('#openBalModalBg').classList.remove('on');};
+  $('#openBalGo').onclick=doSaveOpenBal;
   // SJ modal
   $('#sjCancel').onclick=()=>$('#modalBg').classList.remove('on');
   $('#modalBg').onclick=e=>{if(e.target===$('#modalBg'))$('#modalBg').classList.remove('on');};
@@ -1153,6 +1199,30 @@ function savePO(){
 }
 /* ================= TXN MODAL ================= */
 function openTxn(){ $('#txnType').value='expense';$('#txnDate').value=new Date().toISOString().slice(0,10);$('#txnCat').value='';$('#txnDesc').value='';$('#txnAmt').value='';$('#txnModalBg').classList.add('on'); }
+let paidOrderId=null;
+function openPaidModal(id){
+  paidOrderId=id; const o=orders.find(x=>x.id===id);
+  $('#paidSub').textContent=`${o.service_name} · ${o.client} · total invoice ${rp(o.amount)}`;
+  $('#paidAmt').value=o.amount;
+  $('#paidDate').value=new Date().toISOString().slice(0,10);
+  $('#paidModalBg').classList.add('on');
+}
+function doMarkPaid(){
+  const amt=+$('#paidAmt').value||0; if(amt<=0)return toast('Isi jumlah dulu',true);
+  const date=$('#paidDate').value||new Date().toISOString().slice(0,10);
+  run(()=>db.updOrder(paidOrderId,{paid:true,paid_amount:amt,paid_at:new Date(date+'T00:00:00').toISOString()}),t('marked_paid'),()=>{$('#paidModalBg').classList.remove('on');go('masuk');});
+}
+function openOpenBal(){
+  $('#openBalAmt').value='';
+  $('#openBalDate').value=new Date().toISOString().slice(0,10);
+  $('#openBalModalBg').classList.add('on');
+}
+function doSaveOpenBal(){
+  const amt=+$('#openBalAmt').value||0;
+  if(!amt)return toast('Isi saldo dulu (atau Batal kalau belum mau)',true);
+  const date=$('#openBalDate').value||new Date().toISOString().slice(0,10);
+  run(()=>db.addTxn({type:'opening',date,category:'Modal Awal',description:'Saldo awal kas',amount:amt}),'Modal awal disimpan',()=>{$('#openBalModalBg').classList.remove('on');go('fin');});
+}
 
 /* ================= SJ UPLOAD ================= */
 let sjOrderId=null,sjFile=null;
