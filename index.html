@@ -374,6 +374,7 @@
     <h3 id="poModalTitle">Purchase Order baru</h3>
     <div class="sub">Susun item, harga terhitung otomatis. Simpan sebagai draft dulu.</div>
     <div class="field"><label>Supplier</label><select id="poSup"></select></div>
+    <div class="field"><label>Kategori</label><select id="poCat"><option value="Bahan Produksi">Bahan Produksi</option><option value="Operasional">Operasional</option><option value="Konsumsi">Konsumsi</option><option value="Lainnya">Lainnya</option></select></div>
     <div class="li-head"><span>Item</span><span>Qty</span><span class="li-unit">Satuan</span><span>Harga</span><span></span></div>
     <div id="poItems"></div>
     <button class="btn-sm" id="poAddItem" style="margin-top:4px">+ Tambah baris</button>
@@ -397,7 +398,7 @@
     <h3>Transaksi manual</h3>
     <div class="sub">Catat pemasukan/pengeluaran di luar order & PO.</div>
     <div class="form-row">
-      <div class="field"><label>Jenis</label><select id="txnType"><option value="income">Pemasukan</option><option value="expense">Pengeluaran</option></select></div>
+      <div class="field"><label>Jenis</label><select id="txnType"><option value="income">Pemasukan</option><option value="expense">Pengeluaran</option><option value="owner_draw">Prive / Owner Draw</option></select></div>
       <div class="field"><label>Tanggal</label><input type="date" id="txnDate"></div>
     </div>
     <div class="field"><label>Kategori</label><input type="text" id="txnCat" placeholder="mis. Gaji / Listrik / Lain-lain"></div>
@@ -613,7 +614,7 @@ let demoSuppliers=[
   {id:'sup1',name:'Heaven Chemical',contact:'Bpk. Andi',phone:'0812-3456-7890',email:'sales@heavenchem.co.id',note:'Supplier chemical laundry'},
 ];
 let demoPOs=[
-  {id:'po1',po_number:'PO-2026-001',supplier_id:'sup1',supplier_name:'Heaven Chemical',date:'2026-06-25',status:'received',items:[{name:'Deterjen Giken',qty:50,unit:'kg',price:28000},{name:'Softener',qty:20,unit:'L',price:22000}],subtotal:1840000,ppn_enabled:false,ppn:0,total:1840000,note:'',created_at:'2026-06-25T00:00:00Z'},
+  {id:'po1',po_number:'PO-2026-001',supplier_id:'sup1',supplier_name:'Heaven Chemical',date:'2026-06-25',status:'received',category:'Bahan Produksi',items:[{name:'Deterjen Giken',qty:50,unit:'kg',price:28000},{name:'Softener',qty:20,unit:'L',price:22000}],subtotal:1840000,ppn_enabled:false,ppn:0,total:1840000,note:'',created_at:'2026-06-25T00:00:00Z'},
 ];
 let demoTxns=[]; // manual transactions only; income/expense mostly derived
 let demoGrands=[]; // grand invoices (in-session demo)
@@ -853,9 +854,10 @@ const V={
     body+=`<div class="sec-title">Daftar PO</div>`;
     if(!pos.length)return body+emptyBox('Belum ada PO','Bikin PO pertama di kanan atas.');
     body+=`<div class="card" style="padding:6px 8px"><div class="tbl-wrap"><table>
-      <thead><tr><th>No. PO</th><th>Tanggal</th><th>Supplier</th><th style="text-align:right">Total</th><th>Status</th><th></th></tr></thead><tbody>
+      <thead><tr><th>No. PO</th><th>Tanggal</th><th>Supplier</th><th>Kategori</th><th style="text-align:right">Total</th><th>Status</th><th></th></tr></thead><tbody>
       ${pos.map(p=>{const badge=p.status==='received'?'b-ok':(p.status==='sent'?'b-info':'b-wait');const label=p.status==='received'?'Diterima':(p.status==='sent'?'Terkirim':'Draft');return `<tr>
         <td class="mono">${p.po_number}</td><td>${dLabel(p.date)}</td><td>${p.supplier_name}</td>
+        <td style="color:var(--muted)">${p.category||'Lainnya'}</td>
         <td class="amt" style="text-align:right">${rp(p.total)}</td>
         <td><span class="badge ${badge}">${label}</span></td>
         <td style="text-align:right;white-space:nowrap">${p.status==='draft'?`<button class="btn-sm" data-postatus="${p.id}" data-to="sent">Tandai terkirim</button>`:''}${p.status==='sent'?`<button class="btn-sm btn-adv" data-postatus="${p.id}" data-to="received">Tandai diterima</button>`:''} <button class="btn-sm btn-del" data-podel="${p.id}">✕</button></td>
@@ -870,9 +872,9 @@ const V={
     if(openingTxn)rows.push({date:openingTxn.date,type:'opening',cat:'Modal Awal',desc:openingTxn.description||'Saldo awal kas',amount:+openingTxn.amount,src:'txn',id:openingTxn.id});
     orders.filter(o=>o.paid&&o.paid_at).forEach(o=>rows.push({date:o.paid_at.slice(0,10),type:'income',cat:typeLabel(o.type),desc:`${o.client} · ${o.service_name} (lunas)`,amount:+o.paid_amount||+o.amount,src:'order'}));
     pos.filter(p=>p.status==='received'&&p.received_at).forEach(p=>rows.push({date:p.received_at.slice(0,10),type:'expense',cat:'PO',desc:`${p.po_number} · ${p.supplier_name}`,amount:+p.total,src:'po'}));
-    txns.filter(x=>x.type!=='opening').forEach(x=>rows.push({date:x.date,type:x.type,cat:x.category||'Manual',desc:x.description||'',amount:+x.amount,src:'txn',id:x.id}));
+    txns.filter(x=>x.type!=='opening').forEach(x=>rows.push({date:x.date,type:x.type,cat:x.type==='owner_draw'?('Prive / Owner Draw'+(x.category?' · '+x.category:'')):(x.category||'Manual'),desc:x.description||'',amount:+x.amount,src:'txn',id:x.id}));
     rows.sort((a,b)=>(a.date||'').localeCompare(b.date||''));
-    let bal=0; rows.forEach(r=>{ bal+=(r.type==='expense'?-r.amount:r.amount); r.balance=bal; });
+    let bal=0; rows.forEach(r=>{ bal+=((r.type==='expense'||r.type==='owner_draw')?-r.amount:r.amount); r.balance=bal; });
     const cashBalance=bal;
 
     const ym=new Date().toISOString().slice(0,7);
@@ -904,7 +906,7 @@ const V={
         <td>${dLabel(r.date)}</td><td style="color:var(--muted)">${r.cat}</td>
         <td>${r.desc}</td>
         <td class="amt" style="text-align:right;color:var(--ok)">${r.type==='income'||r.type==='opening'?rp(r.amount):''}</td>
-        <td class="amt" style="text-align:right;color:var(--alert)">${r.type==='expense'?rp(r.amount):''}</td>
+        <td class="amt" style="text-align:right;color:${r.type==='owner_draw'?'var(--tembaga-700)':'var(--alert)'}">${(r.type==='expense'||r.type==='owner_draw')?rp(r.amount):''}</td>
         <td class="amt" style="text-align:right;font-weight:700;color:var(--pinus-700)">${rp(r.balance)}</td>
         <td style="text-align:right">${r.src==='txn'?`<button class="btn-sm btn-del" data-txndel="${r.id}">✕</button>`:''}</td>
       </tr>`).join('')}
@@ -1184,6 +1186,7 @@ function recalcPO(){
 }
 function openPO(){
   $('#poSup').innerHTML = suppliers.length? suppliers.map(s=>`<option value="${s.id}">${s.name}</option>`).join('') : `<option value="">— belum ada supplier —</option>`;
+  $('#poCat').value='Bahan Produksi';
   $('#poItems').innerHTML='';poAddRow();$('#poPPN').checked=false;$('#poNote').value='';recalcPO();
   $('#poModalBg').classList.add('on');
 }
@@ -1195,7 +1198,7 @@ function savePO(){
   const subtotal=items.reduce((s,i)=>s+i.qty*i.price,0);
   const ppnOn=$('#poPPN').checked;const ppn=ppnOn?Math.round(subtotal*TAX.PPN_RATE):0;
   const num='PO-'+new Date().getFullYear()+'-'+String((pos.length+1)).padStart(3,'0');
-  run(()=>db.addPO({po_number:num,supplier_id:sup.id,supplier_name:sup.name,date:new Date().toISOString().slice(0,10),status:'draft',items,subtotal,ppn_enabled:ppnOn,ppn,total:subtotal+ppn,note:$('#poNote').value.trim()}),'PO draft dibuat: '+num,()=>{$('#poModalBg').classList.remove('on');go('po');});
+  run(()=>db.addPO({po_number:num,supplier_id:sup.id,supplier_name:sup.name,date:new Date().toISOString().slice(0,10),status:'draft',category:$('#poCat').value,items,subtotal,ppn_enabled:ppnOn,ppn,total:subtotal+ppn,note:$('#poNote').value.trim()}),'PO draft dibuat: '+num,()=>{$('#poModalBg').classList.remove('on');go('po');});
 }
 /* ================= TXN MODAL ================= */
 function openTxn(){ $('#txnType').value='expense';$('#txnDate').value=new Date().toISOString().slice(0,10);$('#txnCat').value='';$('#txnDesc').value='';$('#txnAmt').value='';$('#txnModalBg').classList.add('on'); }
