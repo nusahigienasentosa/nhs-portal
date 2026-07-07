@@ -663,6 +663,12 @@ async function sbSignedUrl(bucket,path,expiresIn=300){
   const data=await r.json();
   return `${CONFIG.SUPABASE_URL}${data.signedURL}`;
 }
+function sjRelPath(sjFile){
+  if(!sjFile||typeof sjFile!=='string')return null;
+  const marker='/object/public/surat-jalan/';
+  const i=sjFile.indexOf(marker);
+  return i>=0 ? sjFile.slice(i+marker.length) : sjFile;
+}
 const db={
   // services
   async services(){ if(!LIVE)return [...demoServices]; return await sbGet('services','&order=type.asc'); },
@@ -973,7 +979,7 @@ const V={
 };
 
 function orderCard(o,admin){
-  const sjBadge=o.sj_file?`<span class="sj-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>${o.sj_signed?t('sj_signed_tag'):t('sj_uploaded_tag')}${typeof o.sj_file==='string'?' · '+o.sj_file.split('/').pop():''}</span>`:'';
+  const sjBadge=o.sj_file?`<button class="sj-tag" data-viewsj="${sjRelPath(o.sj_file)}" style="border:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>${o.sj_signed?t('sj_signed_tag'):t('sj_uploaded_tag')}${typeof o.sj_file==='string'?' · '+o.sj_file.split('/').pop():''}</button>`:'';
   const ready=!o.delivered&&allAtLast(o);
   const canBatch=!o.delivered;
   return `<div class="card" style="margin-bottom:14px">
@@ -1033,6 +1039,10 @@ async function run(fn,okMsg,then){
 }
 
 function wire(view){
+  main.querySelectorAll('[data-viewsj]').forEach(b=>b.onclick=async()=>{
+    try{ const url=await sbSignedUrl('surat-jalan',b.dataset.viewsj,300); window.open(url,'_blank'); }
+    catch(e){ toast('⚠ '+e.message,true); }
+  });
   if(view==='tagihan')return wireTagihan();
   if(['home','catering','laundry','buatorder'].includes(view))return wireFase4(view);
   if(view==='pesan'){
@@ -1329,7 +1339,7 @@ async function saveSJ(){
       let up=await fetch(`${CONFIG.SUPABASE_URL}/storage/v1/object/surat-jalan/${path}`,{method:'POST',headers:{"apikey":CONFIG.SUPABASE_ANON_KEY,"Authorization":H["Authorization"]},body:upBlob});
       if(up.status===401&&currentUser&&currentUser._refresh){ if(await tryRefresh()) up=await fetch(`${CONFIG.SUPABASE_URL}/storage/v1/object/surat-jalan/${path}`,{method:'POST',headers:{"apikey":CONFIG.SUPABASE_ANON_KEY,"Authorization":H["Authorization"]},body:upBlob}); }
       if(!up.ok){ throw new Error(await errMsg(up,t('sj_upload_fail'))); }
-      fileRef=`${CONFIG.SUPABASE_URL}/storage/v1/object/public/surat-jalan/${path}`;
+      fileRef=path;
     }
     const patch={sj_file:fileRef,sj_signed:signed};
     if(signed){
