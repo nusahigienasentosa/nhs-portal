@@ -1413,6 +1413,18 @@ function billableOrders(){ return orders.filter(o=>o.invoiced&&!o.billed); }
 function billableFor(client,from,to){ return billableOrders().filter(o=>o.client===client && (!from||o.service_date>=from) && (!to||o.service_date<=to)); }
 function billableClients(){ return [...new Set(billableOrders().map(o=>o.client))]; }
 function grandOrders(g){ const ids=g.order_ids||[]; return orders.filter(o=>ids.includes(o.id)); }
+function grandPaidStatus(g){
+  const ords=grandOrders(g);
+  const total=ords.length, paidCount=ords.filter(o=>o.paid).length;
+  const state = total>0&&paidCount===total ? 'paid' : (paidCount>0?'partial':'unpaid');
+  return {total,paidCount,state};
+}
+function grandPaidBadge(g){
+  const {total,paidCount,state}=grandPaidStatus(g);
+  if(state==='paid')return `<span class="badge b-ok">Lunas</span>`;
+  if(state==='partial')return `<span class="badge b-prog">Sebagian ${paidCount}/${total}</span>`;
+  return `<span class="badge b-wait">Belum lunas</span>`;
+}
 
 /* ============================================================
    VIEW: TAGIHAN (rework jadi hub Grand Invoice)
@@ -1422,8 +1434,8 @@ V.tagihan=function(){
     const mine=grands.filter(g=>g.client===currentUser.client&&g.status==='sent');
     let b=head(t('nav_tagihan'),'Tagihan Anda','Invoice gabungan dari NHS. Unduh PDF untuk arsip & pembayaran.');
     if(!mine.length)return b+emptyBox('Belum ada tagihan','Invoice gabungan muncul di sini setelah NHS menerbitkannya.');
-    b+='<div class="card" style="padding:6px 8px"><div class="tbl-wrap"><table><thead><tr><th>No. Invoice</th><th>Periode</th><th>Tanggal</th><th style="text-align:right">Total</th><th></th></tr></thead><tbody>';
-    b+=mine.map(g=>`<tr><td class="mono">${g.number}</td><td>${dLabel(g.period_from)} – ${dLabel(g.period_to)}</td><td>${dLabel(g.created_at)}</td><td class="amt" style="text-align:right">${rp(g.total)}</td><td style="text-align:right"><button class="btn-sm" data-gpdf="${g.id}">Unduh PDF</button></td></tr>`).join('');
+    b+='<div class="card" style="padding:6px 8px"><div class="tbl-wrap"><table><thead><tr><th>No. Invoice</th><th>Periode</th><th>Tanggal</th><th style="text-align:right">Total</th><th>Status</th><th></th></tr></thead><tbody>';
+    b+=mine.map(g=>`<tr><td class="mono">${g.number}</td><td>${dLabel(g.period_from)} – ${dLabel(g.period_to)}</td><td>${dLabel(g.created_at)}</td><td class="amt" style="text-align:right">${rp(g.total)}</td><td>${grandPaidBadge(g)}</td><td style="text-align:right"><button class="btn-sm" data-gpdf="${g.id}">Unduh PDF</button></td></tr>`).join('');
     b+='</tbody></table></div></div>';
     return b;
   }
@@ -1449,11 +1461,12 @@ V.tagihan=function(){
   // grand invoices list
   b+=`<div class="sec-title">Grand Invoice</div>`;
   if(!grands.length)return b+emptyBox('Belum ada grand invoice','Pilih order di pool atas → "Buat Grand Invoice".');
-  b+=`<div class="card" style="padding:6px 8px"><div class="tbl-wrap"><table><thead><tr><th>No.</th><th>Klien</th><th>Periode</th><th style="text-align:right">Total</th><th>Status</th><th></th></tr></thead><tbody>`;
+  b+=`<div class="card" style="padding:6px 8px"><div class="tbl-wrap"><table><thead><tr><th>No.</th><th>Klien</th><th>Periode</th><th style="text-align:right">Total</th><th>Kirim</th><th>Bayar</th><th></th></tr></thead><tbody>`;
   b+=grands.map(g=>{const badge=g.status==='sent'?'b-ok':'b-wait';const lbl=g.status==='sent'?('Terkirim'+(g.sent_to?' → '+g.sent_to:'')):'Draft';return `<tr>
     <td class="mono">${g.number}</td><td>${g.client}</td><td>${dLabel(g.period_from)} – ${dLabel(g.period_to)}</td>
     <td class="amt" style="text-align:right">${rp(g.total)}</td>
     <td><span class="badge ${badge}">${lbl}</span></td>
+    <td>${grandPaidBadge(g)}</td>
     <td style="text-align:right;white-space:nowrap"><button class="btn-sm" data-gpdf="${g.id}">PDF</button> <button class="btn-sm btn-adv" data-gsend="${g.id}">Kirim</button> <button class="btn-sm btn-del" data-gdel="${g.id}">✕</button></td>
   </tr>`;}).join('');
   b+=`</tbody></table></div></div>`;
