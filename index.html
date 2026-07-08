@@ -47,6 +47,27 @@
 
   #app{display:none;min-height:100vh}
   #app.on{display:grid;grid-template-columns:248px 1fr}
+  #app.on.kiosk-mode{grid-template-columns:1fr}
+  .kiosk-mode .sidebar{display:none}
+  .kiosk-mode .main{padding:0;max-width:100%}
+  .kiosk-mode .menu-btn{display:none!important}
+  body.kiosk-mode .langsw{display:none!important}
+  .kiosk-wrap{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;background:var(--pinus-700);color:#fff;text-align:center}
+  .kiosk-clock{font-size:15px;color:#cfe6d8;margin-bottom:8px;font-weight:600;letter-spacing:.05em}
+  .kiosk-title{font-size:26px;font-weight:800;margin-bottom:26px}
+  .kiosk-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px;max-width:640px;width:100%}
+  .kiosk-emp-btn{background:#fff;color:var(--pinus-700);border-radius:16px;padding:22px 12px;font-size:17px;font-weight:700;box-shadow:0 8px 24px rgba(0,0,0,.18)}
+  .kiosk-emp-btn:hover{background:var(--warn-bg)}
+  .kiosk-pin-box{background:#fff;color:var(--pinus-700);border-radius:20px;padding:34px 30px;max-width:360px;width:100%;box-shadow:0 12px 40px rgba(0,0,0,.25)}
+  .kiosk-pin-dots{display:flex;gap:14px;justify-content:center;margin:18px 0}
+  .kiosk-pin-dot{width:16px;height:16px;border-radius:50%;border:2px solid var(--pinus-500)}
+  .kiosk-pin-dot.filled{background:var(--tembaga);border-color:var(--tembaga)}
+  .kiosk-keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
+  .kiosk-key{padding:16px;font-size:20px;font-weight:700;border-radius:12px;background:var(--surface-2);color:var(--pinus-700)}
+  .kiosk-key:hover{background:var(--warn-bg)}
+  .kiosk-feedback{font-size:22px;font-weight:700;margin-bottom:10px}
+  .kiosk-feedback .time{font-size:36px;display:block;margin-top:8px}
+  .kiosk-logout{position:fixed;bottom:10px;right:14px;font-size:11px;color:rgba(255,255,255,.35)}
   .sidebar{background:var(--pinus-700);color:#cfdbd2;padding:22px 15px;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto}
   .sidebar .brandmark{margin-bottom:8px;padding:0 6px}
   .sidebar .brandmark .name{color:#fff}
@@ -522,6 +543,7 @@ const CONFIG = {
   DEMO_ACCOUNTS: [
     { email:"admin@nhs.co.id",         pass:"demo123", role:"nhs",    client:null },
     { email:"staff@nhs.co.id",         pass:"demo123", role:"staff",  client:null },
+    { email:"kiosk@nhs.co.id",         pass:"demo123", role:"kiosk",  client:null },
     { email:"purchasing@foodex.co.id", pass:"demo123", role:"client", client:"PT Foodex Indonesia" },
   ],
 };
@@ -533,7 +555,7 @@ const I18N={
   brand_sub:"SERVICE PORTAL",login_title:"Sign in to portal",email:"Email",ph_email:"name@company.com",password:"Password",remember:"Remember me on this device",signin:"Sign in",checking:"Checking…",wrong:"Wrong email or password",signout:"Sign out",
   chip_admin:"NHS Team (admin)",chip_staff:"NHS Staff",loading:"Loading…",cancel:"Cancel",save:"Save",catering:"Catering",laundry:"Laundry",
   grp_ops:"OPERATIONS",grp_erp:"BACK OFFICE",
-  nav_pesan:"Order services",nav_pesanan:"My orders",nav_tagihan:"Invoices",nav_masuk:"Incoming orders",nav_katalog:"Catalog & prices",nav_inv:"Inventory",nav_po:"Purchase orders",nav_fin:"Finance",nav_karyawan:"Employees",
+  nav_pesan:"Order services",nav_pesanan:"My orders",nav_tagihan:"Invoices",nav_masuk:"Incoming orders",nav_katalog:"Catalog & prices",nav_inv:"Inventory",nav_po:"Purchase orders",nav_fin:"Finance",nav_karyawan:"Employees",nav_absensi:"Attendance",
   b_done:"Done",b_prog:"In progress",b_queue:"Queued",inv_paid:"Invoice paid",inv_issued:"Invoice issued",
   pesan_h:"Create order",pesan_p:"Order daily catering or a laundry pickup. Cost is calculated automatically from the NHS catalog.",
   cat_title:"Daily catering",f_menu:"Menu / package",f_deliverydate:"Delivery date",f_shift1:"Shift 1 portions",f_shift2:"Shift 2 portions",f_note:"Note (optional)",ph_cat_note:"e.g. 20 portions without meat",est_cost:"Estimated cost",btn_send_cat:"Send catering order",no_cat:"No active catering service.",
@@ -551,13 +573,13 @@ const I18N={
   svc_add_title:"Add service",svc_edit_title:"Edit service",svc_sub:"Fill in the service details. Changes apply instantly.",svc_name:"Service name",ph_svc_name:"e.g. Worker catering / Production uniform",svc_type:"Service type",opt_catering:"Catering (per portion)",opt_laundry:"Laundry (per unit)",svc_unit:"Unit",ph_svc_unit:"pcs / set / kg",svc_price:"Price (Rp per unit)",ph_svc_price:"e.g. 15000",svc_stages:"Process stages (comma separated) \u2014 buyers see progress per stage",svc_name_empty:"Service name can't be empty",svc_price_invalid:"Invalid price",svc_updated:"Service updated \u2713",svc_added:"Service added \u2713",
   del_title:"Delete service?",del_sub:"\u201C{name}\u201D will be removed from the catalog. Existing orders are unaffected.",del_confirm:"Yes, delete",svc_deleted:"Service deleted",
   order_cat_sent:"Catering order sent \u2713",order_laundry_sent:"Pickup sent \u2713",need_cat_fields:"Fill in date & portions first",need_laundry_fields:"Fill in quantity & pickup date first",progress_updated:"Progress updated \u2192 client sees it instantly",marked_paid:"Marked as paid",
-  demo_note:"DEMO MODE \u2014 <strong>admin@nhs.co.id</strong> / <strong>staff@nhs.co.id</strong> / <strong>purchasing@foodex.co.id</strong>, password <strong>demo123</strong>."
+  demo_note:"DEMO MODE \u2014 <strong>admin@nhs.co.id</strong> / <strong>staff@nhs.co.id</strong> / <strong>kiosk@nhs.co.id</strong> / <strong>purchasing@foodex.co.id</strong>, password <strong>demo123</strong>."
  },
  id:{
   brand_sub:"PORTAL LAYANAN",login_title:"Masuk ke portal",email:"Email",ph_email:"nama@perusahaan.com",password:"Kata sandi",remember:"Ingat saya di perangkat ini",signin:"Masuk",checking:"Memeriksa…",wrong:"Email atau kata sandi salah",signout:"Keluar",
   chip_admin:"Tim NHS (admin)",chip_staff:"Staff NHS",loading:"Memuat…",cancel:"Batal",save:"Simpan",catering:"Katering",laundry:"Laundry",
   grp_ops:"OPERASIONAL",grp_erp:"BACK OFFICE",
-  nav_pesan:"Pesan layanan",nav_pesanan:"Pesanan saya",nav_tagihan:"Tagihan",nav_masuk:"Pesanan masuk",nav_katalog:"Katalog & harga",nav_inv:"Inventory",nav_po:"Purchase order",nav_fin:"Keuangan",nav_karyawan:"Karyawan",
+  nav_pesan:"Pesan layanan",nav_pesanan:"Pesanan saya",nav_tagihan:"Tagihan",nav_masuk:"Pesanan masuk",nav_katalog:"Katalog & harga",nav_inv:"Inventory",nav_po:"Purchase order",nav_fin:"Keuangan",nav_karyawan:"Karyawan",nav_absensi:"Absensi",
   b_done:"Selesai",b_prog:"Diproses",b_queue:"Antre",inv_paid:"Invoice lunas",inv_issued:"Invoice terbit",
   pesan_h:"Buat pesanan",pesan_p:"Pesan katering harian atau penjemputan laundry. Biaya terhitung otomatis dari katalog NHS.",
   cat_title:"Katering harian",f_menu:"Menu / paket",f_deliverydate:"Tanggal pengiriman",f_shift1:"Porsi shift 1",f_shift2:"Porsi shift 2",f_note:"Catatan (opsional)",ph_cat_note:"mis. 20 porsi tanpa daging",est_cost:"Perkiraan biaya",btn_send_cat:"Kirim pesanan katering",no_cat:"Belum ada layanan katering aktif.",
@@ -575,13 +597,13 @@ const I18N={
   svc_add_title:"Tambah layanan",svc_edit_title:"Ubah layanan",svc_sub:"Isi detail layanan. Perubahan langsung dipakai.",svc_name:"Nama layanan",ph_svc_name:"mis. Katering pekerja / Seragam produksi",svc_type:"Jenis layanan",opt_catering:"Katering (per porsi)",opt_laundry:"Laundry (per satuan)",svc_unit:"Satuan",ph_svc_unit:"pcs / set / kg",svc_price:"Harga (Rp per satuan)",ph_svc_price:"mis. 15000",svc_stages:"Tahapan proses (pisah dengan koma) \u2014 buyer lihat progress per tahap",svc_name_empty:"Nama layanan tidak boleh kosong",svc_price_invalid:"Harga tidak valid",svc_updated:"Layanan diperbarui \u2713",svc_added:"Layanan ditambahkan \u2713",
   del_title:"Hapus layanan?",del_sub:"\u201C{name}\u201D akan dihapus dari katalog. Pesanan lama tidak terpengaruh.",del_confirm:"Ya, hapus",svc_deleted:"Layanan dihapus",
   order_cat_sent:"Pesanan katering terkirim \u2713",order_laundry_sent:"Penjemputan terkirim \u2713",need_cat_fields:"Isi tanggal & jumlah porsi dulu",need_laundry_fields:"Isi jumlah & tanggal jemput dulu",progress_updated:"Progres diperbarui \u2192 klien langsung melihatnya",marked_paid:"Ditandai lunas",
-  demo_note:"MODE DEMO \u2014 <strong>admin@nhs.co.id</strong> / <strong>staff@nhs.co.id</strong> / <strong>purchasing@foodex.co.id</strong>, sandi <strong>demo123</strong>."
+  demo_note:"MODE DEMO \u2014 <strong>admin@nhs.co.id</strong> / <strong>staff@nhs.co.id</strong> / <strong>kiosk@nhs.co.id</strong> / <strong>purchasing@foodex.co.id</strong>, sandi <strong>demo123</strong>."
  },
  zh:{
   brand_sub:"服务门户",login_title:"登录门户",email:"邮箱",ph_email:"name@company.com",password:"密码",remember:"在此设备上记住我",signin:"登录",checking:"验证中…",wrong:"邮箱或密码错误",signout:"退出",
   chip_admin:"NHS 团队（管理员）",chip_staff:"NHS 员工",loading:"加载中…",cancel:"取消",save:"保存",catering:"餐饮",laundry:"洗涤",
   grp_ops:"运营",grp_erp:"后台",
-  nav_pesan:"下单服务",nav_pesanan:"我的订单",nav_tagihan:"账单",nav_masuk:"收到的订单",nav_katalog:"目录与价格",nav_inv:"库存",nav_po:"采购单",nav_fin:"财务",nav_karyawan:"员工",
+  nav_pesan:"下单服务",nav_pesanan:"我的订单",nav_tagihan:"账单",nav_masuk:"收到的订单",nav_katalog:"目录与价格",nav_inv:"库存",nav_po:"采购单",nav_fin:"财务",nav_karyawan:"员工",nav_absensi:"考勤",
   b_done:"完成",b_prog:"处理中",b_queue:"排队中",inv_paid:"账单已付",inv_issued:"账单已开",
   pesan_h:"创建订单",pesan_p:"下单每日餐饮或洗涤取件。费用根据 NHS 目录自动计算。",
   cat_title:"每日餐饮",f_menu:"菜单 / 套餐",f_deliverydate:"配送日期",f_shift1:"第一班份数",f_shift2:"第二班份数",f_note:"备注（可选）",ph_cat_note:"例如：20份不含肉",est_cost:"预计费用",btn_send_cat:"提交餐饮订单",no_cat:"暂无可用餐饮服务。",
@@ -599,7 +621,7 @@ const I18N={
   svc_add_title:"添加服务",svc_edit_title:"编辑服务",svc_sub:"填写服务详情。更改即时生效。",svc_name:"服务名称",ph_svc_name:"例如：员工餐饮 / 生产制服",svc_type:"服务类型",opt_catering:"餐饮（每份）",opt_laundry:"洗涤（每单位）",svc_unit:"单位",ph_svc_unit:"件 / 套 / 公斤",svc_price:"价格（每单位 Rp）",ph_svc_price:"例如：15000",svc_stages:"流程阶段（逗号分隔）\u2014 买家按阶段查看进度",svc_name_empty:"服务名称不能为空",svc_price_invalid:"价格无效",svc_updated:"服务已更新 \u2713",svc_added:"服务已添加 \u2713",
   del_title:"删除服务？",del_sub:"\u201C{name}\u201D 将从目录中移除。现有订单不受影响。",del_confirm:"确认删除",svc_deleted:"服务已删除",
   order_cat_sent:"餐饮订单已提交 \u2713",order_laundry_sent:"取件已提交 \u2713",need_cat_fields:"请先填写日期和份数",need_laundry_fields:"请先填写数量和取件日期",progress_updated:"进度已更新 \u2192 客户即时可见",marked_paid:"已标记为已付",
-  demo_note:"演示模式 \u2014 <strong>admin@nhs.co.id</strong> / <strong>staff@nhs.co.id</strong> / <strong>purchasing@foodex.co.id</strong>，密码 <strong>demo123</strong>。"
+  demo_note:"演示模式 \u2014 <strong>admin@nhs.co.id</strong> / <strong>staff@nhs.co.id</strong> / <strong>kiosk@nhs.co.id</strong> / <strong>purchasing@foodex.co.id</strong>，密码 <strong>demo123</strong>。"
  }
 };
 let LANG=(()=>{try{return localStorage.getItem('nhs_lang')||'en'}catch(e){return 'en'}})();
@@ -641,6 +663,7 @@ let demoEmployees=[
   {id:'e2',nama:'Siti Aminah',no_hp:'0813-2222-3333',jabatan:'Packing',tanggal_masuk:'2025-03-15',tarif_harian:110000,pin:'5678',aktif:true},
   {id:'e3',nama:'Joko Widodo',no_hp:'0815-4444-5555',jabatan:'Driver',tanggal_masuk:'2024-11-01',tarif_harian:130000,pin:'4321',aktif:true},
 ];
+let demoAttendance=[]; // {id,employee_id,tanggal,jam_masuk,jam_keluar,created_at}
 let demoPOs=[
   {id:'po1',po_number:'PO-2026-001',supplier_id:'sup1',supplier_name:'Heaven Chemical',date:'2026-06-25',status:'received',category:'Bahan Produksi',items:[{name:'Deterjen Giken',qty:50,unit:'kg',price:28000},{name:'Softener',qty:20,unit:'L',price:22000}],subtotal:1840000,ppn_enabled:false,ppn:0,total:1840000,note:'',created_at:'2026-06-25T00:00:00Z'},
 ];
@@ -721,6 +744,15 @@ const db={
   async employees(){ if(!LIVE)return [...demoEmployees]; return await sbGet('employees','&order=nama.asc'); },
   async addEmp(x){ if(!LIVE){x.id='e'+Date.now();demoEmployees.push(x);return x;} return await sbWrite('POST','employees',x,true); },
   async updEmp(id,p){ if(!LIVE){Object.assign(demoEmployees.find(v=>v.id===id),p);return;} return await sbWrite('PATCH',`employees?id=eq.${id}`,p); },
+  // kiosk absensi
+  async kioskEmployees(){ if(!LIVE)return demoEmployees.filter(x=>x.aktif!==false).map(x=>({id:x.id,nama:x.nama,pin:x.pin})); return await sbGet('emp_kiosk',''); },
+  async attendance(tanggal,employeeId){
+    if(!LIVE)return demoAttendance.filter(a=>a.tanggal===tanggal&&(!employeeId||a.employee_id===employeeId));
+    let q=`&tanggal=eq.${tanggal}`; if(employeeId)q+=`&employee_id=eq.${employeeId}`;
+    return await sbGet('attendance',q);
+  },
+  async clockIn(employeeId,tanggal,now){ if(!LIVE){const row={id:'a'+Date.now(),employee_id:employeeId,tanggal,jam_masuk:now,jam_keluar:null,created_at:now};demoAttendance.push(row);return row;} return await sbWrite('POST','attendance',{employee_id:employeeId,tanggal,jam_masuk:now}); },
+  async clockOut(id,now){ if(!LIVE){const row=demoAttendance.find(a=>a.id===id);if(row)row.jam_keluar=now;return row;} return await sbWrite('PATCH',`attendance?id=eq.${id}`,{jam_keluar:now}); },
   // purchase orders
   async pos(){ if(!LIVE)return [...demoPOs].sort((a,b)=>(b.created_at||'').localeCompare(a.created_at||'')); return await sbGet('purchase_orders','&order=created_at.desc'); },
   async addPO(x){ if(!LIVE){x.id='po'+Date.now();x.created_at=new Date().toISOString();demoPOs.unshift(x);return x;} return await sbWrite('POST','purchase_orders',x,true); },
@@ -746,7 +778,7 @@ function dLabel(d){const x=new Date(d);if(LANG==='zh')return `${x.getFullYear()}
 function ymLabel(d){const x=new Date(d);if(LANG==='zh')return `${x.getFullYear()}年${x.getMonth()+1}月`;const m=MONTHS_BY[LANG]||MONTHS_BY.en;return m[x.getMonth()]+' '+x.getFullYear();}
 const TAX={PPN_RATE:0.11,PPN_ENABLED:false,PPH23_RATE:0.02};
 
-let role='client',orders=[],services=[],inventory=[],suppliers=[],pos=[],txns=[],grands=[],recon=[],employees=[],currentView='';
+let role='client',orders=[],services=[],inventory=[],suppliers=[],pos=[],txns=[],grands=[],recon=[],employees=[],attendanceRows=[],absensiDate=new Date().toISOString().slice(0,10),currentView='';
 let lastCashBalance=0;
 const $=s=>document.querySelector(s),main=$('#main');
 function toast(m,isErr){const el=$('#toast');el.textContent=m;el.className='toast show'+(isErr?' err':'');setTimeout(()=>el.classList.remove('show'),isErr?4200:2900);}
@@ -783,10 +815,10 @@ function orderTimeline(o){
 }
 async function refresh(){
   const jobs=[db.orders(),db.services(),db.grands()];
-  if(role==='nhs'){ jobs.push(db.inventory(),db.suppliers(),db.pos(),db.txns(),db.reconciliations(),db.employees()); }
+  if(role==='nhs'){ jobs.push(db.inventory(),db.suppliers(),db.pos(),db.txns(),db.reconciliations(),db.employees(),db.attendance(absensiDate)); }
   const r=await Promise.all(jobs);
   orders=r[0];services=r[1];grands=r[2];
-  if(role==='nhs'){ inventory=r[3];suppliers=r[4];pos=r[5];txns=r[6];recon=r[7];employees=r[8]; }
+  if(role==='nhs'){ inventory=r[3];suppliers=r[4];pos=r[5];txns=r[6];recon=r[7];employees=r[8];attendanceRows=r[9]; }
 }
 
 /* ================= NAV ================= */
@@ -795,7 +827,7 @@ const NAV={
   staff:{ops:[['masuk','nav_masuk','M4 6h16M4 12h16M4 18h10']]},
   nhs:{
     ops:[['masuk','nav_masuk','M4 6h16M4 12h16M4 18h10'],['katalog','nav_katalog','M4 7h16M4 12h16M4 17h16M8 3v18']],
-    erp:[['inventory','nav_inv','M4 7l8-4 8 4-8 4-8-4zm0 5l8 4 8-4M4 17l8 4 8-4'],['po','nav_po','M9 5h6M9 9h6M9 13h4M5 3h14v18l-3-2-2 2-2-2-2 2-3-2z'],['fin','nav_fin','M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6'],['karyawan','nav_karyawan','M12 12a4 4 0 100-8 4 4 0 000 8zM4 21c0-4.4 3.6-8 8-8s8 3.6 8 8'],['tagihan','nav_tagihan','M6 3h12v18l-3-2-3 2-3-2-3 2z']],
+    erp:[['inventory','nav_inv','M4 7l8-4 8 4-8 4-8-4zm0 5l8 4 8-4M4 17l8 4 8-4'],['po','nav_po','M9 5h6M9 9h6M9 13h4M5 3h14v18l-3-2-2 2-2-2-2 2-3-2z'],['fin','nav_fin','M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6'],['karyawan','nav_karyawan','M12 12a4 4 0 100-8 4 4 0 000 8zM4 21c0-4.4 3.6-8 8-8s8 3.6 8 8'],['absensi','nav_absensi','M12 7v5l3 3M21 12a9 9 0 11-18 0 9 9 0 0118 0z'],['tagihan','nav_tagihan','M6 3h12v18l-3-2-3 2-3-2-3 2z']],
   },
 };
 function firstView(){ const g=NAV[role]; return (g.ops&&g.ops[0]&&g.ops[0][0])||'masuk'; }
@@ -933,6 +965,29 @@ const V={
         <td class="amt" style="text-align:right">${rp(x.tarif_harian)}</td>
         <td>${isAktif?'<span class="badge b-ok">Aktif</span>':'<span class="badge b-wait">Nonaktif</span>'}</td>
         <td style="text-align:right;white-space:nowrap"><button class="btn-sm" data-empedit="${x.id}">${t('btn_edit')}</button> ${isAktif?`<button class="btn-sm btn-del" data-empdel="${x.id}">Hapus</button>`:`<button class="btn-sm" data-empact="${x.id}">Aktifkan</button>`}</td>
+      </tr>`;}).join('')}
+      </tbody></table></div></div>`;
+    return body;
+  },
+
+  absensi(){
+    const map={}; attendanceRows.forEach(a=>map[a.employee_id]=a);
+    const list=[...employees].sort((a,b)=>(a.nama||'').localeCompare(b.nama||''));
+    const aktifCount=list.filter(x=>x.aktif!==false).length;
+    let body=head(t('nav_absensi'),'Absensi','Rekap kehadiran karyawan per tanggal, dicatat dari kiosk. Read-only.',`<input type="date" id="absensiDateInput" value="${absensiDate}" style="padding:9px 12px;border:1px solid var(--line);border-radius:9px;font-family:inherit;font-size:13.5px;color:var(--pinus-700)">`);
+    body+=`<div class="grid g2">
+      <div class="card stat"><div class="lbl">Karyawan aktif</div><div class="num">${aktifCount}</div><div class="sub">terdaftar</div></div>
+      <div class="card stat"><div class="lbl">Sudah absen</div><div class="num">${attendanceRows.length}</div><div class="sub">${dLabel(absensiDate)}</div></div>
+    </div>`;
+    if(!list.length)return body+emptyBox('Belum ada karyawan','Tambah karyawan dulu di menu Karyawan.');
+    body+=`<div class="sec-title">Kehadiran ${dLabel(absensiDate)}</div><div class="card" style="padding:6px 8px"><div class="tbl-wrap"><table>
+      <thead><tr><th>Nama</th><th>Jabatan</th><th>Jam masuk</th><th>Jam keluar</th><th>Status</th></tr></thead><tbody>
+      ${list.map(x=>{const a=map[x.id];return `<tr>
+        <td style="font-weight:600">${x.nama}</td>
+        <td style="color:var(--muted)">${x.jabatan||'—'}</td>
+        <td class="amt">${a&&a.jam_masuk?tLabel(a.jam_masuk):'—'}</td>
+        <td class="amt">${a&&a.jam_keluar?tLabel(a.jam_keluar):'—'}</td>
+        <td>${a?'<span class="badge b-ok">Hadir</span>':'<span class="badge b-wait">Belum absen</span>'}</td>
       </tr>`;}).join('')}
       </tbody></table></div></div>`;
     return body;
@@ -1136,6 +1191,9 @@ function wire(view){
     main.querySelectorAll('[data-empedit]').forEach(b=>b.onclick=()=>editEmp(b.dataset.empedit));
     main.querySelectorAll('[data-empact]').forEach(b=>b.onclick=()=>{run(()=>db.updEmp(b.dataset.empact,{aktif:true}),'Karyawan diaktifkan',()=>go('karyawan'));});
     main.querySelectorAll('[data-empdel]').forEach(b=>b.onclick=()=>{delCtx={kind:'emp',id:b.dataset.empdel};const x=employees.find(v=>v.id===b.dataset.empdel);$('#delTitle').textContent='Nonaktifkan karyawan?';$('#delSub').textContent=`"${x.nama}" akan ditandai nonaktif (bukan dihapus permanen). Bisa diaktifkan lagi nanti.`;$('#delModalBg').classList.add('on');});
+  }
+  if(view==='absensi'){
+    $('#absensiDateInput').onchange=e=>{absensiDate=e.target.value||absensiDate;go('absensi');};
   }
   if(view==='po'){
     $('#addSup').onclick=()=>editSup(null);
@@ -1498,10 +1556,120 @@ function roleChipText(u){ return role==='nhs'?t('chip_admin'):(role==='staff'?t(
 function enter(u){
   currentUser=u; role=u.role||'client'; currentView='';
   $('#login').style.display='none';$('#app').classList.add('on');
+  if(role==='kiosk'){
+    $('#app').classList.add('kiosk-mode');document.body.classList.add('kiosk-mode');
+    $('#roleChip').textContent='';$('#nav').innerHTML='';
+    startRefreshLoop();renderKiosk();
+    return;
+  }
+  $('#app').classList.remove('kiosk-mode');document.body.classList.remove('kiosk-mode');
   $('#roleChip').className='role-chip '+roleChipClass();
   $('#roleChip').textContent=roleChipText(u);
   buildNav();startRefreshLoop();go(firstView());
 }
+
+/* ================= KIOSK ABSENSI ================= */
+let kioskEmployees=[],kioskPicked=null,kioskPin='',kioskClockTimer=null;
+function kioskClockStr(){ const d=new Date(); return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')+':'+String(d.getSeconds()).padStart(2,'0'); }
+function kioskStartClock(elId){
+  if(kioskClockTimer)clearInterval(kioskClockTimer);
+  const tick=()=>{ const el=document.getElementById(elId); if(!el){clearInterval(kioskClockTimer);return;} el.textContent=kioskClockStr(); };
+  tick(); kioskClockTimer=setInterval(tick,1000);
+}
+async function renderKiosk(){
+  main.innerHTML=`<div class="kiosk-wrap"><div class="kiosk-title">Memuat…</div></div>`;
+  try{ kioskEmployees=await db.kioskEmployees(); }
+  catch(e){ main.innerHTML=`<div class="kiosk-wrap"><div class="kiosk-feedback">⚠ Gagal memuat data karyawan</div><div>${e.message}</div></div>`; console.error(e); return; }
+  kioskShowPicker();
+}
+function kioskShowPicker(){
+  if(kioskClockTimer)clearInterval(kioskClockTimer);
+  kioskPicked=null;kioskPin='';
+  if(!kioskEmployees.length){
+    main.innerHTML=`<div class="kiosk-wrap"><div class="kiosk-title">Absensi Karyawan</div><div>Belum ada karyawan aktif terdaftar.</div></div>`;
+    return;
+  }
+  main.innerHTML=`<div class="kiosk-wrap">
+    <div class="kiosk-clock" id="kioskClock"></div>
+    <div class="kiosk-title">Pilih nama Anda</div>
+    <div class="kiosk-grid">${kioskEmployees.map(x=>`<button class="kiosk-emp-btn" data-kemp="${x.id}">${x.nama}</button>`).join('')}</div>
+    <a class="kiosk-logout" id="kioskLogout" href="#">keluar kiosk</a>
+  </div>`;
+  kioskStartClock('kioskClock');
+  main.querySelectorAll('[data-kemp]').forEach(b=>b.onclick=()=>kioskShowPin(b.dataset.kemp));
+  $('#kioskLogout').onclick=e=>{e.preventDefault();$('#logout').click();};
+}
+function kioskRenderDots(){
+  const el=document.getElementById('kioskDots'); if(!el)return;
+  el.innerHTML=[0,1,2,3].map(i=>`<span class="kiosk-pin-dot ${i<kioskPin.length?'filled':''}"></span>`).join('');
+}
+function kioskShowPin(empId){
+  if(kioskClockTimer)clearInterval(kioskClockTimer);
+  kioskPicked=kioskEmployees.find(x=>x.id===empId);kioskPin='';
+  if(!kioskPicked)return kioskShowPicker();
+  main.innerHTML=`<div class="kiosk-wrap">
+    <div class="kiosk-pin-box">
+      <div class="kiosk-title" style="font-size:20px;margin-bottom:4px">${kioskPicked.nama}</div>
+      <div class="sub" style="margin-bottom:0">Masukkan PIN 4 digit</div>
+      <div class="kiosk-pin-dots" id="kioskDots"></div>
+      <div class="kiosk-keypad">
+        ${[1,2,3,4,5,6,7,8,9].map(n=>`<button class="kiosk-key" data-kn="${n}">${n}</button>`).join('')}
+        <button class="kiosk-key" id="kioskBack">←</button>
+        <button class="kiosk-key" data-kn="0">0</button>
+        <button class="kiosk-key" id="kioskCancel">✕</button>
+      </div>
+    </div>
+    <a class="kiosk-logout" id="kioskLogout" href="#">keluar kiosk</a>
+  </div>`;
+  kioskRenderDots();
+  main.querySelectorAll('[data-kn]').forEach(b=>b.onclick=()=>kioskPressDigit(b.dataset.kn));
+  $('#kioskBack').onclick=()=>{kioskPin=kioskPin.slice(0,-1);kioskRenderDots();};
+  $('#kioskCancel').onclick=()=>kioskShowPicker();
+  $('#kioskLogout').onclick=e=>{e.preventDefault();$('#logout').click();};
+}
+async function kioskPressDigit(n){
+  if(kioskPin.length>=4)return;
+  kioskPin+=n;kioskRenderDots();
+  if(kioskPin.length===4) await kioskVerify();
+}
+async function kioskVerify(){
+  const emp=kioskPicked;
+  if(kioskPin!==String(emp.pin||'')){
+    kioskPin='';kioskRenderDots();
+    toast('PIN salah, coba lagi',true);
+    return;
+  }
+  main.innerHTML=`<div class="kiosk-wrap"><div class="kiosk-feedback">Memproses…</div></div>`;
+  const today=new Date().toISOString().slice(0,10);
+  try{
+    const rows=await db.attendance(today,emp.id);
+    const row=rows&&rows[0];
+    const now=new Date().toISOString();
+    if(!row){
+      await db.clockIn(emp.id,today,now);
+      kioskFeedback(`Selamat datang, ${emp.nama}!`,'Absen masuk tercatat',tLabel(now));
+    }else if(!row.jam_keluar){
+      await db.clockOut(row.id,now);
+      kioskFeedback(`Sampai jumpa, ${emp.nama}!`,'Absen keluar tercatat',tLabel(now));
+    }else{
+      kioskFeedback(`${emp.nama}, kamu udah absen lengkap hari ini`,`Masuk ${tLabel(row.jam_masuk)} · Keluar ${tLabel(row.jam_keluar)}`,null);
+    }
+  }catch(e){
+    console.error(e);
+    main.innerHTML=`<div class="kiosk-wrap"><div class="kiosk-feedback">⚠ Gagal mencatat absen</div><div>${e.message}</div><button class="btn-cta" id="kioskRetry" style="margin-top:16px">Ulangi</button></div>`;
+    $('#kioskRetry').onclick=()=>kioskShowPicker();
+  }
+}
+function kioskFeedback(title,sub,timeStr){
+  main.innerHTML=`<div class="kiosk-wrap">
+    <div class="kiosk-feedback">${title}${timeStr?`<span class="time">${timeStr}</span>`:''}</div>
+    <div class="sub" style="color:#cfe6d8">${sub}</div>
+    <button class="btn-cta" id="kioskDone" style="margin-top:24px">Selesai</button>
+  </div>`;
+  $('#kioskDone').onclick=()=>kioskShowPicker();
+  setTimeout(()=>{ if(currentUser&&role==='kiosk')kioskShowPicker(); },4000);
+}
+
 $('#loginForm').onsubmit=async e=>{
   e.preventDefault();
   const btn=$('#loginBtn'),email=$('#loginEmail').value.trim(),pass=$('#loginPass').value;
@@ -1543,6 +1711,7 @@ function applyStatic(){
   $('#delTitle').textContent=t('del_title');$('#delCancel').textContent=t('cancel');$('#delConfirm').textContent=t('del_confirm');
 }
 function setLang(l){
+  if(role==='kiosk')return;
   LANG=l; try{localStorage.setItem('nhs_lang',l)}catch(e){}
   applyStatic();
   if($('#app').classList.contains('on')){
@@ -2084,7 +2253,7 @@ $('#statusDot').className='status-dot'+(LIVE?'':' demo');
 applyStatic();
 bindStatic();
 bindFase3();
-$('#logout').onclick=()=>{currentUser=null;if(refreshTimer)clearInterval(refreshTimer);localStorage.removeItem('nhs_session');$('#app').classList.remove('on');$('#login').style.display='flex';$('#loginPass').value='';};
+$('#logout').onclick=()=>{currentUser=null;if(refreshTimer)clearInterval(refreshTimer);if(kioskClockTimer)clearInterval(kioskClockTimer);localStorage.removeItem('nhs_session');$('#app').classList.remove('on','kiosk-mode');document.body.classList.remove('kiosk-mode');$('#login').style.display='flex';$('#loginPass').value='';};
 function openMenu(){$('#sidebar').classList.add('open');$('#scrim').classList.add('on');}
 function closeMenu(){$('#sidebar').classList.remove('open');$('#scrim').classList.remove('on');}
 $('#menuBtn').onclick=()=>{$('#sidebar').classList.contains('open')?closeMenu():openMenu();};
