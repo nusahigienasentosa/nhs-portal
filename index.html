@@ -67,7 +67,9 @@
   .kiosk-key:hover{background:var(--warn-bg)}
   .kiosk-feedback{font-size:22px;font-weight:700;margin-bottom:10px}
   .kiosk-feedback .time{font-size:36px;display:block;margin-top:8px}
-  .kiosk-logout{position:fixed;bottom:10px;right:14px;font-size:11px;color:rgba(255,255,255,.35)}
+  .kiosk-logout{display:none;position:fixed;bottom:10px;right:14px;padding:10px 14px;font-size:13px;color:rgba(255,255,255,.5);z-index:250}
+  .kiosk-logout:hover,.kiosk-logout:active{color:rgba(255,255,255,.85)}
+  body.kiosk-mode .kiosk-logout{display:block}
   .sidebar{background:var(--pinus-700);color:#cfdbd2;padding:22px 15px;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto}
   .sidebar .brandmark{margin-bottom:8px;padding:0 6px}
   .sidebar .brandmark .name{color:#fff}
@@ -267,6 +269,7 @@
 
 <button class="menu-btn" id="menuBtn" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round"/></svg></button>
 <div class="scrim" id="scrim"></div>
+<a class="kiosk-logout" id="kioskLogoutBtn" href="#">keluar kiosk</a>
 
 <div id="app">
   <aside class="sidebar" id="sidebar">
@@ -1593,11 +1596,9 @@ function kioskShowPicker(){
     <div class="kiosk-clock" id="kioskClock"></div>
     <div class="kiosk-title">Pilih nama Anda</div>
     <div class="kiosk-grid">${kioskEmployees.map(x=>`<button class="kiosk-emp-btn" data-kemp="${x.id}">${x.nama}</button>`).join('')}</div>
-    <a class="kiosk-logout" id="kioskLogout" href="#">keluar kiosk</a>
   </div>`;
   kioskStartClock('kioskClock');
   main.querySelectorAll('[data-kemp]').forEach(b=>b.onclick=()=>kioskShowPin(b.dataset.kemp));
-  $('#kioskLogout').onclick=e=>{e.preventDefault();$('#logout').click();};
 }
 function kioskRenderDots(){
   const el=document.getElementById('kioskDots'); if(!el)return;
@@ -1619,13 +1620,11 @@ function kioskShowPin(empId){
         <button class="kiosk-key" id="kioskCancel">✕</button>
       </div>
     </div>
-    <a class="kiosk-logout" id="kioskLogout" href="#">keluar kiosk</a>
   </div>`;
   kioskRenderDots();
   main.querySelectorAll('[data-kn]').forEach(b=>b.onclick=()=>kioskPressDigit(b.dataset.kn));
   $('#kioskBack').onclick=()=>{kioskPin=kioskPin.slice(0,-1);kioskRenderDots();};
   $('#kioskCancel').onclick=()=>kioskShowPicker();
-  $('#kioskLogout').onclick=e=>{e.preventDefault();$('#logout').click();};
 }
 async function kioskPressDigit(n){
   if(kioskPin.length>=4)return;
@@ -2254,6 +2253,7 @@ applyStatic();
 bindStatic();
 bindFase3();
 $('#logout').onclick=()=>{currentUser=null;if(refreshTimer)clearInterval(refreshTimer);if(kioskClockTimer)clearInterval(kioskClockTimer);localStorage.removeItem('nhs_session');$('#app').classList.remove('on','kiosk-mode');document.body.classList.remove('kiosk-mode');$('#login').style.display='flex';$('#loginPass').value='';};
+$('#kioskLogoutBtn').onclick=e=>{e.preventDefault();if(confirm('Keluar dari mode kiosk?'))$('#logout').click();};
 function openMenu(){$('#sidebar').classList.add('open');$('#scrim').classList.add('on');}
 function closeMenu(){$('#sidebar').classList.remove('open');$('#scrim').classList.remove('on');}
 $('#menuBtn').onclick=()=>{$('#sidebar').classList.contains('open')?closeMenu():openMenu();};
