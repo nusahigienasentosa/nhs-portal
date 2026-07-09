@@ -52,13 +52,18 @@ di-test di browser beneran (lihat poin "Testing" di bawah).
    mau seketat itu (soalnya kalau suatu saat butuh koreksi payroll
    yang salah, dengan trigger itu satu-satunya jalan adalah hapus
    trigger dulu manual, gak bisa lewat UI sama sekali).
-5. **Tidak ada alur "batalkan/reverse" payroll yang sudah final.**
-   Kalau ternyata ada salah hitung setelah finalisasi & posting ke
-   ledger, koreksi HARUS dilakukan manual (misal: tambah transaksi
-   manual penyeimbang di Finance dengan catatan jelas). Saya sengaja
-   gak bikin fitur "batalkan finalisasi" karena itu riskan (bisa bikin
-   ledger nggak konsisten) — kalau ini kebutuhan nyata, sebaiknya
-   dirancang khusus, bukan ditambahkan buru-buru malam ini.
+5. **[Update] Alur "Batalkan Finalisasi" sudah dibuat, pola reversing
+   entry.** Tombol muncul di baris payroll `status='final'` (role
+   `nhs` only, karena view Payroll sendiri cuma kebuka buat `nhs`).
+   Klik → konfirmasi eksplisit → sistem BIKIN transaksi pembalik baru
+   di `finance_txns` (`type:'income'`, kategori `Gaji Karyawan`,
+   deskripsi diawali "PEMBALIK —", nominal = gaji_bersih), lalu
+   payroll balik ke `status='draft'` dan `finance_txn_id`/
+   `finalized_at` dikosongkan. Transaksi gaji ASLI (yang expense)
+   TIDAK dihapus/diedit — jejak lengkap tetap ada di ledger (gaji
+   asli + pembaliknya). Lihat `doBatalkanFinalisasi()` di
+   `index.html`. Belum di-test di browser beneran (lihat poin
+   Testing).
 
 ## Titik risiko
 

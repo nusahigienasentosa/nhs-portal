@@ -771,6 +771,7 @@ const db={
   },
   // payroll
   async payroll(){ if(!LIVE)return [...demoPayroll].sort((a,b)=>(b.created_at||'').localeCompare(a.created_at||'')); return await sbGet('payroll','&order=created_at.desc'); },
+  async payrollById(id){ if(!LIVE)return demoPayroll.find(v=>v.id===id)||null; const rows=await sbGet('payroll',`&id=eq.${id}`); return rows[0]||null; },
   async addPayroll(x){ if(!LIVE){x.id='pr'+Date.now();x.created_at=new Date().toISOString();demoPayroll.unshift(x);return x;} return await sbWrite('POST','payroll',x,true); },
   async updPayroll(id,p){ if(!LIVE){Object.assign(demoPayroll.find(v=>v.id===id),p);return;} return await sbWrite('PATCH',`payroll?id=eq.${id}`,p); },
   async delPayroll(id){ if(!LIVE){demoPayroll=demoPayroll.filter(v=>v.id!==id);return;} return await sbWrite('DELETE',`payroll?id=eq.${id}`); },
@@ -1040,7 +1041,7 @@ const V={
         <td class="amt" style="text-align:right;color:var(--alert)">${p.total_potongan?rp(p.total_potongan):'—'}</td>
         <td class="amt" style="text-align:right;font-weight:700;color:var(--pinus-700)">${rp(p.gaji_bersih)}</td>
         <td>${p.status==='final'?'<span class="badge b-ok">Final · di ledger</span>':'<span class="badge b-wait">Draft</span>'}</td>
-        <td style="text-align:right;white-space:nowrap">${p.status==='draft'?`<button class="btn-sm btn-adv" data-payfinal="${p.id}">Finalisasi</button> <button class="btn-sm btn-del" data-paydel="${p.id}">✕</button>`:''}</td>
+        <td style="text-align:right;white-space:nowrap">${p.status==='draft'?`<button class="btn-sm btn-adv" data-payfinal="${p.id}">Finalisasi</button> <button class="btn-sm btn-del" data-paydel="${p.id}">✕</button>`:`<button class="btn-sm btn-del" data-paybatal="${p.id}">Batalkan Finalisasi</button>`}</td>
       </tr>`).join('')}
       </tbody></table></div></div>`;
     return body;
@@ -1252,6 +1253,7 @@ function wire(view){
     payCalcState=null;
     if($('#payHitung'))$('#payHitung').onclick=doPayHitung;
     main.querySelectorAll('[data-payfinal]').forEach(b=>b.onclick=()=>doFinalizePayroll(b.dataset.payfinal));
+    main.querySelectorAll('[data-paybatal]').forEach(b=>b.onclick=()=>doBatalkanFinalisasi(b.dataset.paybatal,b));
     main.querySelectorAll('[data-paydel]').forEach(b=>b.onclick=()=>{delCtx={kind:'payroll',id:b.dataset.paydel};const p=payroll.find(v=>v.id===b.dataset.paydel);$('#delTitle').textContent='Hapus payroll draft?';$('#delSub').textContent=`Payroll "${p.employee_nama}" periode ${dLabel(p.period_start)} – ${dLabel(p.period_end)} (draft, belum diposting) akan dihapus.`;$('#delModalBg').classList.add('on');});
   }
   if(view==='po'){
@@ -1565,6 +1567,49 @@ function doFinalizePayroll(id){
     const txn=await db.addTxn({type:'expense',date:new Date().toISOString().slice(0,10),category:'Gaji Karyawan',description:`Gaji ${p.employee_nama} periode ${dLabel(p.period_start)} – ${dLabel(p.period_end)}`,amount:p.gaji_bersih});
     await db.updPayroll(id,{status:'final',finance_txn_id:txn.id,finalized_at:new Date().toISOString()});
   },'Payroll difinalisasi & diposting ke ledger (Gaji Karyawan)',()=>go('payroll'));
+}
+async function doBatalkanFinalisasi(id,btn){
+  const p=payroll.find(x=>x.id===id); if(!p)return;
+  if(p.status!=='final')return;
+  if(!confirm(`Batalkan payroll final ${p.employee_nama} periode ${dLabel(p.period_start)} – ${dLabel(p.period_end)}?\n\nTransaksi pembalik gaji akan dibuat di ledger.`))return;
+  if(btn){btn.disabled=true;btn.textContent='Memproses...';}
+  try{
+    // guard: re-cek status langsung dari server (bukan state lokal) buat cegah
+    // race condition — misal payroll ini udah dibatalkan/diubah di tab/user lain
+    const fresh=await db.payrollById(id);
+    if(!fresh||fresh.status!=='final'){
+      toast('⚠ Payroll ini sudah tidak berstatus final (mungkin sudah diubah di tempat lain) — dibatalkan, silakan refresh.',true);
+      if(btn){btn.disabled=false;btn.textContent='Batalkan Finalisasi';}
+      return;
+    }
+    // simpan nilai asli sebelum diubah, buat bahan rollback kalau addTxn gagal
+    const origFinanceTxnId=fresh.finance_txn_id,origFinalizedAt=fresh.finalized_at;
+    // urutan sengaja: lepas status final dulu, baru posting transaksi pembalik
+    await db.updPayroll(id,{status:'draft',finance_txn_id:null,finalized_at:null});
+    try{
+      await db.addTxn({type:'income',date:new Date().toISOString().slice(0,10),category:'Gaji Karyawan',description:`PEMBALIK — Gaji ${p.employee_nama} periode ${dLabel(p.period_start)} – ${dLabel(p.period_end)} (batal finalisasi)`,amount:p.gaji_bersih});
+    }catch(txnErr){
+      // rollback: addTxn gagal setelah payroll sudah kelanjur balik ke draft —
+      // baik-buruknya harus "either dua-duanya jadi, either dua-duanya nggak"
+      try{
+        await db.updPayroll(id,{status:'final',finance_txn_id:origFinanceTxnId,finalized_at:origFinalizedAt});
+        toast('⚠ Pembatalan gagal, coba lagi.',true);
+        console.error('Batalkan finalisasi gagal (addTxn pembalik), rollback ke final berhasil:',txnErr);
+        if(btn){btn.disabled=false;btn.textContent='Batalkan Finalisasi';}
+      }catch(rollbackErr){
+        toast('⚠ Pembatalan gagal & rollback gagal — JANGAN retry, cek data manual.',true);
+        console.error('Batalkan finalisasi gagal (addTxn pembalik):',txnErr);
+        console.error('Rollback JUGA gagal (updPayroll balik ke final):',rollbackErr);
+        if(btn)btn.textContent='⚠ Cek manual';
+      }
+      return;
+    }
+    toast('Finalisasi dibatalkan, transaksi pembalik diposting ke ledger (Gaji Karyawan)');
+    go('payroll');
+  }catch(e){
+    toast('⚠ '+e.message,true); console.error(e);
+    if(btn){btn.disabled=false;btn.textContent='Batalkan Finalisasi';}
+  }
 }
 
 /* ================= TXN MODAL ================= */
