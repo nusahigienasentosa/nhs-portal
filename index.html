@@ -558,7 +558,7 @@ const I18N={
   brand_sub:"SERVICE PORTAL",login_title:"Sign in to portal",email:"Email",ph_email:"name@company.com",password:"Password",remember:"Remember me on this device",signin:"Sign in",checking:"Checking…",wrong:"Wrong email or password",signout:"Sign out",
   chip_admin:"NHS Team (admin)",chip_staff:"NHS Staff",loading:"Loading…",cancel:"Cancel",save:"Save",catering:"Catering",laundry:"Laundry",
   grp_ops:"OPERATIONS",grp_erp:"BACK OFFICE",
-  nav_pesan:"Order services",nav_pesanan:"My orders",nav_tagihan:"Invoices",nav_masuk:"Incoming orders",nav_katalog:"Catalog & prices",nav_inv:"Inventory",nav_po:"Purchase orders",nav_fin:"Finance",nav_karyawan:"Employees",nav_absensi:"Attendance",nav_payroll:"Payroll",
+  nav_pesan:"Order services",nav_pesanan:"My orders",nav_tagihan:"Invoices",nav_masuk:"Incoming orders",nav_katalog:"Catalog & prices",nav_inv:"Inventory",nav_supplier:"Suppliers",nav_po:"Purchase orders",nav_fin:"Finance",nav_karyawan:"Employees",nav_absensi:"Attendance",nav_payroll:"Payroll",
   b_done:"Done",b_prog:"In progress",b_queue:"Queued",inv_paid:"Invoice paid",inv_issued:"Invoice issued",
   pesan_h:"Create order",pesan_p:"Order daily catering or a laundry pickup. Cost is calculated automatically from the NHS catalog.",
   cat_title:"Daily catering",f_menu:"Menu / package",f_deliverydate:"Delivery date",f_shift1:"Shift 1 portions",f_shift2:"Shift 2 portions",f_note:"Note (optional)",ph_cat_note:"e.g. 20 portions without meat",est_cost:"Estimated cost",btn_send_cat:"Send catering order",no_cat:"No active catering service.",
@@ -582,7 +582,7 @@ const I18N={
   brand_sub:"PORTAL LAYANAN",login_title:"Masuk ke portal",email:"Email",ph_email:"nama@perusahaan.com",password:"Kata sandi",remember:"Ingat saya di perangkat ini",signin:"Masuk",checking:"Memeriksa…",wrong:"Email atau kata sandi salah",signout:"Keluar",
   chip_admin:"Tim NHS (admin)",chip_staff:"Staff NHS",loading:"Memuat…",cancel:"Batal",save:"Simpan",catering:"Katering",laundry:"Laundry",
   grp_ops:"OPERASIONAL",grp_erp:"BACK OFFICE",
-  nav_pesan:"Pesan layanan",nav_pesanan:"Pesanan saya",nav_tagihan:"Tagihan",nav_masuk:"Pesanan masuk",nav_katalog:"Katalog & harga",nav_inv:"Inventory",nav_po:"Purchase order",nav_fin:"Keuangan",nav_karyawan:"Karyawan",nav_absensi:"Absensi",nav_payroll:"Payroll",
+  nav_pesan:"Pesan layanan",nav_pesanan:"Pesanan saya",nav_tagihan:"Tagihan",nav_masuk:"Pesanan masuk",nav_katalog:"Katalog & harga",nav_inv:"Inventory",nav_supplier:"Supplier",nav_po:"Purchase order",nav_fin:"Keuangan",nav_karyawan:"Karyawan",nav_absensi:"Absensi",nav_payroll:"Payroll",
   b_done:"Selesai",b_prog:"Diproses",b_queue:"Antre",inv_paid:"Invoice lunas",inv_issued:"Invoice terbit",
   pesan_h:"Buat pesanan",pesan_p:"Pesan katering harian atau penjemputan laundry. Biaya terhitung otomatis dari katalog NHS.",
   cat_title:"Katering harian",f_menu:"Menu / paket",f_deliverydate:"Tanggal pengiriman",f_shift1:"Porsi shift 1",f_shift2:"Porsi shift 2",f_note:"Catatan (opsional)",ph_cat_note:"mis. 20 porsi tanpa daging",est_cost:"Perkiraan biaya",btn_send_cat:"Kirim pesanan katering",no_cat:"Belum ada layanan katering aktif.",
@@ -606,7 +606,7 @@ const I18N={
   brand_sub:"服务门户",login_title:"登录门户",email:"邮箱",ph_email:"name@company.com",password:"密码",remember:"在此设备上记住我",signin:"登录",checking:"验证中…",wrong:"邮箱或密码错误",signout:"退出",
   chip_admin:"NHS 团队（管理员）",chip_staff:"NHS 员工",loading:"加载中…",cancel:"取消",save:"保存",catering:"餐饮",laundry:"洗涤",
   grp_ops:"运营",grp_erp:"后台",
-  nav_pesan:"下单服务",nav_pesanan:"我的订单",nav_tagihan:"账单",nav_masuk:"收到的订单",nav_katalog:"目录与价格",nav_inv:"库存",nav_po:"采购单",nav_fin:"财务",nav_karyawan:"员工",nav_absensi:"考勤",nav_payroll:"工资",
+  nav_pesan:"下单服务",nav_pesanan:"我的订单",nav_tagihan:"账单",nav_masuk:"收到的订单",nav_katalog:"目录与价格",nav_inv:"库存",nav_supplier:"供应商",nav_po:"采购单",nav_fin:"财务",nav_karyawan:"员工",nav_absensi:"考勤",nav_payroll:"工资",
   b_done:"完成",b_prog:"处理中",b_queue:"排队中",inv_paid:"账单已付",inv_issued:"账单已开",
   pesan_h:"创建订单",pesan_p:"下单每日餐饮或洗涤取件。费用根据 NHS 目录自动计算。",
   cat_title:"每日餐饮",f_menu:"菜单 / 套餐",f_deliverydate:"配送日期",f_shift1:"第一班份数",f_shift2:"第二班份数",f_note:"备注（可选）",ph_cat_note:"例如：20份不含肉",est_cost:"预计费用",btn_send_cat:"提交餐饮订单",no_cat:"暂无可用餐饮服务。",
@@ -800,7 +800,7 @@ function dLabel(d){const x=new Date(d);if(LANG==='zh')return `${x.getFullYear()}
 function ymLabel(d){const x=new Date(d);if(LANG==='zh')return `${x.getFullYear()}年${x.getMonth()+1}月`;const m=MONTHS_BY[LANG]||MONTHS_BY.en;return m[x.getMonth()]+' '+x.getFullYear();}
 const TAX={PPN_RATE:0.11,PPN_ENABLED:false,PPH23_RATE:0.02};
 
-let role='client',orders=[],services=[],inventory=[],suppliers=[],pos=[],txns=[],grands=[],recon=[],employees=[],attendanceRows=[],payroll=[],absensiDate=new Date().toISOString().slice(0,10),currentView='';
+let role='client',orders=[],services=[],inventory=[],suppliers=[],pos=[],txns=[],grands=[],recon=[],employees=[],attendanceRows=[],payroll=[],absensiDate=new Date().toISOString().slice(0,10),currentView='',finCatFilter='all';
 let lastCashBalance=0;
 const $=s=>document.querySelector(s),main=$('#main');
 function toast(m,isErr){const el=$('#toast');el.textContent=m;el.className='toast show'+(isErr?' err':'');setTimeout(()=>el.classList.remove('show'),isErr?4200:2900);}
@@ -849,7 +849,7 @@ const NAV={
   staff:{ops:[['masuk','nav_masuk','M4 6h16M4 12h16M4 18h10']]},
   nhs:{
     ops:[['masuk','nav_masuk','M4 6h16M4 12h16M4 18h10'],['katalog','nav_katalog','M4 7h16M4 12h16M4 17h16M8 3v18']],
-    erp:[['inventory','nav_inv','M4 7l8-4 8 4-8 4-8-4zm0 5l8 4 8-4M4 17l8 4 8-4'],['po','nav_po','M9 5h6M9 9h6M9 13h4M5 3h14v18l-3-2-2 2-2-2-2 2-3-2z'],['fin','nav_fin','M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6'],['karyawan','nav_karyawan','M12 12a4 4 0 100-8 4 4 0 000 8zM4 21c0-4.4 3.6-8 8-8s8 3.6 8 8'],['absensi','nav_absensi','M12 7v5l3 3M21 12a9 9 0 11-18 0 9 9 0 0118 0z'],['payroll','nav_payroll','M3 7h18v10H3zM3 7l2-3h14l2 3M12 9.5a2.5 2.5 0 100 5 2.5 2.5 0 000-5z'],['tagihan','nav_tagihan','M6 3h12v18l-3-2-3 2-3-2-3 2z']],
+    erp:[['inventory','nav_inv','M4 7l8-4 8 4-8 4-8-4zm0 5l8 4 8-4M4 17l8 4 8-4'],['supplier','nav_supplier','M4 21V10l8-6 8 6v11M9 21v-6h6v6M4 21h16'],['po','nav_po','M9 5h6M9 9h6M9 13h4M5 3h14v18l-3-2-2 2-2-2-2 2-3-2z'],['fin','nav_fin','M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6'],['karyawan','nav_karyawan','M12 12a4 4 0 100-8 4 4 0 000 8zM4 21c0-4.4 3.6-8 8-8s8 3.6 8 8'],['absensi','nav_absensi','M12 7v5l3 3M21 12a9 9 0 11-18 0 9 9 0 0118 0z'],['payroll','nav_payroll','M3 7h18v10H3zM3 7l2-3h14l2 3M12 9.5a2.5 2.5 0 100 5 2.5 2.5 0 000-5z'],['tagihan','nav_tagihan','M6 3h12v18l-3-2-3 2-3-2-3 2z']],
   },
 };
 function firstView(){ const g=NAV[role]; return (g.ops&&g.ops[0]&&g.ops[0][0])||'masuk'; }
@@ -1047,14 +1047,18 @@ const V={
     return body;
   },
 
-  po(){
-    let body=head(t('nav_po'),'Purchase Order','Bikin PO ke supplier. Draft dulu, nanti Fase 3 auto-kirim email + PDF ber-stempel.',`<div style="display:flex;gap:8px"><button class="btn-sm" id="addSup">+ Supplier</button><button class="btn-cta" id="addPO">+ PO baru</button></div>`);
-    // suppliers strip
-    body+=`<div class="sec-title">Supplier <span style="font-family:Manrope;font-size:12px;color:var(--faint)">${suppliers.length} terdaftar</span></div><div class="card">`;
-    body+= suppliers.length? suppliers.map(s=>`<div class="svc"><div class="body"><div class="t">${s.name}</div><div class="d">${s.contact||'—'} · ${s.phone||''} · ${s.email||'no email'}</div></div><div style="display:flex;gap:6px"><button class="btn-sm" data-supedit="${s.id}">${t('btn_edit')}</button><button class="btn-sm btn-del" data-supdel="${s.id}">✕</button></div></div>`).join(''):`<div class="empty">Belum ada supplier.</div>`;
+  supplier(){
+    let body=head(t('nav_supplier'),'Supplier','Data supplier — dipakai buat referensi Purchase Order (bukan ketik nama manual).',`<button class="btn-cta" id="addSup">+ Tambah supplier</button>`);
+    if(!suppliers.length)return body+emptyBox('Belum ada supplier','Tambah supplier pertama di kanan atas — dipakai buat pilih di PO.');
+    body+=`<div class="sec-title">Daftar supplier <span style="font-family:Manrope;font-size:12px;color:var(--faint)">${suppliers.length} terdaftar</span></div><div class="card">`;
+    body+=suppliers.map(s=>`<div class="svc"><div class="body"><div class="t">${s.name}</div><div class="d">${s.contact||'—'} · ${s.phone||''} · ${s.email||'no email'}</div></div><div style="display:flex;gap:6px"><button class="btn-sm" data-supedit="${s.id}">${t('btn_edit')}</button><button class="btn-sm btn-del" data-supdel="${s.id}">✕</button></div></div>`).join('');
     body+=`</div>`;
-    // PO list
-    body+=`<div class="sec-title">Daftar PO</div>`;
+    return body;
+  },
+
+  po(){
+    let body=head(t('nav_po'),'Purchase Order','Bikin PO ke supplier. Draft dulu, nanti Fase 3 auto-kirim email + PDF ber-stempel.',`<button class="btn-cta" id="addPO">+ PO baru</button>`);
+    if(!suppliers.length)body+=`<div class="card" style="margin-bottom:14px"><div class="empty">Belum ada supplier terdaftar — buka menu <strong>Supplier</strong> buat nambah dulu sebelum bikin PO.</div></div>`;
     if(!pos.length)return body+emptyBox('Belum ada PO','Bikin PO pertama di kanan atas.');
     body+=`<div class="card" style="padding:6px 8px"><div class="tbl-wrap"><table>
       <thead><tr><th>No. PO</th><th>Tanggal</th><th>Supplier</th><th>Kategori</th><th style="text-align:right">Total</th><th>Status</th><th></th></tr></thead><tbody>
@@ -1074,7 +1078,7 @@ const V={
     const rows=[];
     if(openingTxn)rows.push({date:openingTxn.date,type:'opening',cat:'Modal Awal',desc:openingTxn.description||'Saldo awal kas',amount:+openingTxn.amount,src:'txn',id:openingTxn.id});
     orders.filter(o=>o.paid&&o.paid_at).forEach(o=>rows.push({date:o.paid_at.slice(0,10),type:'income',cat:typeLabel(o.type),desc:`${o.client} · ${o.service_name} (lunas)`,amount:+o.paid_amount||+o.amount,src:'order'}));
-    pos.filter(p=>p.status==='received'&&p.received_at).forEach(p=>rows.push({date:p.received_at.slice(0,10),type:'expense',cat:'PO',desc:`${p.po_number} · ${p.supplier_name}`,amount:+p.total,src:'po'}));
+    pos.filter(p=>p.status==='received'&&p.received_at).forEach(p=>rows.push({date:p.received_at.slice(0,10),type:'expense',cat:'PO · '+(p.category||'Lainnya'),desc:`${p.po_number} · ${p.supplier_name}`,amount:+p.total,src:'po'}));
     txns.filter(x=>x.type!=='opening').forEach(x=>rows.push({date:x.date,type:x.type,cat:x.type==='owner_draw'?('Prive / Owner Draw'+(x.category?' · '+x.category:'')):(x.category||'Manual'),desc:x.description||'',amount:+x.amount,src:'txn',id:x.id,bukti:x.bukti_path}));
     rows.sort((a,b)=>(a.date||'').localeCompare(b.date||''));
     let bal=0; rows.forEach(r=>{ bal+=((r.type==='expense'||r.type==='owner_draw')?-r.amount:r.amount); r.balance=bal; });
@@ -1088,10 +1092,10 @@ const V={
     const unpaidIncome=orders.filter(o=>o.invoiced&&!o.paid).reduce((s,o)=>s+ +o.amount,0);
     const pph23=incomeOrders*TAX.PPH23_RATE;
 
-    let body=head(t('nav_fin'),'Keuangan','Saldo kas berjalan, pajak, dan ledger transaksi. PPN OFF (NHS belum PKP).',
+    let body=head(t('nav_fin'),'Keuangan','Saldo kas berjalan, pajak, dan ledger transaksi. Satu ledger, satu saldo kas — kategori di bawah cuma lensa buat nyaring tampilan. PPN OFF (NHS belum PKP).',
       `<div style="display:flex;gap:8px">${openingTxn?'':'<button class="btn-sm" id="addOpenBal">+ Modal Awal</button>'}<button class="btn-cta" id="addTxn">+ Transaksi</button></div>`);
     body+=`<div class="grid g4">
-      <div class="card stat"><div class="lbl">Saldo Kas Sekarang</div><div class="num" style="color:${cashBalance>=0?'var(--pinus-700)':'var(--alert)'}">${rp(cashBalance)}</div><div class="sub">saldo berjalan</div></div>
+      <div class="card stat"><div class="lbl">Saldo Kas Sekarang</div><div class="num" style="color:${cashBalance>=0?'var(--pinus-700)':'var(--alert)'}">${rp(cashBalance)}</div><div class="sub">saldo berjalan · semua kategori</div></div>
       <div class="card stat"><div class="lbl">Pemasukan bulan ini</div><div class="num sm" style="color:var(--ok)">${rp(monthIncome)}</div><div class="sub">invoice lunas + manual</div></div>
       <div class="card stat"><div class="lbl">Pengeluaran bulan ini</div><div class="num sm" style="color:var(--alert)">${rp(monthExpense)}</div><div class="sub">PO diterima + manual</div></div>
       <div class="card stat"><div class="lbl">Piutang</div><div class="num sm" style="color:var(--tembaga-700)">${rp(unpaidIncome)}</div><div class="sub">invoice belum dibayar</div></div>
@@ -1104,16 +1108,24 @@ const V={
     body+=`<div class="sec-title">Ledger kas (saldo berjalan)</div>`;
     if(!openingTxn)body+=`<div class="card" style="margin-bottom:14px"><div class="empty">Belum ada Modal Awal — klik "+ Modal Awal" kalau mau mulai catet saldo dari angka tertentu. Sementara ini ledger mulai dari 0.</div></div>`;
     if(!rows.length)return body+emptyBox('Belum ada transaksi kas','Transaksi muncul dari invoice lunas, PO diterima, modal awal, atau input manual.');
+    // filter kategori — cuma lensa tampilan tabel di bawah, saldo & kartu statistik di atas TETAP dari seluruh transaksi
+    const catCounts={};rows.forEach(r=>{catCounts[r.cat]=(catCounts[r.cat]||0)+1;});
+    const cats=Object.keys(catCounts).sort((a,b)=>a==='Modal Awal'?-1:(b==='Modal Awal'?1:a.localeCompare(b)));
+    body+=`<div class="tabs" id="finCatTabs">
+      <button data-fincat="all" class="${finCatFilter==='all'?'active':''}">Semua (${rows.length})</button>
+      ${cats.map(c=>`<button data-fincat="${c}" class="${finCatFilter===c?'active':''}">${c} (${catCounts[c]})</button>`).join('')}
+    </div>`;
+    const filteredRows=finCatFilter==='all'?rows:rows.filter(r=>r.cat===finCatFilter);
     body+=`<div class="card" style="padding:6px 8px"><div class="tbl-wrap"><table>
       <thead><tr><th>Tanggal</th><th>Kategori</th><th>Keterangan</th><th style="text-align:right">Masuk</th><th style="text-align:right">Keluar</th><th style="text-align:right">Saldo</th><th></th></tr></thead><tbody>
-      ${rows.map(r=>`<tr>
+      ${filteredRows.length?filteredRows.map(r=>`<tr>
         <td>${dLabel(r.date)}</td><td style="color:var(--muted)">${r.cat}</td>
         <td>${r.desc}</td>
         <td class="amt" style="text-align:right;color:var(--ok)">${r.type==='income'||r.type==='opening'?rp(r.amount):''}</td>
         <td class="amt" style="text-align:right;color:${r.type==='owner_draw'?'var(--tembaga-700)':'var(--alert)'}">${(r.type==='expense'||r.type==='owner_draw')?rp(r.amount):''}</td>
         <td class="amt" style="text-align:right;font-weight:700;color:var(--pinus-700)">${rp(r.balance)}</td>
         <td style="text-align:right;white-space:nowrap">${r.bukti?`<button class="btn-sm" data-viewbukti="${r.bukti}">📎 Bukti</button> `:''}${r.src==='txn'?`<button class="btn-sm btn-del" data-txndel="${r.id}">✕</button>`:''}</td>
-      </tr>`).join('')}
+      </tr>`).join(''):`<tr><td colspan="7" style="text-align:center;color:var(--faint);padding:22px">Gak ada transaksi di kategori ini.</td></tr>`}
       </tbody></table></div></div>`;
     body+=`<div class="sec-title">Rekonsiliasi Bank</div><div class="card">
       <div class="form-row">
@@ -1256,11 +1268,13 @@ function wire(view){
     main.querySelectorAll('[data-paybatal]').forEach(b=>b.onclick=()=>doBatalkanFinalisasi(b.dataset.paybatal,b));
     main.querySelectorAll('[data-paydel]').forEach(b=>b.onclick=()=>{delCtx={kind:'payroll',id:b.dataset.paydel};const p=payroll.find(v=>v.id===b.dataset.paydel);$('#delTitle').textContent='Hapus payroll draft?';$('#delSub').textContent=`Payroll "${p.employee_nama}" periode ${dLabel(p.period_start)} – ${dLabel(p.period_end)} (draft, belum diposting) akan dihapus.`;$('#delModalBg').classList.add('on');});
   }
-  if(view==='po'){
+  if(view==='supplier'){
     $('#addSup').onclick=()=>editSup(null);
-    $('#addPO').onclick=()=>openPO();
     main.querySelectorAll('[data-supedit]').forEach(b=>b.onclick=()=>editSup(b.dataset.supedit));
     main.querySelectorAll('[data-supdel]').forEach(b=>b.onclick=()=>{delCtx={kind:'sup',id:b.dataset.supdel};const s=suppliers.find(v=>v.id===b.dataset.supdel);$('#delTitle').textContent='Hapus supplier?';$('#delSub').textContent=`"${s.name}" akan dihapus.`;$('#delModalBg').classList.add('on');});
+  }
+  if(view==='po'){
+    $('#addPO').onclick=()=>openPO();
     main.querySelectorAll('[data-postatus]').forEach(b=>b.onclick=()=>{
       const patch={status:b.dataset.to};
       if(b.dataset.to==='received')patch.received_at=new Date().toISOString();
@@ -1271,6 +1285,7 @@ function wire(view){
   if(view==='fin'){
     $('#addTxn').onclick=()=>openTxn();
     if($('#addOpenBal'))$('#addOpenBal').onclick=()=>openOpenBal();
+    main.querySelectorAll('[data-fincat]').forEach(b=>b.onclick=()=>{finCatFilter=b.dataset.fincat;go('fin');});
     main.querySelectorAll('[data-txndel]').forEach(b=>b.onclick=()=>run(()=>db.delTxn(b.dataset.txndel),'Transaksi dihapus',()=>go('fin')));
     main.querySelectorAll('[data-viewbukti]').forEach(b=>b.onclick=async()=>{
       try{ const url=await sbSignedUrl('bukti-transfer',b.dataset.viewbukti,300); window.open(url,'_blank'); }
@@ -1328,7 +1343,7 @@ function bindStatic(){
     if(c.kind==='svc')run(()=>db.delService(c.id),t('svc_deleted'),()=>go('katalog'));
     if(c.kind==='inv')run(()=>db.delInv(c.id),'Item dihapus',()=>go('inventory'));
     if(c.kind==='emp')run(()=>db.updEmp(c.id,{aktif:false}),'Karyawan dinonaktifkan',()=>go('karyawan'));
-    if(c.kind==='sup')run(()=>db.delSup(c.id),'Supplier dihapus',()=>go('po'));
+    if(c.kind==='sup')run(()=>db.delSup(c.id),'Supplier dihapus',()=>go('supplier'));
     if(c.kind==='po')run(()=>db.delPO(c.id),'PO dihapus',()=>go('po'));
     if(c.kind==='payroll')run(()=>db.delPayroll(c.id),'Payroll draft dihapus',()=>go('payroll'));
     if(c.kind==='order')run(()=>db.delOrder(c.id),'Order dihapus',()=>go('masuk'));
@@ -1361,8 +1376,8 @@ function bindStatic(){
   $('#supSave').onclick=()=>{
     const name=$('#supName').value.trim(); if(!name)return toast('Nama supplier kosong',true);
     const payload={name,contact:$('#supContact').value.trim(),phone:$('#supPhone').value.trim(),email:$('#supEmail').value.trim(),note:$('#supNote').value.trim()};
-    if(editingSupId)run(()=>db.updSup(editingSupId,payload),'Supplier diperbarui',()=>{$('#supModalBg').classList.remove('on');go('po');});
-    else run(()=>db.addSup(payload),'Supplier ditambahkan',()=>{$('#supModalBg').classList.remove('on');go('po');});
+    if(editingSupId)run(()=>db.updSup(editingSupId,payload),'Supplier diperbarui',()=>{$('#supModalBg').classList.remove('on');go('supplier');});
+    else run(()=>db.addSup(payload),'Supplier ditambahkan',()=>{$('#supModalBg').classList.remove('on');go('supplier');});
   };
   // batch modal
   $('#batchCancel').onclick=()=>$('#batchModalBg').classList.remove('on');
