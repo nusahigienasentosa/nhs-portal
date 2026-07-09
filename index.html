@@ -558,7 +558,7 @@ const I18N={
   brand_sub:"SERVICE PORTAL",login_title:"Sign in to portal",email:"Email",ph_email:"name@company.com",password:"Password",remember:"Remember me on this device",signin:"Sign in",checking:"Checking…",wrong:"Wrong email or password",signout:"Sign out",
   chip_admin:"NHS Team (admin)",chip_staff:"NHS Staff",loading:"Loading…",cancel:"Cancel",save:"Save",catering:"Catering",laundry:"Laundry",
   grp_ops:"OPERATIONS",grp_erp:"BACK OFFICE",
-  nav_pesan:"Order services",nav_pesanan:"My orders",nav_tagihan:"Invoices",nav_masuk:"Incoming orders",nav_katalog:"Catalog & prices",nav_inv:"Inventory",nav_po:"Purchase orders",nav_fin:"Finance",nav_karyawan:"Employees",nav_absensi:"Attendance",
+  nav_pesan:"Order services",nav_pesanan:"My orders",nav_tagihan:"Invoices",nav_masuk:"Incoming orders",nav_katalog:"Catalog & prices",nav_inv:"Inventory",nav_po:"Purchase orders",nav_fin:"Finance",nav_karyawan:"Employees",nav_absensi:"Attendance",nav_payroll:"Payroll",
   b_done:"Done",b_prog:"In progress",b_queue:"Queued",inv_paid:"Invoice paid",inv_issued:"Invoice issued",
   pesan_h:"Create order",pesan_p:"Order daily catering or a laundry pickup. Cost is calculated automatically from the NHS catalog.",
   cat_title:"Daily catering",f_menu:"Menu / package",f_deliverydate:"Delivery date",f_shift1:"Shift 1 portions",f_shift2:"Shift 2 portions",f_note:"Note (optional)",ph_cat_note:"e.g. 20 portions without meat",est_cost:"Estimated cost",btn_send_cat:"Send catering order",no_cat:"No active catering service.",
@@ -582,7 +582,7 @@ const I18N={
   brand_sub:"PORTAL LAYANAN",login_title:"Masuk ke portal",email:"Email",ph_email:"nama@perusahaan.com",password:"Kata sandi",remember:"Ingat saya di perangkat ini",signin:"Masuk",checking:"Memeriksa…",wrong:"Email atau kata sandi salah",signout:"Keluar",
   chip_admin:"Tim NHS (admin)",chip_staff:"Staff NHS",loading:"Memuat…",cancel:"Batal",save:"Simpan",catering:"Katering",laundry:"Laundry",
   grp_ops:"OPERASIONAL",grp_erp:"BACK OFFICE",
-  nav_pesan:"Pesan layanan",nav_pesanan:"Pesanan saya",nav_tagihan:"Tagihan",nav_masuk:"Pesanan masuk",nav_katalog:"Katalog & harga",nav_inv:"Inventory",nav_po:"Purchase order",nav_fin:"Keuangan",nav_karyawan:"Karyawan",nav_absensi:"Absensi",
+  nav_pesan:"Pesan layanan",nav_pesanan:"Pesanan saya",nav_tagihan:"Tagihan",nav_masuk:"Pesanan masuk",nav_katalog:"Katalog & harga",nav_inv:"Inventory",nav_po:"Purchase order",nav_fin:"Keuangan",nav_karyawan:"Karyawan",nav_absensi:"Absensi",nav_payroll:"Payroll",
   b_done:"Selesai",b_prog:"Diproses",b_queue:"Antre",inv_paid:"Invoice lunas",inv_issued:"Invoice terbit",
   pesan_h:"Buat pesanan",pesan_p:"Pesan katering harian atau penjemputan laundry. Biaya terhitung otomatis dari katalog NHS.",
   cat_title:"Katering harian",f_menu:"Menu / paket",f_deliverydate:"Tanggal pengiriman",f_shift1:"Porsi shift 1",f_shift2:"Porsi shift 2",f_note:"Catatan (opsional)",ph_cat_note:"mis. 20 porsi tanpa daging",est_cost:"Perkiraan biaya",btn_send_cat:"Kirim pesanan katering",no_cat:"Belum ada layanan katering aktif.",
@@ -606,7 +606,7 @@ const I18N={
   brand_sub:"服务门户",login_title:"登录门户",email:"邮箱",ph_email:"name@company.com",password:"密码",remember:"在此设备上记住我",signin:"登录",checking:"验证中…",wrong:"邮箱或密码错误",signout:"退出",
   chip_admin:"NHS 团队（管理员）",chip_staff:"NHS 员工",loading:"加载中…",cancel:"取消",save:"保存",catering:"餐饮",laundry:"洗涤",
   grp_ops:"运营",grp_erp:"后台",
-  nav_pesan:"下单服务",nav_pesanan:"我的订单",nav_tagihan:"账单",nav_masuk:"收到的订单",nav_katalog:"目录与价格",nav_inv:"库存",nav_po:"采购单",nav_fin:"财务",nav_karyawan:"员工",nav_absensi:"考勤",
+  nav_pesan:"下单服务",nav_pesanan:"我的订单",nav_tagihan:"账单",nav_masuk:"收到的订单",nav_katalog:"目录与价格",nav_inv:"库存",nav_po:"采购单",nav_fin:"财务",nav_karyawan:"员工",nav_absensi:"考勤",nav_payroll:"工资",
   b_done:"完成",b_prog:"处理中",b_queue:"排队中",inv_paid:"账单已付",inv_issued:"账单已开",
   pesan_h:"创建订单",pesan_p:"下单每日餐饮或洗涤取件。费用根据 NHS 目录自动计算。",
   cat_title:"每日餐饮",f_menu:"菜单 / 套餐",f_deliverydate:"配送日期",f_shift1:"第一班份数",f_shift2:"第二班份数",f_note:"备注（可选）",ph_cat_note:"例如：20份不含肉",est_cost:"预计费用",btn_send_cat:"提交餐饮订单",no_cat:"暂无可用餐饮服务。",
@@ -666,7 +666,16 @@ let demoEmployees=[
   {id:'e2',nama:'Siti Aminah',no_hp:'0813-2222-3333',jabatan:'Packing',tanggal_masuk:'2025-03-15',tarif_harian:110000,pin:'5678',aktif:true},
   {id:'e3',nama:'Joko Widodo',no_hp:'0815-4444-5555',jabatan:'Driver',tanggal_masuk:'2024-11-01',tarif_harian:130000,pin:'4321',aktif:true},
 ];
-let demoAttendance=[]; // {id,employee_id,tanggal,jam_masuk,jam_keluar,created_at}
+let demoAttendance=(()=>{ // {id,employee_id,tanggal,jam_masuk,jam_keluar,created_at} — seeded Juni 2026 buat demo payroll
+  const rows=[];let seq=1;
+  const gen=(empId,libur)=>{ for(let d=1;d<=30;d++){ if(libur.includes(d))continue; const dd=String(d).padStart(2,'0'); const tgl=`2026-06-${dd}`;
+    rows.push({id:'a'+(seq++),employee_id:empId,tanggal:tgl,jam_masuk:`${tgl}T08:02:00Z`,jam_keluar:`${tgl}T16:05:00Z`,created_at:`${tgl}T08:02:00Z`}); } };
+  gen('e1',[6,7,13,14,20,21,27,28]);       // Budi Santoso — libur weekend, 22 hari masuk
+  gen('e2',[6,7,13,14,20,21,27,28,3,17]);  // Siti Aminah — 2 hari absen tambahan, 20 hari masuk
+  gen('e3',[6,7,13,14,20,21,27,28]);       // Joko Widodo — 22 hari masuk
+  return rows;
+})();
+let demoPayroll=[]; // {id,employee_id,employee_nama,period_start,period_end,hari_masuk,tarif_harian,gaji_kotor,potongan:[{label,amount}],total_potongan,gaji_bersih,status,finance_txn_id,finalized_at,created_at}
 let demoPOs=[
   {id:'po1',po_number:'PO-2026-001',supplier_id:'sup1',supplier_name:'Heaven Chemical',date:'2026-06-25',status:'received',category:'Bahan Produksi',items:[{name:'Deterjen Giken',qty:50,unit:'kg',price:28000},{name:'Softener',qty:20,unit:'L',price:22000}],subtotal:1840000,ppn_enabled:false,ppn:0,total:1840000,note:'',created_at:'2026-06-25T00:00:00Z'},
 ];
@@ -756,6 +765,16 @@ const db={
   },
   async clockIn(employeeId,tanggal,now){ if(!LIVE){const row={id:'a'+Date.now(),employee_id:employeeId,tanggal,jam_masuk:now,jam_keluar:null,created_at:now};demoAttendance.push(row);return row;} return await sbWrite('POST','attendance',{employee_id:employeeId,tanggal,jam_masuk:now}); },
   async clockOut(id,now){ if(!LIVE){const row=demoAttendance.find(a=>a.id===id);if(row)row.jam_keluar=now;return row;} return await sbWrite('PATCH',`attendance?id=eq.${id}`,{jam_keluar:now}); },
+  async attendanceRange(employeeId,from,to){
+    if(!LIVE)return demoAttendance.filter(a=>a.employee_id===employeeId&&a.tanggal>=from&&a.tanggal<=to);
+    return await sbGet('attendance',`&employee_id=eq.${employeeId}&tanggal=gte.${from}&tanggal=lte.${to}`);
+  },
+  // payroll
+  async payroll(){ if(!LIVE)return [...demoPayroll].sort((a,b)=>(b.created_at||'').localeCompare(a.created_at||'')); return await sbGet('payroll','&order=created_at.desc'); },
+  async payrollById(id){ if(!LIVE)return demoPayroll.find(v=>v.id===id)||null; const rows=await sbGet('payroll',`&id=eq.${id}`); return rows[0]||null; },
+  async addPayroll(x){ if(!LIVE){x.id='pr'+Date.now();x.created_at=new Date().toISOString();demoPayroll.unshift(x);return x;} return await sbWrite('POST','payroll',x,true); },
+  async updPayroll(id,p){ if(!LIVE){Object.assign(demoPayroll.find(v=>v.id===id),p);return;} return await sbWrite('PATCH',`payroll?id=eq.${id}`,p); },
+  async delPayroll(id){ if(!LIVE){demoPayroll=demoPayroll.filter(v=>v.id!==id);return;} return await sbWrite('DELETE',`payroll?id=eq.${id}`); },
   // purchase orders
   async pos(){ if(!LIVE)return [...demoPOs].sort((a,b)=>(b.created_at||'').localeCompare(a.created_at||'')); return await sbGet('purchase_orders','&order=created_at.desc'); },
   async addPO(x){ if(!LIVE){x.id='po'+Date.now();x.created_at=new Date().toISOString();demoPOs.unshift(x);return x;} return await sbWrite('POST','purchase_orders',x,true); },
@@ -781,7 +800,7 @@ function dLabel(d){const x=new Date(d);if(LANG==='zh')return `${x.getFullYear()}
 function ymLabel(d){const x=new Date(d);if(LANG==='zh')return `${x.getFullYear()}年${x.getMonth()+1}月`;const m=MONTHS_BY[LANG]||MONTHS_BY.en;return m[x.getMonth()]+' '+x.getFullYear();}
 const TAX={PPN_RATE:0.11,PPN_ENABLED:false,PPH23_RATE:0.02};
 
-let role='client',orders=[],services=[],inventory=[],suppliers=[],pos=[],txns=[],grands=[],recon=[],employees=[],attendanceRows=[],absensiDate=new Date().toISOString().slice(0,10),currentView='';
+let role='client',orders=[],services=[],inventory=[],suppliers=[],pos=[],txns=[],grands=[],recon=[],employees=[],attendanceRows=[],payroll=[],absensiDate=new Date().toISOString().slice(0,10),currentView='';
 let lastCashBalance=0;
 const $=s=>document.querySelector(s),main=$('#main');
 function toast(m,isErr){const el=$('#toast');el.textContent=m;el.className='toast show'+(isErr?' err':'');setTimeout(()=>el.classList.remove('show'),isErr?4200:2900);}
@@ -818,10 +837,10 @@ function orderTimeline(o){
 }
 async function refresh(){
   const jobs=[db.orders(),db.services(),db.grands()];
-  if(role==='nhs'){ jobs.push(db.inventory(),db.suppliers(),db.pos(),db.txns(),db.reconciliations(),db.employees(),db.attendance(absensiDate)); }
+  if(role==='nhs'){ jobs.push(db.inventory(),db.suppliers(),db.pos(),db.txns(),db.reconciliations(),db.employees(),db.attendance(absensiDate),db.payroll()); }
   const r=await Promise.all(jobs);
   orders=r[0];services=r[1];grands=r[2];
-  if(role==='nhs'){ inventory=r[3];suppliers=r[4];pos=r[5];txns=r[6];recon=r[7];employees=r[8];attendanceRows=r[9]; }
+  if(role==='nhs'){ inventory=r[3];suppliers=r[4];pos=r[5];txns=r[6];recon=r[7];employees=r[8];attendanceRows=r[9];payroll=r[10]; }
 }
 
 /* ================= NAV ================= */
@@ -830,7 +849,7 @@ const NAV={
   staff:{ops:[['masuk','nav_masuk','M4 6h16M4 12h16M4 18h10']]},
   nhs:{
     ops:[['masuk','nav_masuk','M4 6h16M4 12h16M4 18h10'],['katalog','nav_katalog','M4 7h16M4 12h16M4 17h16M8 3v18']],
-    erp:[['inventory','nav_inv','M4 7l8-4 8 4-8 4-8-4zm0 5l8 4 8-4M4 17l8 4 8-4'],['po','nav_po','M9 5h6M9 9h6M9 13h4M5 3h14v18l-3-2-2 2-2-2-2 2-3-2z'],['fin','nav_fin','M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6'],['karyawan','nav_karyawan','M12 12a4 4 0 100-8 4 4 0 000 8zM4 21c0-4.4 3.6-8 8-8s8 3.6 8 8'],['absensi','nav_absensi','M12 7v5l3 3M21 12a9 9 0 11-18 0 9 9 0 0118 0z'],['tagihan','nav_tagihan','M6 3h12v18l-3-2-3 2-3-2-3 2z']],
+    erp:[['inventory','nav_inv','M4 7l8-4 8 4-8 4-8-4zm0 5l8 4 8-4M4 17l8 4 8-4'],['po','nav_po','M9 5h6M9 9h6M9 13h4M5 3h14v18l-3-2-2 2-2-2-2 2-3-2z'],['fin','nav_fin','M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6'],['karyawan','nav_karyawan','M12 12a4 4 0 100-8 4 4 0 000 8zM4 21c0-4.4 3.6-8 8-8s8 3.6 8 8'],['absensi','nav_absensi','M12 7v5l3 3M21 12a9 9 0 11-18 0 9 9 0 0118 0z'],['payroll','nav_payroll','M3 7h18v10H3zM3 7l2-3h14l2 3M12 9.5a2.5 2.5 0 100 5 2.5 2.5 0 000-5z'],['tagihan','nav_tagihan','M6 3h12v18l-3-2-3 2-3-2-3 2z']],
   },
 };
 function firstView(){ const g=NAV[role]; return (g.ops&&g.ops[0]&&g.ops[0][0])||'masuk'; }
@@ -992,6 +1011,38 @@ const V={
         <td class="amt">${a&&a.jam_keluar?tLabel(a.jam_keluar):'—'}</td>
         <td>${a?'<span class="badge b-ok">Hadir</span>':'<span class="badge b-wait">Belum absen</span>'}</td>
       </tr>`;}).join('')}
+      </tbody></table></div></div>`;
+    return body;
+  },
+
+  payroll(){
+    const aktifEmp=employees.filter(x=>x.aktif!==false);
+    let body=head(t('nav_payroll'),'Payroll','Hitung gaji dari absensi (hari masuk × tarif harian), kurangi potongan (kasbon dll), lalu finalisasi buat posting ke Finance sebagai kategori "Gaji Karyawan" — terpisah dari Prive/Owner Draw & Bahan Produksi.',``);
+    body+=`<div class="card" style="margin-bottom:18px">
+      <div class="sec-title" style="margin-top:0">Hitung gaji baru</div>
+      <div class="form-row r3">
+        <div class="field"><label>Karyawan</label><select id="payEmp">${aktifEmp.length?aktifEmp.map(x=>`<option value="${x.id}">${x.nama}</option>`).join(''):'<option value="">— belum ada karyawan aktif —</option>'}</select></div>
+        <div class="field"><label>Dari tanggal</label><input type="date" id="payFrom"></div>
+        <div class="field"><label>Sampai tanggal</label><input type="date" id="payTo"></div>
+      </div>
+      <button class="btn-sm btn-adv" id="payHitung"${aktifEmp.length?'':' disabled'}>Hitung dari absensi</button>
+      <div id="payPreview"></div>
+    </div>`;
+    body+=`<div class="sec-title">Riwayat payroll</div>`;
+    if(!payroll.length)return body+emptyBox('Belum ada payroll','Hitung payroll pertama di atas.');
+    const sorted=[...payroll].sort((a,b)=>(b.created_at||'').localeCompare(a.created_at||''));
+    body+=`<div class="card" style="padding:6px 8px"><div class="tbl-wrap"><table>
+      <thead><tr><th>Karyawan</th><th>Periode</th><th style="text-align:right">Hari masuk</th><th style="text-align:right">Gaji kotor</th><th style="text-align:right">Potongan</th><th style="text-align:right">Gaji bersih</th><th>Status</th><th></th></tr></thead><tbody>
+      ${sorted.map(p=>`<tr>
+        <td style="font-weight:600">${p.employee_nama}</td>
+        <td>${dLabel(p.period_start)} – ${dLabel(p.period_end)}</td>
+        <td class="amt" style="text-align:right">${p.hari_masuk}</td>
+        <td class="amt" style="text-align:right">${rp(p.gaji_kotor)}</td>
+        <td class="amt" style="text-align:right;color:var(--alert)">${p.total_potongan?rp(p.total_potongan):'—'}</td>
+        <td class="amt" style="text-align:right;font-weight:700;color:var(--pinus-700)">${rp(p.gaji_bersih)}</td>
+        <td>${p.status==='final'?'<span class="badge b-ok">Final · di ledger</span>':'<span class="badge b-wait">Draft</span>'}</td>
+        <td style="text-align:right;white-space:nowrap">${p.status==='draft'?`<button class="btn-sm btn-adv" data-payfinal="${p.id}">Finalisasi</button> <button class="btn-sm btn-del" data-paydel="${p.id}">✕</button>`:`<button class="btn-sm btn-del" data-paybatal="${p.id}">Batalkan Finalisasi</button>`}</td>
+      </tr>`).join('')}
       </tbody></table></div></div>`;
     return body;
   },
@@ -1198,6 +1249,13 @@ function wire(view){
   if(view==='absensi'){
     $('#absensiDateInput').onchange=e=>{absensiDate=e.target.value||absensiDate;go('absensi');};
   }
+  if(view==='payroll'){
+    payCalcState=null;
+    if($('#payHitung'))$('#payHitung').onclick=doPayHitung;
+    main.querySelectorAll('[data-payfinal]').forEach(b=>b.onclick=()=>doFinalizePayroll(b.dataset.payfinal));
+    main.querySelectorAll('[data-paybatal]').forEach(b=>b.onclick=()=>doBatalkanFinalisasi(b.dataset.paybatal,b));
+    main.querySelectorAll('[data-paydel]').forEach(b=>b.onclick=()=>{delCtx={kind:'payroll',id:b.dataset.paydel};const p=payroll.find(v=>v.id===b.dataset.paydel);$('#delTitle').textContent='Hapus payroll draft?';$('#delSub').textContent=`Payroll "${p.employee_nama}" periode ${dLabel(p.period_start)} – ${dLabel(p.period_end)} (draft, belum diposting) akan dihapus.`;$('#delModalBg').classList.add('on');});
+  }
   if(view==='po'){
     $('#addSup').onclick=()=>editSup(null);
     $('#addPO').onclick=()=>openPO();
@@ -1272,6 +1330,7 @@ function bindStatic(){
     if(c.kind==='emp')run(()=>db.updEmp(c.id,{aktif:false}),'Karyawan dinonaktifkan',()=>go('karyawan'));
     if(c.kind==='sup')run(()=>db.delSup(c.id),'Supplier dihapus',()=>go('po'));
     if(c.kind==='po')run(()=>db.delPO(c.id),'PO dihapus',()=>go('po'));
+    if(c.kind==='payroll')run(()=>db.delPayroll(c.id),'Payroll draft dihapus',()=>go('payroll'));
     if(c.kind==='order')run(()=>db.delOrder(c.id),'Order dihapus',()=>go('masuk'));
     if(c.kind==='grand')run(async()=>{ if(c.orders)for(const id of c.orders)await db.updOrder(id,{billed:false,grand_no:null}); await db.delGrand(c.id); },'Grand invoice dihapus',()=>go('tagihan'));
   };
@@ -1431,6 +1490,128 @@ function savePO(){
   const num='PO-'+new Date().getFullYear()+'-'+String((pos.length+1)).padStart(3,'0');
   run(()=>db.addPO({po_number:num,supplier_id:sup.id,supplier_name:sup.name,date:new Date().toISOString().slice(0,10),status:'draft',category:$('#poCat').value,items,subtotal,ppn_enabled:ppnOn,ppn,total:subtotal+ppn,note:$('#poNote').value.trim()}),'PO draft dibuat: '+num,()=>{$('#poModalBg').classList.remove('on');go('po');});
 }
+/* ================= PAYROLL ================= */
+let payCalcState=null; // {employeeId,employeeNama,from,to,hariMasuk,tarifHarian,gajiKotor,potongan:[{label,amount}]}
+async function doPayHitung(){
+  const empId=$('#payEmp').value; if(!empId)return toast('Pilih karyawan dulu',true);
+  const from=$('#payFrom').value,to=$('#payTo').value;
+  if(!from||!to)return toast('Isi periode (dari–sampai tanggal) dulu',true);
+  if(from>to)return toast('Tanggal awal harus sebelum tanggal akhir',true);
+  const emp=employees.find(x=>x.id===empId); if(!emp)return;
+  try{
+    const rows=await db.attendanceRange(empId,from,to);
+    const hariMasuk=rows.filter(r=>r.jam_masuk).length;
+    const tarif=+emp.tarif_harian||0;
+    payCalcState={employeeId:empId,employeeNama:emp.nama,from,to,hariMasuk,tarifHarian:tarif,gajiKotor:hariMasuk*tarif,potongan:[]};
+    renderPayPreview();
+  }catch(e){ toast('⚠ '+e.message,true); console.error(e); }
+}
+function payPotonganTotal(){ return (payCalcState?payCalcState.potongan:[]).reduce((s,p)=>s+(+p.amount||0),0); }
+function renderPayPreview(){
+  const el=$('#payPreview'); if(!el)return;
+  if(!payCalcState){ el.innerHTML=''; return; }
+  const s=payCalcState;
+  const gajiBersih=s.gajiKotor-payPotonganTotal();
+  el.innerHTML=`
+    <div class="price-preview" style="flex-direction:column;align-items:stretch;gap:6px;margin-top:14px">
+      <div style="display:flex;justify-content:space-between"><span class="l">${s.employeeNama} · ${dLabel(s.from)} – ${dLabel(s.to)}</span></div>
+      <div style="display:flex;justify-content:space-between"><span class="l">Hari masuk</span><span style="font-weight:600">${s.hariMasuk} hari</span></div>
+      <div style="display:flex;justify-content:space-between"><span class="l">Tarif harian</span><span style="font-weight:600">${rp(s.tarifHarian)}</span></div>
+      <div style="display:flex;justify-content:space-between;border-top:1px solid var(--line);padding-top:6px"><span class="l">Gaji kotor</span><span style="font-weight:600">${rp(s.gajiKotor)}</span></div>
+    </div>
+    <div class="sec-title" style="margin:16px 0 8px;font-size:15px">Potongan (opsional — kasbon dll)</div>
+    <div class="li-head" style="grid-template-columns:1fr 92px 26px"><span>Keterangan</span><span>Jumlah</span><span></span></div>
+    <div id="payPotonganRows"></div>
+    <button class="btn-sm" id="payAddPotongan" style="margin-top:4px">+ Tambah potongan</button>
+    <div class="batch-sum ok" style="margin-top:14px" id="payGajiBersih"><span>Gaji bersih</span><span>${rp(gajiBersih)}</span></div>
+    <div class="modal-actions" style="margin-top:14px">
+      <button class="btn-cta block" id="paySaveDraft">Simpan sebagai draft</button>
+    </div>`;
+  $('#payAddPotongan').onclick=()=>payAddPotonganRow();
+  $('#paySaveDraft').onclick=doSavePayrollDraft;
+}
+function payAddPotonganRow(item){
+  const wrap=$('#payPotonganRows'); if(!wrap)return;
+  const div=document.createElement('div');div.className='li-row2';
+  div.innerHTML=`<input type="text" class="pot-label" placeholder="mis. Kasbon" value="${item?item.label:''}"><input type="number" class="pot-amt" min="0" value="${item?item.amount:0}"><span class="of-x">✕</span>`;
+  wrap.appendChild(div);
+  div.querySelector('.of-x').onclick=()=>{div.remove();syncPotonganState();};
+  div.querySelectorAll('input').forEach(i=>i.oninput=syncPotonganState);
+}
+function syncPotonganState(){
+  if(!payCalcState)return;
+  const potongan=[];
+  $('#payPotonganRows').querySelectorAll('.li-row2').forEach(r=>{
+    const label=r.querySelector('.pot-label').value.trim();
+    const amount=+r.querySelector('.pot-amt').value||0;
+    if(label&&amount>0)potongan.push({label,amount});
+  });
+  payCalcState.potongan=potongan;
+  const gajiBersih=payCalcState.gajiKotor-payPotonganTotal();
+  const el=$('#payGajiBersih'); if(el)el.innerHTML=`<span>Gaji bersih</span><span>${rp(gajiBersih)}</span>`;
+}
+function doSavePayrollDraft(){
+  if(!payCalcState)return;
+  const s=payCalcState;
+  const totalPotongan=payPotonganTotal();
+  const gajiBersih=s.gajiKotor-totalPotongan;
+  if(gajiBersih<0)return toast('Potongan melebihi gaji kotor — cek lagi',true);
+  const payload={employee_id:s.employeeId,employee_nama:s.employeeNama,period_start:s.from,period_end:s.to,hari_masuk:s.hariMasuk,tarif_harian:s.tarifHarian,gaji_kotor:s.gajiKotor,potongan:s.potongan,total_potongan:totalPotongan,gaji_bersih:gajiBersih,status:'draft'};
+  run(()=>db.addPayroll(payload),'Payroll draft disimpan',()=>{payCalcState=null;go('payroll');});
+}
+function doFinalizePayroll(id){
+  const p=payroll.find(x=>x.id===id); if(!p)return;
+  if(p.status==='final')return;
+  if(!confirm(`Finalisasi payroll ${p.employee_nama} (${dLabel(p.period_start)} – ${dLabel(p.period_end)})?\n\nGaji bersih ${rp(p.gaji_bersih)} akan diposting ke Finance › Ledger kategori "Gaji Karyawan". Setelah final, payroll ini terkunci (tidak bisa diedit/dihapus dari sini).`))return;
+  run(async()=>{
+    const txn=await db.addTxn({type:'expense',date:new Date().toISOString().slice(0,10),category:'Gaji Karyawan',description:`Gaji ${p.employee_nama} periode ${dLabel(p.period_start)} – ${dLabel(p.period_end)}`,amount:p.gaji_bersih});
+    await db.updPayroll(id,{status:'final',finance_txn_id:txn.id,finalized_at:new Date().toISOString()});
+  },'Payroll difinalisasi & diposting ke ledger (Gaji Karyawan)',()=>go('payroll'));
+}
+async function doBatalkanFinalisasi(id,btn){
+  const p=payroll.find(x=>x.id===id); if(!p)return;
+  if(p.status!=='final')return;
+  if(!confirm(`Batalkan payroll final ${p.employee_nama} periode ${dLabel(p.period_start)} – ${dLabel(p.period_end)}?\n\nTransaksi pembalik gaji akan dibuat di ledger.`))return;
+  if(btn){btn.disabled=true;btn.textContent='Memproses...';}
+  try{
+    // guard: re-cek status langsung dari server (bukan state lokal) buat cegah
+    // race condition — misal payroll ini udah dibatalkan/diubah di tab/user lain
+    const fresh=await db.payrollById(id);
+    if(!fresh||fresh.status!=='final'){
+      toast('⚠ Payroll ini sudah tidak berstatus final (mungkin sudah diubah di tempat lain) — dibatalkan, silakan refresh.',true);
+      if(btn){btn.disabled=false;btn.textContent='Batalkan Finalisasi';}
+      return;
+    }
+    // simpan nilai asli sebelum diubah, buat bahan rollback kalau addTxn gagal
+    const origFinanceTxnId=fresh.finance_txn_id,origFinalizedAt=fresh.finalized_at;
+    // urutan sengaja: lepas status final dulu, baru posting transaksi pembalik
+    await db.updPayroll(id,{status:'draft',finance_txn_id:null,finalized_at:null});
+    try{
+      await db.addTxn({type:'income',date:new Date().toISOString().slice(0,10),category:'Gaji Karyawan',description:`PEMBALIK — Gaji ${p.employee_nama} periode ${dLabel(p.period_start)} – ${dLabel(p.period_end)} (batal finalisasi)`,amount:p.gaji_bersih});
+    }catch(txnErr){
+      // rollback: addTxn gagal setelah payroll sudah kelanjur balik ke draft —
+      // baik-buruknya harus "either dua-duanya jadi, either dua-duanya nggak"
+      try{
+        await db.updPayroll(id,{status:'final',finance_txn_id:origFinanceTxnId,finalized_at:origFinalizedAt});
+        toast('⚠ Pembatalan gagal, coba lagi.',true);
+        console.error('Batalkan finalisasi gagal (addTxn pembalik), rollback ke final berhasil:',txnErr);
+        if(btn){btn.disabled=false;btn.textContent='Batalkan Finalisasi';}
+      }catch(rollbackErr){
+        toast('⚠ Pembatalan gagal & rollback gagal — JANGAN retry, cek data manual.',true);
+        console.error('Batalkan finalisasi gagal (addTxn pembalik):',txnErr);
+        console.error('Rollback JUGA gagal (updPayroll balik ke final):',rollbackErr);
+        if(btn)btn.textContent='⚠ Cek manual';
+      }
+      return;
+    }
+    toast('Finalisasi dibatalkan, transaksi pembalik diposting ke ledger (Gaji Karyawan)');
+    go('payroll');
+  }catch(e){
+    toast('⚠ '+e.message,true); console.error(e);
+    if(btn){btn.disabled=false;btn.textContent='Batalkan Finalisasi';}
+  }
+}
+
 /* ================= TXN MODAL ================= */
 let txnBuktiFile=null;
 function openTxn(){ $('#txnType').value='expense';$('#txnDate').value=new Date().toISOString().slice(0,10);$('#txnCat').value='';$('#txnDesc').value='';$('#txnAmt').value='';txnBuktiFile=null;$('#txnBukti').value='';$('#txnBuktiName').textContent='';$('#txnModalBg').classList.add('on'); }
